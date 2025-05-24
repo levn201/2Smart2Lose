@@ -20,3 +20,23 @@
     <h2>User</h2>
     <p>Hier kannst du Benutzer verwalten und deren Rollen einsehen oder ändern.</p>
 </div>
+
+<table style="width: 100%; border-collapse: collapse;">
+    <thead style="background-color: #00c896; color: white;">
+        <tr>
+            <th style="padding: 10px; border: 1px solid #ccc;">ID</th>
+            <th style="padding: 10px; border: 1px solid #ccc;">Benutzername</th>
+            <th style="padding: 10px; border: 1px solid #ccc;">Password</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.UserList)
+        {
+            <tr style="background-color: #06666f; color: white;">
+                <td style="padding: 10px; border: 1px solid #ccc;">@user.ID</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">@user.Username</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">@user.Password</td>
+            </tr>
+        }
+    </tbody>
+</table>
