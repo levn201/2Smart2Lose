@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace KahootTransnetBW.Pages.Admin
 {
-    public class LoginAdminModel : PageModel
+    public class FrageboegenErstellenModel : PageModel
     {
         public void OnGet()
         {
