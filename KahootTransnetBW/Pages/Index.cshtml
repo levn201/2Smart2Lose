@@ -1,0 +1,79 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<link rel="stylesheet" href="~/css/Admin/Index.css" asp-append-version="true" />
+
+<!-- Login-Button für Admin-Dashboard-->
+<header class="header">
+
+    <button id="loginBtn" class="login-button">Login</button>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+
+            <h2>Login</h2>
+            <form method="post" asp-page-handler="LoginRequired">
+                <input type="text" asp-for="Username" required placeholder="Username" />
+                <input type="password" asp-for="Password" required placeholder="Passwort" />
+                <button type="submit">Einloggen</button>
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <p style="color: red;">@Model.ErrorMessage</p>
+                }
+            </form>
+
+        </div>
+    </div>
+
+</header>
+
+
+
+
+<!-- Kahoot Bereich zum Joinen-->
+<div class="text-center">
+
+
+    <div class="main-content">
+        <h1>Willkommen bei Kahoot!</h1>
+        <p>Gib den Game-PIN ein, um beizutreten:</p>
+
+        <form method="post">
+            <div class="input-group">
+                <input type="number" asp-for="GamePin" required placeholder="Game-PIN eingeben" />
+                <button type="submit">Beitreten</button>
+            </div>
+        </form>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <p style="color: red;">@Model.ErrorMessage</p>
+        }
+    </div>
+
+
+</div>
+
+<script>
+    const loginBtn = document.getElementById("loginBtn");
+    const modal = document.getElementById("loginModal");
+    const closeBtn = document.querySelector(".close");
+
+    loginBtn.onclick = () => {
+        modal.style.display = "flex";
+    };
+
+    closeBtn.onclick = () => {
+        modal.style.display = "none";
+    };
+
+    window.onclick = (event) => {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    };
+</script>

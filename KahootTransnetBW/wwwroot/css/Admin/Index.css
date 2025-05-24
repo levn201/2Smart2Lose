@@ -1,0 +1,179 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #004552;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.text-center {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main-content {
+    background-color: #06666f;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+}
+
+    .main-content h1 {
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+
+    .main-content p {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+    .input-group input[type="number"] {
+        padding: 10px;
+        border-radius: 8px;
+        border: none;
+        width: 100%;
+        max-width: 250px;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .input-group button {
+        padding: 10px 20px;
+        background-color: #00c896;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+    }
+
+        .input-group button:hover {
+            background-color: #00a47a;
+        }
+
+#error {
+    margin-top: 15px;
+    color: #ff4c4c;
+    font-size: 14px;
+}
+
+.login-button {
+    padding: 10px 20px;
+    background-color: #0077cc;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+    .login-button:hover {
+        background-color: #005fa3;
+    }
+
+/* Login Menu */
+
+/* Header oben fixieren und Button rechts platzieren */
+.header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 20px;
+    z-index: 999;
+}
+
+/* Stelle sicher, dass der Button nicht vom Zentrierungs-Layout beeinflusst wird */
+.login-button {
+    background-color: #0077cc;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+}
+
+    .login-button:hover {
+        background-color: #005fa3;
+    }
+
+
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #06666f;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    max-width: 300px;
+    width: 90%;
+    margin: auto;
+}
+
+    .modal-content input {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: none;
+        font-size: 16px;
+    }
+
+    .modal-content button {
+        background-color: #00c896;
+        padding: 10px 20px;
+        border: none;
+        color: white;
+        font-size: 16px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+        .modal-content button:hover {
+            background-color: #00a47a;
+        }
+
+.close {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+}
+
+

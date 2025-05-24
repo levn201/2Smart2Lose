@@ -1,0 +1,27 @@
+﻿@page
+@model KahootTransnetBW.Pages.Admin.DatabaseCheckModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+
+<h1>MySQL-Test</h1>
+
+<form method="post">
+    <button asp-page-handler="TestVerbindung">Verbindung testen</button>
+</form>
+
+<form method="post">
+    <button asp-page-handler="EintragHinzufuegen">Eintrag hinzufügen</button>
+</form>
+
+<form method="post">
+    <button asp-page-handler="EintraegeAnzeigen">Einträge anzeigen</button>
+</form>
+
+<hr />
+
+<h3>Status:</h3>
+<pre style="background-color: #f4f4f4; padding: 10px; border: 1px solid #ccc;">@Model.StatusMessage</pre>
+
+<button type="submit"></button>
