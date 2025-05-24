@@ -21,6 +21,10 @@
     <p>Hier kannst du Benutzer verwalten und deren Rollen einsehen oder ändern.</p>
 </div>
 
+<br />
+<br />
+<br />
+
 <table style="width: 100%; border-collapse: collapse;">
     <thead style="background-color: #00c896; color: white;">
         <tr>
@@ -40,3 +44,33 @@
         }
     </tbody>
 </table>
+
+<br />
+<br />
+<br />
+
+<div class="container">
+    <h2>Neuen Benutzer anlegen</h2>
+
+    <form method="post">
+        <label>Benutzername:</label>
+        <input type="text" asp-for="Username" />
+
+        <label>Passwort:</label>
+        <input type="password" asp-for="Password" />
+
+        <label>Rolle wählen:</label>
+        <select asp-for="Role">
+            <option value="">Bitte wählen</option>
+            <option value="Admin">Admin</option>
+            <option value="Creater">Creater</option>
+        </select>
+
+        <button type="submit">Benutzer speichern</button>
+    </form>
+
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <p class="message">@Model.Message</p>
+    }
+</div>
