@@ -56,7 +56,6 @@ namespace KahootTransnetBW.Pages
         {
             try
             {
-                // Damits nicht leer sein kann  
                 if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
                 {
                     ErrorMessage = "Benutzername und Passwort dürfen nicht leer sein.";
@@ -95,35 +94,6 @@ namespace KahootTransnetBW.Pages
             }
         }
 
-
-
-
     }
 
 }
-
-//try
-//{
-//    //var db = new DatenbankZugriff();
-//    //using var connection = db.GetConnectionCom();
-
-//    //string query = "SELECT * FROM AdminUser WHERE username = @username AND pass = @pass";
-//    //using var cmd = new SqlCommand(query, connection);  // Use SqlCommand, not SqlConnection
-
-//    //cmd.Parameters.Add("@username", SqlDbType.NVarChar, 50).Value = Username;
-//    //cmd.Parameters.Add("@pass", SqlDbType.NVarChar, 50).Value = Password;
-
-//    //using var reader = cmd.ExecuteReader();
-//    //if (reader.HasRows)
-//    //{
-//    //    return RedirectToPage("/Admin/DatenbankChecker2");
-//    //}
-//    //else
-//    //{
-//    return RedirectToPage("/LoginFehlgeschlagen");
-//    //}
-//}
-//catch
-//{
-//    return RedirectToPage("/Fehler");
-//}
