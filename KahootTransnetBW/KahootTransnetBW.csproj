@@ -7,7 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\css\Viewer\" />
+    <Compile Remove="wwwroot\css\Viewer\**" />
+    <Content Remove="wwwroot\css\Viewer\**" />
+    <EmbeddedResource Remove="wwwroot\css\Viewer\**" />
+    <None Remove="wwwroot\css\Viewer\**" />
   </ItemGroup>
 
   <ItemGroup>

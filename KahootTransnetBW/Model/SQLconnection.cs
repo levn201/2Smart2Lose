@@ -14,14 +14,14 @@ namespace KahootTransnetBW.Model
         public class DatenbankZugriff
         {
             public string connectionString =
-                //"Server=mysql-347a283a-levn-5ab8.b.aivencloud.com;" +
-                //"Port=24098;" +
-                //"Database=KahootDatabase;" +
-                //"User Id=avnadmin;" +
-                //"Password=AVNS_tNLe4WVjQEonX1fIAb0;" +
-                //"SslMode=Required;";
+            //"Server=mysql-347a283a-levn-5ab8.b.aivencloud.com;" +
+            //"Port=24098;" +
+            //"Database=KahootDatabase;" +
+            //"User Id=avnadmin;" +
+            //"Password=AVNS_tNLe4WVjQEonX1fIAb0;" +
+            //"SslMode=Required;";
 
-                "Server=localhost;Database=KahootDatabase;Uid=root;Pwd=";
+            "Server=localhost;Database=KahootDatabase;Uid=root;Pwd=21481TNGhello!";
             public MySqlConnection GetConnection()
             {
                 return new MySqlConnection(connectionString);

@@ -44,3 +44,33 @@
         }
     </tbody>
 </table>
+
+<br />
+<br />
+<br />
+
+<div class="container">
+    <h2>Neuen Benutzer anlegen</h2>
+
+    <form method="post">
+        <label>Benutzername:</label>
+        <input type="text" asp-for="Username" />
+
+        <label>Passwort:</label>
+        <input type="password" asp-for="Password" />
+
+        <label>Rolle wählen:</label>
+        <select asp-for="Role">
+            <option value="">Bitte wählen</option>
+            <option value="Admin">Admin</option>
+            <option value="Creater">Creater</option>
+        </select>
+
+        <button type="submit">Benutzer speichern</button>
+    </form>
+
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <p class="message">@Model.Message</p>
+    }
+</div>
