@@ -110,3 +110,69 @@ form button {
     font-weight: bold;
     color: lightgreen;
 }
+
+
+
+.main-content {
+    margin-top: 120px;
+    max-width: 800px;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #06666f;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+    .main-content h2 {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 30px;
+    }
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    background-color: #ffffff;
+    color: #000;
+}
+
+input[type="radio"] {
+    margin-left: 10px;
+    margin-right: 5px;
+}
+
+button {
+    padding: 12px 20px;
+    background-color: #00c896;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+    button:hover {
+        background-color: #00a47a;
+    }
+
+.frage {
+    background-color: #005b66;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
