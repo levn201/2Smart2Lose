@@ -54,7 +54,6 @@ namespace KahootTransnetBW.Pages
         {
             try
             {
-                // Damits nicht leer sein kann  
                 if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
                 {
                     ErrorMessage = "Benutzername und Passwort dürfen nicht leer sein.";
@@ -93,10 +92,6 @@ namespace KahootTransnetBW.Pages
             }
         }
 
-
-
-
     }
 
 }
-
