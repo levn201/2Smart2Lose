@@ -4,6 +4,7 @@
     ViewData["Title"] = "Admin Dashboard - User";
 }
 
+<!-- Menu zu den verschiednen Punkten -->
 <link rel="stylesheet" href="~/css/Admin/Dashboard.css" asp-append-version="true" />
 
 <header class="header">
@@ -22,15 +23,14 @@
 </div>
 
 <br />
-<br />
-<br />
 
+<!-- Ausgabe Admin User -->
 <table style="width: 100%; border-collapse: collapse;">
     <thead style="background-color: #00c896; color: white;">
         <tr>
             <th style="padding: 10px; border: 1px solid #ccc;">ID</th>
             <th style="padding: 10px; border: 1px solid #ccc;">Benutzername</th>
-            <th style="padding: 10px; border: 1px solid #ccc;">Password</th>
+            <th style="padding: 10px; border: 1px solid #ccc;">Passwort</th>
         </tr>
     </thead>
     <tbody>
@@ -39,16 +39,41 @@
             <tr style="background-color: #06666f; color: white;">
                 <td style="padding: 10px; border: 1px solid #ccc;">@user.ID</td>
                 <td style="padding: 10px; border: 1px solid #ccc;">@user.Username</td>
-                <td style="padding: 10px; border: 1px solid #ccc;">@user.Password</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">@user.Password</td> <!-- Sicherer -->
             </tr>
         }
     </tbody>
 </table>
 
 <br />
+
+<!-- Ausgabe Creator User -->
+<table style="width: 100%; border-collapse: collapse;">
+    <thead style="background-color: #00c896; color: white;">
+        <tr>
+            <th style="padding: 10px; border: 1px solid #ccc;">ID</th>
+            <th style="padding: 10px; border: 1px solid #ccc;">Benutzername</th>
+            <th style="padding: 10px; border: 1px solid #ccc;">Passwort</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.CreaterList)
+        {
+            <tr style="background-color: #06666f; color: white;">
+                <td style="padding: 10px; border: 1px solid #ccc;">@user.ID</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">@user.Username</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">@user.Password</td> <!-- Sicherer -->
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<br />
 <br />
 <br />
 
+<!-- Neuen Benutzer anlegen  => Nur sichtbar für Admins -->
 <div class="container">
     <h2>Neuen Benutzer anlegen</h2>
 

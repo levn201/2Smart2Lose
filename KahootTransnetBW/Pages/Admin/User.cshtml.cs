@@ -8,18 +8,34 @@ namespace KahootTransnetBW.Pages.Admin
 {
     public class UserModel : PageModel
     {
+        public void OnGet()
+        {
+            GetAdminUser();
+            GetCreaterUser();
+        }
 
+        // Admin User Klasse
         public class AdminUser
         {
             public int ID { get; set; }
             public string Username { get; set; }
-            public string Password { get; set; }
+            public string Password { get; set; } // Optional: weglassen, wenn nicht gebraucht
         }
 
+        // Creator User Klasse
+        public class CreateUser
+        {
+            public int ID { get; set; }
+            public string Username { get; set; }
+            public string Password { get; set; } // Optional: weglassen, wenn nicht gebraucht
+        }
 
+        // Listen
         public List<AdminUser> UserList { get; set; } = new();
+        public List<CreateUser> CreaterList { get; set; } = new();
 
-        public void OnGet()
+        // Admin User abrufen
+        public void GetAdminUser()
         {
             try
             {
@@ -27,10 +43,10 @@ namespace KahootTransnetBW.Pages.Admin
                 using var connection = db.GetConnection();
                 connection.Open();
 
-                string query = "select * from adminuser;";
+                string query = "SELECT * FROM AdminUser;";
                 using var cmd = new MySqlCommand(query, connection);
-
                 using var reader = cmd.ExecuteReader();
+
                 while (reader.Read())
                 {
                     UserList.Add(new AdminUser
@@ -43,10 +59,44 @@ namespace KahootTransnetBW.Pages.Admin
             }
             catch (Exception ex)
             {
-                // Optional: Fehlerbehandlung
+                Console.WriteLine($"Fehler beim Abrufen der Admin-User: {ex.Message}");
             }
         }
 
+        // Creator User abrufen
+        public void GetCreaterUser()
+        {
+            try
+            {
+                var db = new SQLconnection.DatenbankZugriff();
+                using var connection = db.GetConnection();
+                connection.Open();
+
+                string query = "SELECT * FROM CreaterUser;";
+                using var cmd = new MySqlCommand(query, connection);
+                using var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    CreaterList.Add(new CreateUser
+                    {
+                        ID = reader.GetInt32("Creater_ID"),
+                        Username = reader.GetString("Username"),
+                        Password = reader.GetString("password")
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Fehler beim Abrufen der Creator-User: {ex.Message}");
+            }
+        }
+
+
+
+
+
+        // User Anlegen
         [BindProperty]
         public string Username { get; set; }
 
