@@ -22,92 +22,92 @@
 </div>
 
 <!-- Fragebögen erstellen und Speichern -->
-<div>
-    <div class="header">
-        <h1>Quiz-Ersteller</h1>
-    </div>
-
-    <div class="main-content">
-        <h2>Neues Quiz erstellen</h2>
-
-        <label for="quizTitel">Titel des Quizzes:</label>
-        <input type="text" id="quizTitel" placeholder="z. B. Geografie-Quiz" />
-
-        <div id="fragenContainer"></div>
-
-        <button onclick="frageHinzufügen()">+ Neue Frage hinzufügen</button>
-        <button onclick="quizSpeichern()">Quiz speichern</button>
-    </div>
-
-    <script>
-        let fragen = [];
-
-        function frageHinzufügen() {
-          const index = fragen.length;
-          const container = document.createElement("div");
-          container.className = "frage";
-          container.innerHTML = `
-            <label>Frage ${index + 1}:</label>
-            <input type="text" id="frage${index}" placeholder="Fragetext eingeben..." />
-
-            <label>A:</label>
-            <input type="text" id="a${index}" placeholder="Antwort A" />
-            <label><input type="radio" name="richtig${index}" value="A" /> Richtige Antwort</label><br>
-
-            <label>B:</label>
-            <input type="text" id="b${index}" placeholder="Antwort B" />
-            <label><input type="radio" name="richtig${index}" value="B" /> Richtige Antwort</label><br>
-
-            <label>C:</label>
-            <input type="text" id="c${index}" placeholder="Antwort C" />
-            <label><input type="radio" name="richtig${index}" value="C" /> Richtige Antwort</label><br>
-
-            <label>D:</label>
-            <input type="text" id="d${index}" placeholder="Antwort D" />
-            <label><input type="radio" name="richtig${index}" value="D" /> Richtige Antwort</label>
-          `;
-          document.getElementById("fragenContainer").appendChild(container);
-          fragen.push(index);
-        }
-
-        function quizSpeichern() {
-          const titel = document.getElementById("quizTitel").value.trim();
-          if (!titel) {
-            alert("Bitte gib einen Titel für das Quiz ein!");
-            return;
-          }
-
-          const quiz = { titel, fragen: [] };
-
-          let fehler = false;
-
-          fragen.forEach(i => {
-            const frage = document.getElementById(`frage${i}`).value.trim();
-            const a = document.getElementById(`a${i}`).value.trim();
-            const b = document.getElementById(`b${i}`).value.trim();
-            const c = document.getElementById(`c${i}`).value.trim();
-            const d = document.getElementById(`d${i}`).value.trim();
-            const richtig = document.querySelector(`input[name="richtig${i}"]:checked`)?.value;
-
-            if (!frage || !a || !b || !c || !d || !richtig) {
-              alert(`Bitte fülle alle Felder für Frage ${i + 1} aus und wähle die richtige Antwort.`);
-              fehler = true;
-              return;
-            }
-
-            quiz.fragen.push({
-              frage,
-              antworten: { A: a, B: b, C: c, D: d },
-              richtig
-            });
-          });
-
-          if (!fehler) {
-            console.log("Gespeichertes Quiz:", quiz);
-            alert("Quiz gespeichert! Siehe Konsole.");
-          }
-        }
-    </script>
-
-
+<div class="header">
+    <h1>Quiz-Ersteller</h1>
 </div>
+
+<div class="main-content">
+    <h2>Neues Quiz erstellen</h2>
+
+    <label for="quizTitel">Titel des Quizzes:</label>
+    <input type="text" id="quizTitel" placeholder="z. B. Geografie-Quiz" />
+
+    <div id="fragenContainer"></div>
+
+    <button onclick="frageHinzufügen()">+ Neue Frage hinzufügen</button>
+    <button onclick="quizSpeichern()">Quiz speichern</button>
+</div>
+
+<script>
+    let fragen = [];
+
+    function frageHinzufügen() {
+      const index = fragen.length;
+      const container = document.createElement("div");
+      container.className = "frage";
+      container.innerHTML = `
+        <label>Frage ${index + 1}:</label>
+        <input type="text" id="frage${index}" placeholder="Fragetext eingeben..." />
+
+        <label>A:</label>
+        <input type="text" id="a${index}" placeholder="Antwort A" />
+        <label><input type="radio" name="richtig${index}" value="A" /> Richtige Antwort</label><br>
+
+        <label>B:</label>
+        <input type="text" id="b${index}" placeholder="Antwort B" />
+        <label><input type="radio" name="richtig${index}" value="B" /> Richtige Antwort</label><br>
+
+        <label>C:</label>
+        <input type="text" id="c${index}" placeholder="Antwort C" />
+        <label><input type="radio" name="richtig${index}" value="C" /> Richtige Antwort</label><br>
+
+        <label>D:</label>
+        <input type="text" id="d${index}" placeholder="Antwort D" />
+        <label><input type="radio" name="richtig${index}" value="D" /> Richtige Antwort</label>
+      `;
+      document.getElementById("fragenContainer").appendChild(container);
+      fragen.push(index);
+    }
+
+    function quizSpeichern() {
+      const titel = document.getElementById("quizTitel").value.trim();
+      if (!titel) {
+        alert("Bitte gib einen Titel für das Quiz ein!");
+        return;
+      }
+
+      const quiz = { titel, fragen: [] };
+
+      let fehler = false;
+
+      fragen.forEach(i => {
+        const frage = document.getElementById(`frage${i}`).value.trim();
+        const a = document.getElementById(`a${i}`).value.trim();
+        const b = document.getElementById(`b${i}`).value.trim();
+        const c = document.getElementById(`c${i}`).value.trim();
+        const d = document.getElementById(`d${i}`).value.trim();
+        const richtig = document.querySelector(`input[name="richtig${i}"]:checked`)?.value;
+
+        if (!frage || !a || !b || !c || !d || !richtig) {
+          alert(`Bitte fülle alle Felder für Frage ${i + 1} aus und wähle die richtige Antwort.`);
+          fehler = true;
+          return;
+        }
+
+        quiz.fragen.push({
+          frage,
+          antworten: { A: a, B: b, C: c, D: d },
+          richtig
+        });
+      });
+
+      if (!fehler) {
+        console.log("Gespeichertes Quiz:", quiz);
+        alert("Quiz gespeichert! Siehe Konsole.");
+      }
+    }
+</script>
+
+<script src="~/js/fragebogen.js"></script>
+
+
