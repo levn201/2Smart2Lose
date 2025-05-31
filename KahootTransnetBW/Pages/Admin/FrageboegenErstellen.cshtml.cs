@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Http;
+using MySql.Data.MySqlClient;
 using KahootTransnetBW.Model;
-using System.Data.SqlClient;
+
 
 namespace KahootTransnetBW.Pages.Admin
 {
@@ -12,52 +13,58 @@ namespace KahootTransnetBW.Pages.Admin
         {
         }
 
+        public int FragenCount = 0;
+
+        public int RandomNum()
+        {
+            Random random = new Random();
+            return random.Next(1000, 10000);
+        }
+
+        [BindProperty]
+        public string Titel { get; set; }
+        public string loadError { get; set; }
+        public string TitelError { get; set; }
+
         public IActionResult OnPost()
         {
-            // Beispiel: Nur Frage 0 wird verarbeitet. Für mehrere Fragen -> Schleife (kann ich dir auch bauen).
-            string fragetext = Request.Form["frage0"];
-            string antwortA = Request.Form["a0"];
-            string antwortB = Request.Form["b0"];
-            string antwortC = Request.Form["c0"];
-            string antwortD = Request.Form["d0"];
-            string richtigeAntwort = Request.Form["richtig0"]; // "A", "B", "C", "D"
-
-            if (string.IsNullOrWhiteSpace(fragetext) || string.IsNullOrWhiteSpace(richtigeAntwort))
+            if (string.IsNullOrWhiteSpace(Titel))
             {
-                ModelState.AddModelError(string.Empty, "Fragetext und richtige Antwort dürfen nicht leer sein.");
+                TitelError = "Gebe einen Titel ein.";
                 return Page();
             }
 
-            // Daten speichern
             try
             {
+
+                int JoinNumber = RandomNum();
+
                 var db = new SQLconnection.DatenbankZugriff();
                 using var connection = db.GetConnection();
                 connection.Open();
 
-                var command = connection.CreateCommand();
-                command.CommandText = @"
-                    INSERT INTO Fragen (Fragetext, AntwortA, AntwortB, AntwortC, AntwortD, RichtigeAntwort)
-                    VALUES (@Fragetext, @AntwortA, @AntwortB, @AntwortC, @AntwortD, @RichtigeAntwort)";
+                string query = "INSERT INTO Fragebogen (Titel, Join_ID) VALUES (@titel, @Join_ID)";
 
-                command.Parameters.AddWithValue("@Fragetext", fragetext);
-                command.Parameters.AddWithValue("@AntwortA", antwortA);
-                command.Parameters.AddWithValue("@AntwortB", antwortB);
-                command.Parameters.AddWithValue("@AntwortC", antwortC);
-                command.Parameters.AddWithValue("@AntwortD", antwortD);
-                command.Parameters.AddWithValue("@RichtigeAntwort", richtigeAntwort);
+                using var cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@titel", Titel);
+                cmd.Parameters.AddWithValue("@Join_ID", JoinNumber);
 
-                command.ExecuteNonQuery();
-            }
-            catch (SqlException ex)
-            {
-                ModelState.AddModelError(string.Empty, "Fehler beim Speichern in die Datenbank: " + ex.Message);
+                cmd.ExecuteNonQuery();
+
+                TitelError = "Erfolgreich eingeschrieben";
                 return Page();
             }
-
-            // Erfolgreich
-            TempData["Success"] = "Frage wurde erfolgreich gespeichert!";
-            return RedirectToPage(); // Lädt die Seite neu
+            catch (MySqlException ex)
+            {
+                TitelError = $"MySQL-Fehler: {ex.Message}";
+                return Page();
+            }
+            catch (Exception ex)
+            {
+                TitelError = $"Allgemeiner Fehler: {ex.Message}";
+                return Page();
+            }
         }
+
     }
 }

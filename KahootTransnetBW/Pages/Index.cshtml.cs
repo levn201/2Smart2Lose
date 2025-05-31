@@ -30,9 +30,9 @@ namespace KahootTransnetBW.Pages
             {
                 return RedirectToPage("/Admin/DatabaseCheck");
             }
-            else if (GamePin == "222")
+            else if (GamePin == "2")
             {
-                return RedirectToPage("/Admin/DatenbankChecker2");
+                return RedirectToPage("/Admin/FrageboegenErstellen");
             }
             else
             {
