@@ -35,7 +35,6 @@
         {
             <p class="message">@Model.TitelError</p>
         }
-
         <button type="submit">Quiz erstellen</button>
     </form>
 </div>
@@ -81,10 +80,10 @@
             <button type="button">Weitere Antwort hinzufügen</button>
             <button type="submit">Frage speichern</button>
         </div>
-        @if (!string.IsNullOrEmpty(Model.loadError))
+        @* @if (!string.IsNullOrEmpty(Model.loadError))
         {
             <p class="message">@Model.loadError</p>
-        }
+        } *@
     </div>
 </div>
 

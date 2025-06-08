@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
 using KahootTransnetBW.Model;
 using System.Data;
+using KahootTransnetBW.Data;
 
 namespace KahootTransnetBW.Pages.Admin
 {
@@ -10,32 +11,23 @@ namespace KahootTransnetBW.Pages.Admin
     {
         public void OnGet()
         {
-            GetAdminUser();
-            GetCreaterUser();
+            GetAllUsers();
         }
+
 
         // Admin User Klasse
-        public class AdminUser
+        public class User
         {
             public int ID { get; set; }
             public string Username { get; set; }
-            public string Password { get; set; } // Optional: weglassen, wenn nicht gebraucht
+            public string Password { get; set; }
+            public string Role { get; set; }
         }
+        public List<User> UserList { get; set; } = new();
 
-        // Creator User Klasse
-        public class CreateUser
-        {
-            public int ID { get; set; }
-            public string Username { get; set; }
-            public string Password { get; set; } // Optional: weglassen, wenn nicht gebraucht
-        }
 
-        // Listen
-        public List<AdminUser> UserList { get; set; } = new();
-        public List<CreateUser> CreaterList { get; set; } = new();
-
-        // Admin User abrufen
-        public void GetAdminUser()
+        // Auslesen aller User 
+        public void GetAllUsers()
         {
             try
             {
@@ -43,71 +35,39 @@ namespace KahootTransnetBW.Pages.Admin
                 using var connection = db.GetConnection();
                 connection.Open();
 
-                string query = "SELECT * FROM AdminUser;";
+                string query = "SELECT * FROM DasboardUser;";
                 using var cmd = new MySqlCommand(query, connection);
                 using var reader = cmd.ExecuteReader();
 
                 while (reader.Read())
                 {
-                    UserList.Add(new AdminUser
+                    UserList.Add(new User
                     {
-                        ID = reader.GetInt32("User_ID"),
+                        ID = reader.GetInt32("ID_User"),
                         Username = reader.GetString("Username"),
-                        Password = reader.GetString("password")
+                        Password = reader.GetString("Password"),
+                        Role = reader.GetString("Role")
                     });
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Fehler beim Abrufen der Admin-User: {ex.Message}");
+                Console.WriteLine($"Fehler beim Abrufen der Benutzer: {ex.Message}");
             }
         }
-
-        // Creator User abrufen
-        public void GetCreaterUser()
-        {
-            try
-            {
-                var db = new SQLconnection.DatenbankZugriff();
-                using var connection = db.GetConnection();
-                connection.Open();
-
-                string query = "SELECT * FROM CreaterUser;";
-                using var cmd = new MySqlCommand(query, connection);
-                using var reader = cmd.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    CreaterList.Add(new CreateUser
-                    {
-                        ID = reader.GetInt32("Creater_ID"),
-                        Username = reader.GetString("Username"),
-                        Password = reader.GetString("password")
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Fehler beim Abrufen der Creator-User: {ex.Message}");
-            }
-        }
-
-
-
 
 
         // User Anlegen
         [BindProperty]
         public string Username { get; set; }
-
         [BindProperty]
         public string Password { get; set; }
-
         [BindProperty]
-        public string Role { get; set; } // "Admin" oder "Creater"
-
+        public string Role { get; set; }
         public string Message { get; set; }
 
+
+        // Einschreiben neuer User 
         public IActionResult OnPost()
         {
             if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(Role))
@@ -122,14 +82,16 @@ namespace KahootTransnetBW.Pages.Admin
                 using var connection = db.GetConnection();
                 connection.Open();
 
-                string tableName = Role == "Admin" ? "AdminUser" : "CreaterUser";
-                string query = $"INSERT INTO {tableName} (Username, Password) VALUES (@username, @password)";
+                string query = "INSERT INTO DasboardUser (Username, Password, Role) VALUES (@username, @password, @role);";
 
                 using var cmd = new MySqlCommand(query, connection);
                 cmd.Parameters.AddWithValue("@username", Username);
-                cmd.Parameters.AddWithValue("@password", Password); // Achtung: später bitte Passwort-Hash!
+                cmd.Parameters.AddWithValue("@password", Password); // Später bitte Passwort-Hash!
+                cmd.Parameters.AddWithValue("@role", Role);
 
                 cmd.ExecuteNonQuery();
+
+                GetAllUsers();
 
                 Message = $"Benutzer erfolgreich als {Role} gespeichert.";
                 return Page();
@@ -145,6 +107,7 @@ namespace KahootTransnetBW.Pages.Admin
                 return Page();
             }
         }
+
     }
 
 

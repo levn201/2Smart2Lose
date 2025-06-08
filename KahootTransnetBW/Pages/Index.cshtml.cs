@@ -49,7 +49,7 @@ namespace KahootTransnetBW.Pages
         [BindProperty]
         public string Password { get; set; }
 
-
+        //Login zu den Dashboards 
         public IActionResult OnPostLoginRequired()
         {
             try
@@ -64,15 +64,24 @@ namespace KahootTransnetBW.Pages
                 using var connection = db.GetConnection();
                 connection.Open();
 
-                string query = "SELECT * FROM AdminUser WHERE username = @username AND password = @password";
+                string query = "SELECT * FROM DasboardUser WHERE Username = @username AND Password = @password";
                 using var cmd = new MySqlCommand(query, connection);
                 cmd.Parameters.AddWithValue("@username", Username);
                 cmd.Parameters.AddWithValue("@password", Password);
 
                 using var reader = cmd.ExecuteReader();
-                if (reader.HasRows)
+                if (reader.Read())
                 {
-                    return RedirectToPage("/Admin/Dashboard");
+                    string role = reader.GetString("Role");
+
+                    if (role == "Creater")
+                    {
+                        return RedirectToPage("/Creater/DashboardCreater"); //Ansicht für Creater Ohne User USW 
+                    }
+                    else
+                    {
+                        return RedirectToPage("/Admin/Dashboard"); // Admin Bereich mit vollen berechtig
+                    }
                 }
                 else
                 {
@@ -90,7 +99,12 @@ namespace KahootTransnetBW.Pages
                 ErrorMessage = $"Allgemeiner Fehler: {ex.Message}";
                 return Page();
             }
+
+            // ?? Fallback für alle anderen Fälle
+            return Page();
         }
+
+
 
     }
 
