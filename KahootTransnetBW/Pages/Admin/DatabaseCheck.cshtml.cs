@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
+using KahootTransnetBW.Model;
 
 using static KahootTransnetBW.Model.SQLconnection;
 
@@ -81,6 +82,28 @@ namespace KahootTransnetBW.Pages.Admin
             {
                 StatusMessage = "Fehler beim Lesen: " + ex.Message;
             }
+        }
+
+        [BindProperty]
+        public string Antwort { get; set; }
+
+        [BindProperty]
+        public bool IstAntwortRichtig { get; set; }
+        public void OnPostCheckButten()
+        {
+            var db = new SQLconnection.DatenbankZugriff();
+            using var connection = db.GetConnection();
+            connection.Open();
+
+            string query = @"INSERT INTO Frage ( chck ) VALUES ( @BoolCheck );";
+
+            using var cmd = new MySqlCommand(query, connection);
+            cmd.Parameters.AddWithValue("@BoolCheck", IstAntwortRichtig);
+            cmd.Parameters.AddWithValue("@Fragestellung", Antwort);
+
+            cmd.ExecuteNonQuery();
+
+
         }
     }
 }

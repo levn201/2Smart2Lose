@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Http;
 using MySql.Data.MySqlClient;
 using KahootTransnetBW.Model;
+using Mysqlx.Crud;
 
 
 namespace KahootTransnetBW.Pages.Admin
@@ -11,21 +12,24 @@ namespace KahootTransnetBW.Pages.Admin
     {
         public void OnGet()
         {
+            FragebogenJoinId = JoinNumber;
         }
 
-        public int FragenCount = 0;
-
+        // Random Join Number 
         public int RandomNum()
         {
             Random random = new Random();
             return random.Next(1000, 10000);
         }
 
+        public int JoinNumber { get; set; }
+
         [BindProperty]
         public string Titel { get; set; }
         public string loadError { get; set; }
         public string TitelError { get; set; }
 
+        // Titel Speichert
         public IActionResult OnPost()
         {
             if (string.IsNullOrWhiteSpace(Titel))
@@ -36,22 +40,132 @@ namespace KahootTransnetBW.Pages.Admin
 
             try
             {
-
-                int JoinNumber = RandomNum();
+                JoinNumber = RandomNum(); // speichere die ID im Property
 
                 var db = new SQLconnection.DatenbankZugriff();
                 using var connection = db.GetConnection();
                 connection.Open();
 
                 string query = "INSERT INTO Fragebogen (Titel, Join_ID) VALUES (@titel, @Join_ID)";
-
                 using var cmd = new MySqlCommand(query, connection);
                 cmd.Parameters.AddWithValue("@titel", Titel);
                 cmd.Parameters.AddWithValue("@Join_ID", JoinNumber);
 
                 cmd.ExecuteNonQuery();
 
-                TitelError = "Erfolgreich eingeschrieben";
+                // Ein Flag setzen, um im Frontend zu wissen, dass gespeichert wurde
+                ViewData["ShowPopup"] = true;
+
+                return Page();
+            }
+            catch (MySqlException ex)
+            {
+                TitelError = $"MySQL-Fehler: {ex.Message}";
+                return Page();
+            }
+            catch (Exception ex)
+            {
+                TitelError = $"Allgemeiner Fehler: {ex.Message}";
+                return Page();
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+        [BindProperty]
+        public string Fragestellung { get; set; }
+
+        [BindProperty]
+        public string Antwort1 { get; set; }
+
+        [BindProperty]
+        public bool IstAntwort1Richtig { get; set; }
+
+        [BindProperty]
+        public string Antwort2 { get; set; }
+
+        [BindProperty]
+        public bool IstAntwort2Richtig { get; set; }
+
+        [BindProperty]
+        public string Antwort3 { get; set; }
+
+        [BindProperty]
+        public bool IstAntwort3Richtig { get; set; }
+
+        [BindProperty]
+        public string Antwort4 { get; set; }
+
+        [BindProperty]
+        public bool IstAntwort4Richtig { get; set; }
+
+        [BindProperty]
+        public int FragebogenJoinId { get; set; }
+        public string FragenError { get; set; }
+
+
+        public IActionResult OnPostAddFrage()
+        {
+            try
+            {
+                var db = new SQLconnection.DatenbankZugriff();
+                using var connection = db.GetConnection();
+                connection.Open();
+
+                string query = @"
+        INSERT INTO Frage (
+            FragebogenID,
+            Fragestellung,
+            Antwort1,
+            IstAntwort1Richtig,
+            Antwort2,
+            IstAntwort2Richtig,
+            Antwort3,
+            IstAntwort3Richtig,
+            Antwort4,
+            IstAntwort4Richtig
+        ) VALUES (
+            @FragebogenID,
+            @Fragestellung,
+            @Antwort1,
+            @IstAntwort1Richtig,
+            @Antwort2,
+            @IstAntwort2Richtig,
+            @Antwort3,
+            @IstAntwort3Richtig,
+            @Antwort4,
+            @IstAntwort4Richtig
+        );";
+
+                using var cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@FragebogenID", FragebogenJoinId);
+                cmd.Parameters.AddWithValue("@Fragestellung", Fragestellung);
+                cmd.Parameters.AddWithValue("@Antwort1", Antwort1);
+                cmd.Parameters.AddWithValue("@IstAntwort1Richtig", IstAntwort1Richtig);
+                cmd.Parameters.AddWithValue("@Antwort2", Antwort2);
+                cmd.Parameters.AddWithValue("@IstAntwort2Richtig", IstAntwort2Richtig);
+                cmd.Parameters.AddWithValue("@Antwort3", Antwort3);
+                cmd.Parameters.AddWithValue("@IstAntwort3Richtig", IstAntwort3Richtig);
+                cmd.Parameters.AddWithValue("@Antwort4", Antwort4);
+                cmd.Parameters.AddWithValue("@IstAntwort4Richtig", IstAntwort4Richtig);
+
+                cmd.ExecuteNonQuery();
+
+                //// ?? Dieses Signal sorgt dafür, dass das Popup erneut angezeigt wird
+                //ViewData["ShowPopup"] = true;
+
+                //// Optional: Felder leeren
+                //Fragestellung = "";
+                //Antwort1 = Antwort2 = Antwort3 = Antwort4 = "";
+                //IstAntwort1Richtig = IstAntwort2Richtig = IstAntwort3Richtig = IstAntwort4Richtig = false;
+
                 return Page();
             }
             catch (MySqlException ex)

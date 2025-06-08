@@ -7,9 +7,10 @@
     background-color: #ffffff;
     color: #000;
     resize: none;
-    border: none;
+    border: 1px solid black; /* Korrigiert */
     margin-bottom: 20px;
 }
+
 
 .button-row {
     display: flex;
@@ -39,7 +40,7 @@
         resize: none;
         padding: 10px;
         font-size: 16px;
-        border: none;
+        border: 1px solid black; /* Hinzugefügt */
         border-radius: 8px;
         background-color: #ffffff;
         color: #000;
@@ -94,13 +95,19 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow-y: auto; /* Damit Popup scrollbar ist */
-    padding: 40px 20px; /* Abstand vom Rand */
+    overflow-y: auto; 
+    padding: 40px 20px; 
 }
 
+.popup-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 700px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
 
-
-/* Schließen-Button */
 .close-btn {
     position: absolute;
     top: 15px;
@@ -119,10 +126,16 @@
     flex-wrap: wrap;
 }
 
+.JoinID-anzeige {
+    font-size: 24px;
+    margin: 0;
+    text-align: center;
+    color: black;
+}
 
 .fragtitel-anzeige {
     font-size: 24px;
     margin: 0;
     text-align: center;
-    color: white;
+    color: black;
 }

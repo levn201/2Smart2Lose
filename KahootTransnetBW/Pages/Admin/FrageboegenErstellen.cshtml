@@ -42,50 +42,59 @@
 
 <!-- Das Popup -->
 <div id="quizPopup" class="popup-overlay" style="display: none;">
-    <span class="close-btn" onclick="closeQuizPopup()">&times;</span>
+    <form method="post" asp-page-handler="AddFrage" class="popup-content">
+        <input type="hidden" name="FragebogenJoinId" value="@Model.JoinNumber" />
 
-    <div class="main-content">
-
-        <!-- Kopfbereich im Popup -->
-        <div class="fragenkopf">
-            <div class="fragtitel-anzeige">1</div>
-            <div class="fragtitel-anzeige">Titel der Frage</div>
-        </div>
-
+        <div class="JoinID-anzeige">@Model.JoinNumber</div>
+        <div class="fragtitel-anzeige">@Model.Titel</div>
 
         <h2>Frage erstellen</h2>
 
-        <textarea class="frage vollbreite" placeholder="Geben Sie hier die Frage ein"></textarea>
+
+        <textarea name="Fragestellung" class="frage vollbreite" placeholder="Geben Sie hier die Frage ein"></textarea>
+        <input type="hidden" asp-for="FragebogenJoinId" />
 
         <div class="antwort-grid">
             <div class="antwort-card bg-1">
-                <input type="checkbox" class="checkmark" />
-                <textarea placeholder="Antwortoption 1"></textarea>
+                <input type="hidden" name="IstAntwort1Richtig" value="false" />
+                <input type="checkbox" name="IstAntwort1Richtig" value="true" class="checkmark" />
+                <textarea name="Antwort1" placeholder="Antwortoption 1"></textarea>
             </div>
             <div class="antwort-card bg-2">
-                <input type="checkbox" class="checkmark" />
-                <textarea placeholder="Antwortoption 2"></textarea>
+                <input type="hidden" name="IstAntwort2Richtig" value="false" />
+                <input type="checkbox" name="IstAntwort2Richtig" value="true" class="checkmark" />
+                <textarea name="Antwort2" placeholder="Antwortoption 2"></textarea>
             </div>
             <div class="antwort-card bg-3">
-                <input type="checkbox" class="checkmark" />
-                <textarea placeholder="Antwortoption 3"></textarea>
+                <input type="hidden" name="IstAntwort3Richtig" value="false" />
+                <input type="checkbox" name="IstAntwort3Richtig" value="true" class="checkmark" />
+                <textarea name="Antwort3" placeholder="Antwortoption 3"></textarea>
             </div>
             <div class="antwort-card bg-4">
-                <input type="checkbox" class="checkmark" />
-                <textarea placeholder="Antwortoption 4"></textarea>
+                <input type="hidden" name="IstAntwort4Richtig" value="false" />
+                <input type="checkbox" name="IstAntwort4Richtig" value="true" class="checkmark" />
+                <textarea name="Antwort4" placeholder="Antwortoption 4"></textarea>
             </div>
         </div>
 
+        
+
+        
+
+        
+
+
         <div class="button-row">
-            <button type="button">Weitere Antwort hinzufügen</button>
             <button type="submit">Frage speichern</button>
+            <button type="button" onclick="closeQuizPopup()">Abbrechen</button>
         </div>
-        @* @if (!string.IsNullOrEmpty(Model.loadError))
+        @if (!string.IsNullOrEmpty(Model.FragenError))
         {
-            <p class="message">@Model.loadError</p>
-        } *@
-    </div>
+            <p class="message">@Model.FragenError</p>
+        }
+    </form>
 </div>
+
 
 
 
@@ -106,4 +115,19 @@
         document.body.style.overflow = ""; // erlaubt Scrollen wieder
     }
 </script>
+
+@if (ViewData["ShowPopup"] != null && (bool)ViewData["ShowPopup"])
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            openQuizPopup();
+        });
+    </script>
+}
+
+
+
+
+
+
 
