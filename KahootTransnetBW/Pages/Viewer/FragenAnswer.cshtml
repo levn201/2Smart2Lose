@@ -1,0 +1,30 @@
+﻿@page
+@model KahootTransnetBW.Pages.Viewer.FragenAnswerModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
+
+<div class="text-center">
+
+
+    <div class="main-content">
+        <h1>Willkommen bei Kahoot!</h1>
+        <p>Gib den Game-PIN ein, um beizutreten:</p>
+
+        <form method="post">
+            <div class="input-group">
+                <input type="text" asp-for="participant" class="form-input" required placeholder="Anzeige Name eingeben" />
+                <button type="submit">Beitreten</button>
+            </div>
+        </form>
+
+        @if (!string.IsNullOrEmpty(Model.UserError))
+        {
+            <p style="color: red;">@Model.UserError</p>
+        }
+    </div>
+
+
+</div>

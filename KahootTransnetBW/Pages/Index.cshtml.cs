@@ -34,6 +34,10 @@ namespace KahootTransnetBW.Pages
             {
                 return RedirectToPage("/Admin/FrageboegenErstellen");
             }
+            else if (GamePin == "3")
+            {
+                return RedirectToPage("/Viewer/FragenAnswer");
+            }
             else
             {
                 ErrorMessage = "Ungültiger Game-PIN.";
