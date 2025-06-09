@@ -8,42 +8,70 @@ namespace KahootTransnetBW.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly ILogger<IndexModel> _logger;
-
-        public IndexModel(ILogger<IndexModel> logger)
-        {
-            _logger = logger;
-        }
 
         public void OnGet()
         {
         }
 
-        // Um die bestehenden codes durchzugehen und zu Überprüfen 
         [BindProperty]
         public string GamePin { get; set; }
+
         public string ErrorMessage { get; set; }
 
         public IActionResult OnPost()
         {
-            if (GamePin == "111")
+            try
             {
-                return RedirectToPage("/Admin/DatabaseCheck");
+                if (string.IsNullOrWhiteSpace(GamePin))
+                {
+                    ErrorMessage = "Der Game-PIN darf nicht leer sein.";
+                    return Page();
+                }
+
+                // Spezialfälle zuerst prüfen
+                switch (GamePin)
+                {
+                    case "111":
+                        return RedirectToPage("/Admin/DatabaseCheck");
+                    case "2":
+                        return RedirectToPage("/Admin/FrageboegenErstellen");
+                    case "3":
+                        return RedirectToPage("/Viewer/AddName");
+                }
+
+                // Allgemeine PIN-Prüfung gegen Datenbank
+                var db = new SQLconnection.DatenbankZugriff();
+                using var connection = db.GetConnection();
+                connection.Open();
+
+                string query = "SELECT Join_ID FROM Fragebogen WHERE Join_ID = @joinID";
+                using var cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@joinID", GamePin);
+
+                using var reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    return RedirectToPage("/Viewer/PlayQuizz");
+                }
+                else
+                {
+                    ErrorMessage = "Ungültiger Game-PIN.";
+                    return Page();
+                }
             }
-            else if (GamePin == "2")
+            catch (MySqlException ex)
             {
-                return RedirectToPage("/Admin/FrageboegenErstellen");
+                ErrorMessage = $"MySQL-Fehler: {ex.Message}";
+                return Page();
             }
-            else if (GamePin == "3")
+            catch (Exception ex)
             {
-                return RedirectToPage("/Viewer/FragenAnswer");
-            }
-            else
-            {
-                ErrorMessage = "Ungültiger Game-PIN.";
+                ErrorMessage = $"Allgemeiner Fehler: {ex.Message}";
                 return Page();
             }
         }
+
+        
 
 
         //Anmelde Fenster 
