@@ -158,14 +158,6 @@ namespace KahootTransnetBW.Pages.Admin
 
                 cmd.ExecuteNonQuery();
 
-                //// ?? Dieses Signal sorgt dafür, dass das Popup erneut angezeigt wird
-                //ViewData["ShowPopup"] = true;
-
-                //// Optional: Felder leeren
-                //Fragestellung = "";
-                //Antwort1 = Antwort2 = Antwort3 = Antwort4 = "";
-                //IstAntwort1Richtig = IstAntwort2Richtig = IstAntwort3Richtig = IstAntwort4Richtig = false;
-
                 return Page();
             }
             catch (MySqlException ex)
