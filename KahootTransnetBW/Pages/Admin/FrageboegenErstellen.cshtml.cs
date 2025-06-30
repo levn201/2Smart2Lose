@@ -10,26 +10,43 @@ namespace KahootTransnetBW.Pages.Admin
 {
     public class FrageboegenErstellenModel : PageModel
     {
+
+
+        [BindProperty(SupportsGet = true)]
+        public string Titel { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public int JoinNumber { get; set; }
+
+        [BindProperty]
+        public int FragebogenJoinId { get; set; }
+
+
+
+
+
+
+        // Macht JoinNumber gleich wie FragebogenID 
         public void OnGet()
         {
             FragebogenJoinId = JoinNumber;
         }
 
-        // Random Join Number 
+        // Random Join Number wird einmal beim Titel einschrirben durchgeführt und übertragen 
         public int RandomNum()
         {
             Random random = new Random();
             return random.Next(1000, 10000);
         }
 
-        public int JoinNumber { get; set; }
 
-        [BindProperty]
-        public string Titel { get; set; }
+
+
+
         public string loadError { get; set; }
         public string TitelError { get; set; }
 
-        // Titel Speichert
+        // Titel Speichert und übertragen an das PopUp
         public IActionResult OnPost()
         {
             if (string.IsNullOrWhiteSpace(Titel))
@@ -76,9 +93,6 @@ namespace KahootTransnetBW.Pages.Admin
 
 
 
-
-
-
         [BindProperty]
         public string Fragestellung { get; set; }
 
@@ -106,11 +120,9 @@ namespace KahootTransnetBW.Pages.Admin
         [BindProperty]
         public bool IstAntwort4Richtig { get; set; }
 
-        [BindProperty]
-        public int FragebogenJoinId { get; set; }
         public string FragenError { get; set; }
 
-
+        // INSERT die ganzen Fekder in die Datenbank und aufrufen des PopUps nach jeder speicherung 
         public IActionResult OnPostAddFrage()
         {
             try
@@ -120,32 +132,32 @@ namespace KahootTransnetBW.Pages.Admin
                 connection.Open();
 
                 string query = @"
-        INSERT INTO Frage (
-            FragebogenID,
-            Fragestellung,
-            Antwort1,
-            IstAntwort1Richtig,
-            Antwort2,
-            IstAntwort2Richtig,
-            Antwort3,
-            IstAntwort3Richtig,
-            Antwort4,
-            IstAntwort4Richtig
-        ) VALUES (
-            @FragebogenID,
-            @Fragestellung,
-            @Antwort1,
-            @IstAntwort1Richtig,
-            @Antwort2,
-            @IstAntwort2Richtig,
-            @Antwort3,
-            @IstAntwort3Richtig,
-            @Antwort4,
-            @IstAntwort4Richtig
-        );";
+                    INSERT INTO Frage (
+                        FragebogenID,
+                        Fragestellung,
+                        Antwort1,
+                        IstAntwort1Richtig,
+                        Antwort2,
+                        IstAntwort2Richtig,
+                        Antwort3,
+                        IstAntwort3Richtig,
+                        Antwort4,
+                        IstAntwort4Richtig
+                    ) VALUES (
+                        @FragebogenID,
+                        @Fragestellung,
+                        @Antwort1,
+                        @IstAntwort1Richtig,
+                        @Antwort2,
+                        @IstAntwort2Richtig,
+                        @Antwort3,
+                        @IstAntwort3Richtig,
+                        @Antwort4,
+                        @IstAntwort4Richtig
+                    );";
 
                 using var cmd = new MySqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@FragebogenID", FragebogenJoinId);
+                cmd.Parameters.AddWithValue("@FragebogenID", JoinNumber);
                 cmd.Parameters.AddWithValue("@Fragestellung", Fragestellung);
                 cmd.Parameters.AddWithValue("@Antwort1", Antwort1);
                 cmd.Parameters.AddWithValue("@IstAntwort1Richtig", IstAntwort1Richtig);
@@ -158,19 +170,25 @@ namespace KahootTransnetBW.Pages.Admin
 
                 cmd.ExecuteNonQuery();
 
+                // Popup erneut anzeigen
+                ViewData["ShowPopup"] = true;
+
                 return Page();
             }
             catch (MySqlException ex)
             {
-                TitelError = $"MySQL-Fehler: {ex.Message}";
+                FragenError = $"MySQL-Fehler: {ex.Message}";
+                ViewData["ShowPopup"] = true;
                 return Page();
             }
             catch (Exception ex)
             {
-                TitelError = $"Allgemeiner Fehler: {ex.Message}";
+                FragenError = $"Allgemeiner Fehler: {ex.Message}";
+                ViewData["ShowPopup"] = true;
                 return Page();
             }
         }
+
 
     }
 }

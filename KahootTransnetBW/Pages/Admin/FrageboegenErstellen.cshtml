@@ -43,16 +43,16 @@
 <!-- Das Popup -->
 <div id="quizPopup" class="popup-overlay" style="display: none;">
     <form method="post" asp-page-handler="AddFrage" class="popup-content">
-        <input type="hidden" name="FragebogenJoinId" value="@Model.JoinNumber" />
+        <!-- Übergibt JoinNumber und Titel korrekt an den Server -->
+        <input type="hidden" asp-for="JoinNumber" />
+        <input type="hidden" asp-for="Titel" />
 
         <div class="JoinID-anzeige">@Model.JoinNumber</div>
         <div class="fragtitel-anzeige">@Model.Titel</div>
 
         <h2>Frage erstellen</h2>
 
-
         <textarea name="Fragestellung" class="frage vollbreite" placeholder="Geben Sie hier die Frage ein"></textarea>
-        <input type="hidden" asp-for="FragebogenJoinId" />
 
         <div class="antwort-grid">
             <div class="antwort-card bg-1">
@@ -61,7 +61,6 @@
             </div>
             <div class="antwort-card bg-2">
                 <input type="checkbox" name="IstAntwort2Richtig" value="true" class="checkmark" />
-
                 <textarea name="Antwort2" placeholder="Antwortoption 2"></textarea>
             </div>
             <div class="antwort-card bg-3">
@@ -74,12 +73,11 @@
             </div>
         </div>
 
-        
-
         <div class="button-row">
             <button type="submit">Frage speichern</button>
             <button type="button" onclick="closeQuizPopup()">Abbrechen</button>
         </div>
+
         @if (!string.IsNullOrEmpty(Model.FragenError))
         {
             <p class="message">@Model.FragenError</p>
@@ -87,24 +85,23 @@
     </form>
 </div>
 
-
-
-
 <script>
-    function openQuizPopup() {
-        const title = document.getElementById("quizTitle").value;
-        if (title.trim() === "") {
+    function openQuizPopup(skipValidation = false) {
+        const titleField = document.getElementById("quizTitle");
+        const title = titleField ? titleField.value : "";
+
+        if (!skipValidation && title.trim() === "") {
             alert("Bitte geben Sie einen Quiz-Titel ein.");
             return;
         }
 
         document.getElementById("quizPopup").style.display = "flex";
-        document.body.style.overflow = "hidden"; // verhindert Scrollen
+        document.body.style.overflow = "hidden";
     }
 
     function closeQuizPopup() {
         document.getElementById("quizPopup").style.display = "none";
-        document.body.style.overflow = ""; // erlaubt Scrollen wieder
+        document.body.style.overflow = "";
     }
 </script>
 
@@ -112,14 +109,8 @@
 {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            openQuizPopup();
+            openQuizPopup(true);
         });
     </script>
 }
-
-
-
-
-
-
 
