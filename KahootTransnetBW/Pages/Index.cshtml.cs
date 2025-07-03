@@ -51,7 +51,7 @@ namespace KahootTransnetBW.Pages
                 using var reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    return RedirectToPage("/Viewer/PlayQuizz");
+                    return RedirectToPage("/Viewer/AddName");
                 }
                 else
                 {
