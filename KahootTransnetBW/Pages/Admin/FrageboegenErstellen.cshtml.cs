@@ -35,13 +35,30 @@ namespace KahootTransnetBW.Pages.Admin
         // Random Join Number wird einmal beim Titel einschrirben durchgeführt und übertragen 
         public int RandomNum()
         {
-            Random random = new Random();
-            return random.Next(1000, 10000);
+            int number;
+            var random = new Random();
+            var db = new SQLconnection.DatenbankZugriff();
+
+            using var connection = db.GetConnection();
+            connection.Open();
+
+            bool exists;
+
+            do
+            {
+                number = random.Next(1000, 10000);
+
+                string query = "SELECT COUNT(*) FROM Fragebogen WHERE Join_ID = @Join_ID";
+                using var cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@Join_ID", number);
+
+                var count = Convert.ToInt32(cmd.ExecuteScalar());
+                exists = count > 0;
+
+            } while (exists);
+
+            return number;
         }
-
-
-
-
 
         public string loadError { get; set; }
         public string TitelError { get; set; }
@@ -57,6 +74,7 @@ namespace KahootTransnetBW.Pages.Admin
 
             try
             {
+  
                 JoinNumber = RandomNum(); // speichere die ID im Property
 
                 var db = new SQLconnection.DatenbankZugriff();
