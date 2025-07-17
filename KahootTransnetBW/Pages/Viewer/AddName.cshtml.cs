@@ -32,7 +32,5 @@ namespace KahootTransnetBW.Pages.Viewer
             return string.IsNullOrWhiteSpace(vorname);
         }
 
-
-
     }
 }

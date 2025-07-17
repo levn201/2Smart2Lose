@@ -3,22 +3,56 @@
 @{
     ViewData["Title"] = "Admin Dashboard - Fragebögen";
 }
-
-<link rel="stylesheet" href="~/css/Admin/Dashboard.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Admin/Fragenbundel.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Admin/FrageboegenDesign.css" asp-append-version="true" />
 
 <header class="header">
     <h1>Admin Dashboard</h1>
     <nav class="nav-links">
         <a href="/Admin/User">User</a>
-        <a href="/Admin/Frageboegen">Fragebögen</a>
+        <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
         <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
         <a href="/Index">Quit</a>
     </nav>
 </header>
 
-<div class="main-content" id="frageboegen">
+
+
+<!-- Bereits gut aber noch nicht auf die datenbank zuzugreifen -->
+<div class="main-content">
     <h2>Fragebögen</h2>
-    <p>Übersicht über vorhandene Fragebögen. Du kannst sie bearbeiten oder löschen.</p>
+    <p class="info-text">Übersicht über vorhandene Fragebögen. Du kannst sie bearbeiten oder löschen.</p>
+
+    <div class="button-row">
+        <button onclick="createNewSurvey()">Neuen Fragebogen erstellen</button>
+        <button onclick="refreshList()">Aktualisieren</button>
+    </div>
+
+    <div id="surveyTableContainer">
+        <table class="survey-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Titel</th>
+                    <th>Erstellt am</th>
+                    <th>Aktionen</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var fragebogen in Model.Frageboegen)
+                {
+                    <tr>
+                        <td>@fragebogen.JoinId</td>
+                        <td>@fragebogen.Titel</td>
+                        <td>@fragebogen.ErstelltAm.ToString("dd.MM.yyyy HH:mm")</td>
+                        <td>
+                            <button onclick="bearbeite(@fragebogen.JoinId)">Bearbeiten</button>
+                            <button onclick="loesche(@fragebogen.JoinId)">Löschen</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
-
-

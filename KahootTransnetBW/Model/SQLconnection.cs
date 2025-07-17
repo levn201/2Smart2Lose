@@ -1,5 +1,4 @@
-﻿using KahootTransnetBW.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
@@ -21,7 +20,7 @@ namespace KahootTransnetBW.Model
             //"Password=AVNS_tNLe4WVjQEonX1fIAb0;" +
             //"SslMode=Required;";
 
-            "Server=localhost;Database=KahootDatabase;Uid=root;Pwd=21481TNGhello!";
+            "Server=localhost;Database=KahootDatabase;Uid=root;Pwd=21481TNGhello!";  //Connection zur Framework Local Database von Levin 
             public MySqlConnection GetConnection()
             {
                 return new MySqlConnection(connectionString);

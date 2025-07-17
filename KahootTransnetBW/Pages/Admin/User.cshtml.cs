@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
 using KahootTransnetBW.Model;
 using System.Data;
-using KahootTransnetBW.Data;
 
 namespace KahootTransnetBW.Pages.Admin
 {
