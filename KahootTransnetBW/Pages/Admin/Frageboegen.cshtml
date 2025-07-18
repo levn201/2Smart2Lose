@@ -3,8 +3,9 @@
 @{
     ViewData["Title"] = "Admin Dashboard - Fragebögen";
 }
-<link rel="stylesheet" href="~/css/Admin/Fragenbundel.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/Admin/FrageboegenDesign.css" asp-append-version="true" />
+
+<link rel="stylesheet" href="~/css/Admin/Dashboard.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Admin/Frageboegen.css" asp-append-version="true" />
 
 <header class="header">
     <h1>Admin Dashboard</h1>
@@ -28,31 +29,29 @@
         <button onclick="refreshList()">Aktualisieren</button>
     </div>
 
-    <div id="surveyTableContainer">
-        <table class="survey-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Titel</th>
-                    <th>Erstellt am</th>
-                    <th>Aktionen</th>
-                </tr>
-            </thead>
+    <table class="survey-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Titel</th>
+                <th>Erstellt am</th>
+                <th>Aktionen</th>
+            </tr>
+        </thead>
 
-            <tbody>
-                @foreach (var fragebogen in Model.Frageboegen)
-                {
-                    <tr>
-                        <td>@fragebogen.JoinId</td>
-                        <td>@fragebogen.Titel</td>
-                        <td>@fragebogen.ErstelltAm.ToString("dd.MM.yyyy HH:mm")</td>
-                        <td>
-                            <button onclick="bearbeite(@fragebogen.JoinId)">Bearbeiten</button>
-                            <button onclick="loesche(@fragebogen.JoinId)">Löschen</button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+        <tbody>
+            @foreach (var fragebogen in Model.Frageboegen)
+            {
+                <tr>
+                    <td>@fragebogen.JoinId</td>
+                    <td>@fragebogen.Titel</td>
+                    <td>@fragebogen.ErstelltAm.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>
+                        <button onclick="bearbeite(@fragebogen.JoinId)">⚙️</button>
+                        <button onclick="loesche(@fragebogen.JoinId)">🗑️</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>

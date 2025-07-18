@@ -3,3 +3,99 @@
 @{
 	ViewData["Title"] = "Quizz Time";
 }
+
+<link rel="stylesheet" href="~/css/Viewer/PlayQuizz.css" asp-append-version="true" />
+
+<body>
+    <header class="header">
+        <h1>Quiz System</h1>
+        <nav class="nav-links">
+            <a href="index.html">Spiel verlassen</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="player-info">
+            <div class="player-name">Spieler: <span id="playerName">Max Mustermann</span></div>
+        </div>
+
+        <div class="game-header">
+            <div class="game-id">Spiel-ID: <span id="gameId">9136</span></div>
+            <h2 class="question-title">Frage erstellen</h2>
+            <div class="question-counter">Frage <span id="currentQuestion">1</span> von <span id="totalQuestions">10</span></div>
+        </div>
+
+        <!-- Alert Messages -->
+        <div class="alert alert-success" style="display: none;" id="successAlert">
+            Antwort erfolgreich übermittelt!
+        </div>
+        <div class="alert alert-error" style="display: none;" id="errorAlert">
+            Bitte wählen Sie eine Antwort aus.
+        </div>
+
+        <!-- Playing State -->
+        <div class="question-container" id="playingContainer">
+            <div class="question-text" id="questionText">
+                Welche Programmiersprache wird hauptsächlich für die Entwicklung von Android-Apps verwendet?
+            </div>
+
+            <form method="post" id="answerForm">
+                <div class="answer-options">
+                    <div class="answer-option option-a">
+                        <input type="radio" id="answerA" name="SelectedAnswer" value="A" />
+                        <label for="answerA">
+                            <div class="answer-label">A</div>
+                            <div id="answerTextA">Java</div>
+                        </label>
+                    </div>
+                    <div class="answer-option option-b">
+                        <input type="radio" id="answerB" name="SelectedAnswer" value="B" />
+                        <label for="answerB">
+                            <div class="answer-label">B</div>
+                            <div id="answerTextB">Python</div>
+                        </label>
+                    </div>
+                    <div class="answer-option option-c">
+                        <input type="radio" id="answerC" name="SelectedAnswer" value="C" />
+                        <label for="answerC">
+                            <div class="answer-label">C</div>
+                            <div id="answerTextC">JavaScript</div>
+                        </label>
+                    </div>
+                    <div class="answer-option option-d">
+                        <input type="radio" id="answerD" name="SelectedAnswer" value="D" />
+                        <label for="answerD">
+                            <div class="answer-label">D</div>
+                            <div id="answerTextD">C++</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="submit-container">
+                    <button type="submit" class="submit-btn">
+                        Antwort abgeben
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Waiting State -->
+        <div class="question-container" id="waitingContainer" style="display: none;">
+            <div class="waiting-message">
+                <h3>Warte auf andere Spieler...</h3>
+                <p>Ihre Antwort wurde erfolgreich übermittelt.</p>
+                <p>Das Spiel wird automatisch fortgesetzt, sobald alle Spieler geantwortet haben.</p>
+            </div>
+        </div>
+
+        <!-- Finished State -->
+        <div class="question-container" id="finishedContainer" style="display: none;">
+            <div class="results-container">
+                <h2 class="results-title">Spiel beendet!</h2>
+                <p class="results-text">Vielen Dank für Ihre Teilnahme.</p>
+                <p class="results-text">Die Ergebnisse werden vom Spielleiter präsentiert.</p>
+                <p class="results-text" id="playerScore" style="display: none;">Ihre Punktzahl: <span id="scoreValue">0</span> von <span id="maxScore">10</span></p>
+            </div>
+        </div>
+    </div>
+</body>

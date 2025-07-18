@@ -1,11 +1,52 @@
-﻿body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #004552;
-    color: white;
+﻿/* ==========================================================================
+   DASHBOARD.CSS - Grundlegende Admin Dashboard Styles
+   Farbschema: Dunkles Grün #004552, Header/Felder #06666F, Helles Grün #00A47A, Button Blau #005FA3
+   ========================================================================== */
+
+/* ==========================================================================
+   CSS CUSTOM PROPERTIES (VARIABLEN)
+   ========================================================================== */
+:root {
+    --color-dark-green: #004552;
+    --color-header-fields: #06666F;
+    --color-light-green: #00A47A;
+    --color-button-blue: #005FA3;
+    --color-white: #ffffff;
+    --color-light-gray: #f8f9fa;
+    --color-text-dark: #2c3e50;
+    --color-text-muted: #7f8c8d;
+    --color-border: #e8ecf0;
+    --color-error: #e74c3c;
+    --color-success: #27ae60;
+    --border-radius: 12px;
+    --border-radius-small: 8px;
+    --border-radius-large: 20px;
+    --transition: all 0.3s ease;
+    --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.15);
+    --shadow-heavy: 0 8px 30px rgba(0, 0, 0, 0.2);
 }
 
+/* ==========================================================================
+   GRUNDLEGENDE RESETS UND BODY
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--color-dark-green) 0%, var(--color-header-fields) 100%);
+    min-height: 100vh;
+    color: var(--color-text-dark);
+    line-height: 1.6;
+}
+
+/* ==========================================================================
+   HEADER NAVIGATION
+   ========================================================================== */
 .header {
     background-color: #06666f;
     display: flex;
@@ -20,10 +61,15 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-    .header h1 {
-        margin: 0;
-        font-size: 24px;
-    }
+/* Platz für den fixed header schaffen */
+body {
+    margin-top: 150px; /* Anpassung je nach Header-Höhe */
+} 
+
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+}
 
 .nav-links {
     display: flex;
@@ -35,7 +81,7 @@
         text-decoration: none;
         font-size: 16px;
         padding: 8px 16px;
-        background-color: #00c896; 
+        background-color: #00c896;
         border-radius: 8px;
         transition: background-color 0.3s ease;
     }
@@ -44,137 +90,361 @@
             background-color: #00a47a;
         }
 
-.main-content,
-.container {
-    margin-top: 100px;
-    max-width: 1200px; /* Mehr maximale Breite */
-    width: 100%; /* Ganze Breite bis max */
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #004552;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-}
-
-
-    .main-content h2,
-    .container h2 {
-        text-align: center;
-        font-size: 24px;
-        margin-bottom: 30px;
-    }
-
-form label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-form input[type="text"],
-form input[type="password"],
-form select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    border: none;
-    font-size: 16px;
-    background-color: #ffffff;
-    color: #000;
-}
-
-form button {
-    width: 100%;
-    padding: 12px;
-    background-color: #00c896;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 18px;
-    transition: background-color 0.3s ease;
-}
-
-    form button:hover {
-        background-color: #00a47a;
-    }
-
-    form button:focus {
-        outline: 2px solid #00c896;
-        outline-offset: 2px;
-    }
-
-.message {
-    text-align: center;
-    margin-top: 20px;
-    font-weight: bold;
-    color: lightgreen;
-}
-
-
-
+/* ==========================================================================
+   HAUPT-CONTENT-BEREICHE
+   ========================================================================== */
 .main-content {
-    margin-top: 120px;
-    max-width: 800px;
-    width: 90%;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #06666f;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--shadow-heavy);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: fadeIn 0.6s ease-out;
 }
 
     .main-content h2 {
+        color: var(--color-dark-green);
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
         text-align: center;
-        font-size: 24px;
-        margin-bottom: 30px;
+        position: relative;
     }
+
+        .main-content h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-light-green), var(--color-button-blue));
+            border-radius: 2px;
+        }
+
+    .main-content p {
+        text-align: center;
+        color: var(--color-text-muted);
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+        font-weight: 400;
+    }
+
+/* ==========================================================================
+   FORMULARE
+   ========================================================================== */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 500px;
+    margin: 0 auto;
+}
 
 label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+    color: var(--color-dark-green);
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    font-size: 1rem;
 }
 
-input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    border: none;
-    font-size: 16px;
-    background-color: #ffffff;
-    color: #000;
+input[type="text"],
+input[type="password"],
+select,
+textarea {
+    padding: 0.8rem;
+    border: 2px solid var(--color-border);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: var(--transition);
+    background: var(--color-white);
+    color: var(--color-text-dark);
 }
 
-input[type="radio"] {
-    margin-left: 10px;
-    margin-right: 5px;
-}
-
-button {
-    padding: 12px 20px;
-    background-color: #00c896;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-    margin-top: 10px;
-    margin-bottom: 20px;
-}
-
-    button:hover {
-        background-color: #00a47a;
+    input[type="text"]:focus,
+    input[type="password"]:focus,
+    select:focus,
+    textarea:focus {
+        outline: none;
+        border-color: var(--color-light-green);
+        box-shadow: 0 0 0 3px rgba(0, 164, 122, 0.1);
+        transform: translateY(-1px);
     }
 
-.frage {
-    background-color: #005b66;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
+select {
+    cursor: pointer;
 }
 
+/* ==========================================================================
+   BUTTONS (GRUNDLEGENDE STYLES)
+   ========================================================================== */
+button {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+    button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    button:hover::before {
+        left: 100%;
+    }
+
+    button:hover {
+        transform: translateY(-2px);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+    /* Primary Button (Standard) */
+    button[type="submit"],
+    button.btn-primary {
+        background: linear-gradient(135deg, var(--color-button-blue), #003d73);
+        color: var(--color-white);
+        box-shadow: 0 4px 15px rgba(0, 95, 163, 0.3);
+    }
+
+        button[type="submit"]:hover,
+        button.btn-primary:hover {
+            background: linear-gradient(135deg, #003d73, #002952);
+            box-shadow: 0 6px 20px rgba(0, 95, 163, 0.4);
+        }
+
+    /* Secondary Button */
+    button[type="button"],
+    button.btn-secondary {
+        background: linear-gradient(135deg, var(--color-header-fields), #04565f);
+        color: var(--color-white);
+        box-shadow: 0 4px 15px rgba(6, 102, 111, 0.3);
+    }
+
+        button[type="button"]:hover,
+        button.btn-secondary:hover {
+            background: linear-gradient(135deg, #04565f, #034048);
+            box-shadow: 0 6px 20px rgba(6, 102, 111, 0.4);
+        }
+
+    /* Success Button */
+    button.btn-success {
+        background: linear-gradient(135deg, var(--color-light-green), #008261);
+        color: var(--color-white);
+        box-shadow: 0 4px 15px rgba(0, 164, 122, 0.3);
+    }
+
+        button.btn-success:hover {
+            background: linear-gradient(135deg, #008261, #006649);
+            box-shadow: 0 6px 20px rgba(0, 164, 122, 0.4);
+        }
+
+/* ==========================================================================
+   TABELLEN (GRUNDLEGENDE STYLES)
+   ========================================================================== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--color-white);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-medium);
+    margin: 1rem 0;
+}
+
+thead {
+    background: var(--color-header-fields);
+    color: var(--color-white);
+}
+
+th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-dark);
+}
+
+tbody tr {
+    transition: var(--transition);
+}
+
+    tbody tr:hover {
+        background: linear-gradient(135deg, #f8f9ff 0%, #f1f3ff 100%);
+        transform: scale(1.01);
+    }
+
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+/* ==========================================================================
+   NACHRICHTEN UND ALERTS
+   ========================================================================== */
+.message {
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin: 1rem 0;
+    font-weight: 500;
+    text-align: center;
+}
+
+    .message.error {
+        background: linear-gradient(135deg, #fadbd8, #f1948a);
+        color: var(--color-error);
+        border: 1px solid var(--color-error);
+    }
+
+    .message.success {
+        background: linear-gradient(135deg, #d5f4e6, #82e3aa);
+        color: var(--color-success);
+        border: 1px solid var(--color-success);
+    }
+
+    .message.info {
+        background: linear-gradient(135deg, #d6eaf8, #85c1e9);
+        color: var(--color-button-blue);
+        border: 1px solid var(--color-button-blue);
+    }
+
+/* ==========================================================================
+   RESPONSIVE DESIGN
+   ========================================================================== */
+@media (max-width: 768px) {
+    .header {
+        padding: 1rem;
+    }
+
+        .header h1 {
+            font-size: 1.5rem;
+        }
+
+    .nav-links {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+        .nav-links a {
+            text-align: center;
+        }
+
+    .main-content {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+
+        .main-content h2 {
+            font-size: 1.8rem;
+        }
+
+    table {
+        font-size: 0.9rem;
+    }
+
+    th, td {
+        padding: 0.8rem 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        margin: 0.5rem;
+        padding: 1rem;
+    }
+
+        .main-content h2 {
+            font-size: 1.5rem;
+        }
+
+    form {
+        max-width: 100%;
+    }
+
+    button {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+}
+
+/* ==========================================================================
+   ANIMATIONEN
+   ========================================================================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================================================
+   UTILITY KLASSEN
+   ========================================================================== */
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-muted {
+    color: var(--color-text-muted);
+}
+
+.font-weight-bold {
+    font-weight: 600;
+}
+
+.mt-1 {
+    margin-top: 1rem;
+}
+
+.mb-1 {
+    margin-bottom: 1rem;
+}
+
+.p-1 {
+    padding: 1rem;
+}
+
+.hidden {
+    display: none;
+}
+
+.visible {
+    display: block;
+}

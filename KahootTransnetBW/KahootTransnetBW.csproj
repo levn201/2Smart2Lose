@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\css\Viewer\**" />
-    <Content Remove="wwwroot\css\Viewer\**" />
-    <EmbeddedResource Remove="wwwroot\css\Viewer\**" />
-    <None Remove="wwwroot\css\Viewer\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.5">
       <PrivateAssets>all</PrivateAssets>

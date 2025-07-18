@@ -1,0 +1,305 @@
+﻿/* ==========================================================================
+   FRAGENBUNDEL.CSS - Spezifische Styles für Fragebögen Übersicht
+   Basiert auf Dashboard.css und erweitert es für die Fragebögen-Seite
+   ========================================================================== */
+
+/* ==========================================================================
+   BUTTON-BEREICH (ERWEITERT)
+   ========================================================================== */
+.button-row {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+    .button-row button {
+        min-width: 200px;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 25px;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+
+        /* Neuen Fragebogen erstellen Button */
+        .button-row button:first-child {
+            background: linear-gradient(135deg, var(--color-light-green), #008261);
+            color: var(--color-white);
+            box-shadow: 0 4px 15px rgba(0, 164, 122, 0.3);
+        }
+
+            .button-row button:first-child:hover {
+                background: linear-gradient(135deg, #008261, #006649);
+                box-shadow: 0 6px 20px rgba(0, 164, 122, 0.4);
+            }
+
+        /* Aktualisieren Button */
+        .button-row button:last-child {
+            background: linear-gradient(135deg, var(--color-button-blue), #003d73);
+            color: var(--color-white);
+            box-shadow: 0 4px 15px rgba(0, 95, 163, 0.3);
+        }
+
+            .button-row button:last-child:hover {
+                background: linear-gradient(135deg, #003d73, #002952);
+                box-shadow: 0 6px 20px rgba(0, 95, 163, 0.4);
+            }
+
+/* ==========================================================================
+   SURVEY-TABELLE (ERWEITERT)
+   ========================================================================== */
+.survey-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--color-white);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-medium);
+    margin-top: 1rem;
+}
+
+    .survey-table thead {
+        background: var(--color-header-fields);
+        color: var(--color-white);
+    }
+
+    .survey-table th {
+        padding: 1.2rem 1rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+        .survey-table th:last-child {
+            text-align: center;
+        }
+
+    .survey-table tbody tr {
+        transition: var(--transition);
+        border-bottom: 1px solid var(--color-border);
+    }
+
+        .survey-table tbody tr:hover {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f1f3ff 100%);
+            transform: scale(1.01);
+            box-shadow: var(--shadow-light);
+        }
+
+        .survey-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+    .survey-table td {
+        padding: 1rem;
+        font-size: 0.95rem;
+        color: var(--color-text-dark);
+        vertical-align: middle;
+    }
+
+        /* ID-Spalte Styling */
+        .survey-table td:first-child {
+            font-weight: 700;
+            color: var(--color-light-green);
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #f0f8f5 0%, #e6f3ee 100%);
+            border-radius: var(--border-radius-small);
+            text-align: center;
+            font-size: 0.9rem;
+            box-shadow: inset 0 2px 4px rgba(0, 164, 122, 0.1);
+        }
+
+        /* Titel-Spalte */
+        .survey-table td:nth-child(2) {
+            font-weight: 600;
+            color: var(--color-dark-green);
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Datum-Spalte */
+        .survey-table td:nth-child(3) {
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: var(--border-radius-small);
+            text-align: center;
+        }
+
+        /* ==========================================================================
+   AKTIONS-BUTTONS (ERWEITERT)
+   ========================================================================== */
+        .survey-table td:last-child {
+            text-align: center;
+        }
+
+        .survey-table td button {
+            background: none;
+            border: none;
+            padding: 8px 10px;
+            margin: 0 3px;
+            border-radius: var(--border-radius-small);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+        }
+
+            /* Bearbeiten-Button (Zahnrad) */
+            .survey-table td button:first-child {
+                background: linear-gradient(135deg, var(--color-button-blue), #003d73);
+                color: var(--color-white);
+                box-shadow: 0 3px 10px rgba(0, 95, 163, 0.3);
+            }
+
+                .survey-table td button:first-child:hover {
+                    background: linear-gradient(135deg, #003d73, #002952);
+                    transform: translateY(-2px);
+                    box-shadow: 0 5px 15px rgba(0, 95, 163, 0.4);
+                }
+
+            /* Löschen-Button (Mülleimer) */
+            .survey-table td button:last-child {
+                background: linear-gradient(135deg, var(--color-error), #c0392b);
+                color: var(--color-white);
+                box-shadow: 0 3px 10px rgba(231, 76, 60, 0.3);
+            }
+
+                .survey-table td button:last-child:hover {
+                    background: linear-gradient(135deg, #c0392b, #a93226);
+                    transform: translateY(-2px);
+                    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+                }
+
+/* ==========================================================================
+   LEERER ZUSTAND
+   ========================================================================== */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--color-text-muted);
+}
+
+    .empty-state h3 {
+        color: var(--color-header-fields);
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    .empty-state p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        color: var(--color-text-muted);
+    }
+
+    .empty-state button {
+        background: linear-gradient(135deg, var(--color-light-green), #008261);
+        color: var(--color-white);
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: var(--border-radius);
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: 0 4px 15px rgba(0, 164, 122, 0.3);
+    }
+
+        .empty-state button:hover {
+            background: linear-gradient(135deg, #008261, #006649);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 164, 122, 0.4);
+        }
+
+/* ==========================================================================
+   RESPONSIVE DESIGN (ERWEITERT)
+   ========================================================================== */
+@media (max-width: 768px) {
+    .button-row {
+        flex-direction: column;
+        align-items: center;
+    }
+
+        .button-row button {
+            width: 100%;
+            max-width: 300px;
+            min-width: auto;
+        }
+
+    .survey-table {
+        font-size: 0.85rem;
+    }
+
+        .survey-table th,
+        .survey-table td {
+            padding: 0.8rem 0.5rem;
+        }
+
+            .survey-table td:nth-child(2) {
+                max-width: 150px;
+            }
+
+            .survey-table td button {
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
+            }
+}
+
+@media (max-width: 480px) {
+    .survey-table th,
+    .survey-table td {
+        padding: 0.6rem 0.3rem;
+    }
+
+        .survey-table td:nth-child(2) {
+            max-width: 120px;
+        }
+
+        .survey-table td button {
+            width: 30px;
+            height: 30px;
+            font-size: 0.9rem;
+            margin: 0 1px;
+        }
+}
+
+/* ==========================================================================
+   ANIMATIONEN (ERWEITERT)
+   ========================================================================== */
+.survey-table tbody tr {
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.button-row button {
+    animation: slideIn 0.6s ease-out;
+}
+
+    .button-row button:nth-child(2) {
+        animation-delay: 0.1s;
+    }
