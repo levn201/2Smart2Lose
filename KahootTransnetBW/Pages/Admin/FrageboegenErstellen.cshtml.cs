@@ -22,15 +22,12 @@ namespace KahootTransnetBW.Pages.Admin
         public int FragebogenJoinId { get; set; }
 
 
-
-
-
-
         // Macht JoinNumber gleich wie FragebogenID 
         public void OnGet()
         {
             FragebogenJoinId = JoinNumber;
         }
+
 
         // Random Join Number wird einmal beim Titel einschrirben durchgeführt und übertragen 
         public int RandomNum()
@@ -60,10 +57,12 @@ namespace KahootTransnetBW.Pages.Admin
             return number;
         }
 
+
+
+        // Titel Speichert und übertragen an das PopUp
         public string loadError { get; set; }
         public string TitelError { get; set; }
 
-        // Titel Speichert und übertragen an das PopUp
         public IActionResult OnPost()
         {
             if (string.IsNullOrWhiteSpace(Titel))
@@ -107,10 +106,7 @@ namespace KahootTransnetBW.Pages.Admin
 
 
 
-
-
-
-
+        // INSERT die ganzen Fekder in die Datenbank und aufrufen des PopUps nach jeder speicherung 
         [BindProperty]
         public string Fragestellung { get; set; }
 
@@ -139,8 +135,6 @@ namespace KahootTransnetBW.Pages.Admin
         public bool IstAntwort4Richtig { get; set; }
 
         public string FragenError { get; set; }
-
-        // INSERT die ganzen Fekder in die Datenbank und aufrufen des PopUps nach jeder speicherung 
         public IActionResult OnPostAddFrage()
         {
             try

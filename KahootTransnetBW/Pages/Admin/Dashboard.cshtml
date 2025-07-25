@@ -4,13 +4,14 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<link rel="stylesheet" href="~/css/Admin/Dashboard.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Admin/GrundDashboard.css" asp-append-version="true" />
 
+<!-- Header -->
 <header class="header">
-    <h1>Admin Dashboard</h1>
+    <div class="logo">TRANS<span>NET</span> BW</div>
     <nav class="nav-links">
         <a href="/Admin/User">User</a>
-        <a href="/Admin/Frageboegen">Fragebögen</a>
+        <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
         <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
         <a href="/Index">Quit</a>
     </nav>

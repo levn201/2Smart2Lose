@@ -1,2 +1,90 @@
-﻿body {
+﻿/* Main-Content Abstand */
+.main-content {
+    max-width: 1000px;
+    margin: 20px auto;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Tabelle */
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+    .user-table thead {
+        background-color: #00c896;
+        color: #fff;
+    }
+
+    .user-table th,
+    .user-table td {
+        padding: 0.8rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .user-table tbody tr:nth-child(even) {
+        background-color: #f7f7f7;
+    }
+
+    .user-table tbody tr:hover {
+        background-color: #e9fdf6;
+    }
+
+/* Formular */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+    form label {
+        font-weight: 600;
+        color: #00434e;
+    }
+
+    form input,
+    form select {
+        padding: 0.7rem 0.9rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 1rem;
+        background-color: #f9f9f9;
+    }
+
+        form input:focus,
+        form select:focus {
+            border-color: #00c896;
+            box-shadow: 0 0 4px rgba(0, 200, 150, 0.4);
+            outline: none;
+        }
+
+    form button {
+        background-color: #00c896;
+        color: white;
+        border: none;
+        padding: 0.8rem 1.2rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.2s ease;
+    }
+
+        form button:hover {
+            background-color: #009f75;
+        }
+
+.message {
+    margin-top: 1rem;
+    padding: 0.6rem 1rem;
+    background-color: #e9fdf6;
+    color: #00434e;
+    border: 1px solid #00c896;
+    border-radius: 6px;
+    font-weight: 500;
 }

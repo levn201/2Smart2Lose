@@ -3,12 +3,12 @@
 @{
     ViewData["Title"] = "Admin Dashboard - Fragebögen";
 }
-
-<link rel="stylesheet" href="~/css/Admin/Dashboard.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Admin/GrundDashboard.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/Admin/Frageboegen.css" asp-append-version="true" />
 
+<!-- Header -->
 <header class="header">
-    <h1>Admin Dashboard</h1>
+    <div class="logo">TRANS<span>NET</span> BW</div>
     <nav class="nav-links">
         <a href="/Admin/User">User</a>
         <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
@@ -19,39 +19,36 @@
 
 
 
-<!-- Bereits gut aber noch nicht auf die datenbank zuzugreifen -->
-<div class="main-content">
-    <h2>Fragebögen</h2>
-    <p class="info-text">Übersicht über vorhandene Fragebögen. Du kannst sie bearbeiten oder löschen.</p>
-
-    <div class="button-row">
-        <button onclick="createNewSurvey()">Neuen Fragebogen erstellen</button>
-        <button onclick="refreshList()">Aktualisieren</button>
-    </div>
-
-    <table class="survey-table">
-        <thead>
+<!-- Tabelle -->
+<table class="survey-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Titel</th>
+            <th>Erstellt am</th>
+            <th>Aktionen</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var fragebogen in Model.Frageboegen)
+        {
             <tr>
-                <th>ID</th>
-                <th>Titel</th>
-                <th>Erstellt am</th>
-                <th>Aktionen</th>
+                <td>@fragebogen.JoinId</td>
+                <td>@fragebogen.Titel</td>
+                <td>@fragebogen.ErstelltAm.ToString("dd.MM.yyyy HH:mm")</td>
+                <td>
+                    <!-- Bearbeiten-Button -->
+                    <form method="post" asp-action="Bearbeiten" asp-controller="Fragebogen" style="display:inline;">
+                        <input type="hidden" name="id" value="@fragebogen.JoinId" />
+                        <button type="submit">⚙️</button>
+                    </form>
+                    <!-- Löschen-Button -->
+                    <form method="post" asp-page-handler="Loeschen" style="display:inline;">
+                        <input type="hidden" name="id" value="@fragebogen.JoinId" />
+                        <button type="submit">🗑️</button>
+                    </form>
+                </td>
             </tr>
-        </thead>
-
-        <tbody>
-            @foreach (var fragebogen in Model.Frageboegen)
-            {
-                <tr>
-                    <td>@fragebogen.JoinId</td>
-                    <td>@fragebogen.Titel</td>
-                    <td>@fragebogen.ErstelltAm.ToString("dd.MM.yyyy HH:mm")</td>
-                    <td>
-                        <button onclick="bearbeite(@fragebogen.JoinId)">⚙️</button>
-                        <button onclick="loesche(@fragebogen.JoinId)">🗑️</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
+        }
+    </tbody>
+</table>

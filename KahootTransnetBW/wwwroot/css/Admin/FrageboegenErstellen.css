@@ -1,156 +1,107 @@
-﻿/* ==========================================================================
-   FRAGEBOEGENDESIGN.CSS - Spezifische Styles für Fragebogen-Erstellung
-   Basiert auf Dashboard.css und erweitert es für die Erstellungs-Seite
+﻿/* ========================================================================== 
+   FRAGEBOEGENERSTELLEN.CSS - Neues Quiz erstellen
    ========================================================================== */
 
-/* ==========================================================================
-   POPUP OVERLAY UND CONTENT
-   ========================================================================== */
-.popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 69, 82, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    backdrop-filter: blur(5px);
-    animation: fadeIn 0.3s ease-out;
-}
 
-.popup-content {
-    background: var(--color-white);
-    border-radius: var(--border-radius-large);
-    padding: 2rem;
-    max-width: 800px;
-    width: 90%;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    position: relative;
-    animation: slideUp 0.4s ease-out;
-}
 
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(50px) scale(0.9);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-/* ==========================================================================
-   JOINID UND TITEL ANZEIGE
-   ========================================================================== */
-.JoinID-anzeige {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: linear-gradient(135deg, var(--color-light-green), #008261);
-    color: var(--color-white);
-    padding: 0.5rem 1rem;
-    border-radius: var(--border-radius);
-    font-family: 'Courier New', monospace;
-    font-weight: 700;
-    font-size: 0.9rem;
-    box-shadow: var(--shadow-light);
-}
-
-.fragtitel-anzeige {
-    background: linear-gradient(135deg, var(--color-header-fields), #04565f);
-    color: var(--color-white);
-    padding: 0.8rem 1.5rem;
-    border-radius: var(--border-radius);
-    margin-bottom: 1.5rem;
+/* Formulare */
+form label {
+    display: block;
     font-weight: 600;
-    font-size: 1.1rem;
-    text-align: center;
-    box-shadow: var(--shadow-light);
+    margin-bottom: 0.4rem;
+    color: #00434e;
 }
 
-/* ==========================================================================
-   POPUP ÜBERSCHRIFT
-   ========================================================================== */
-.popup-content h2 {
-    color: var(--color-dark-green);
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    position: relative;
-}
-
-    .popup-content h2::after {
-        content: '';
-        position: absolute;
-        bottom: -8px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 60px;
-        height: 3px;
-        background: linear-gradient(90deg, var(--color-light-green), var(--color-button-blue));
-        border-radius: 2px;
-    }
-
-/* ==========================================================================
-   FRAGESTELLUNG TEXTAREA
-   ========================================================================== */
-.frage.vollbreite {
+form input[type="text"],
+form textarea {
     width: 100%;
-    min-height: 100px;
-    padding: 1rem;
-    border: 3px solid var(--color-border);
-    border-radius: var(--border-radius);
-    font-size: 1.1rem;
-    font-family: inherit;
-    resize: vertical;
-    transition: var(--transition);
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-    margin-bottom: 1.5rem;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 1rem;
+    transition: border 0.2s ease;
 }
 
-    .frage.vollbreite:focus {
+    form input[type="text"]:focus,
+    form textarea:focus {
+        border-color: #006a7e;
         outline: none;
-        border-color: var(--color-light-green);
-        box-shadow: 0 0 0 4px rgba(0, 164, 122, 0.1);
-        background: var(--color-white);
     }
 
-    .frage.vollbreite::placeholder {
-        color: var(--color-text-muted);
-        font-style: italic;
+/* Buttons */
+form button {
+    background-color: #00434e;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+    form button:hover {
+        background-color: #006a7e;
+        transform: scale(1.05);
     }
 
-/* ==========================================================================
-   ANTWORT GRID
-   ========================================================================== */
+/* Fehlermeldungen */
+.message {
+    color: #d9534f;
+    font-weight: 600;
+    margin: 0.5rem 0 1rem;
+}
+
+/* Antwortkarten-Grid */
 .antwort-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: 1fr 1fr;
     gap: 1rem;
-    margin-bottom: 2rem;
+    margin-top: 1rem;
 }
 
 .antwort-card {
-    background: var(--color-white);
-    border: 2px solid var(--color-border);
-    border-radius: var(--border-radius);
     padding: 1rem;
-    transition: var(--transition);
+    border-radius: 8px;
     position: relative;
-    overflow: hidden;
+    color: white;
 }
 
-    .antwort-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right
+.bg-1 {
+    background-color: #e63946;
+}
+/* rot */
+.bg-2 {
+    background-color: #457b9d;
+}
+/* blau */
+.bg-3 {
+    background-color: #f4a261;
+}
+/* orange */
+.bg-4 {
+    background-color: #2a9d8f;
+}
+/* grün */
+
+.antwort-card textarea {
+    width: 100%;
+    height: 60px;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    resize: none;
+    margin-top: 0.5rem;
+    color: #00434e;
+}
+
+.checkmark {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    transform: scale(1.3);
+    cursor: pointer;
+}

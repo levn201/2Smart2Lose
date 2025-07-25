@@ -4,13 +4,14 @@
     ViewData["Title"] = "Admin Dashboard - User";
 }
 
-<!-- Menu zu den verschiednen Punkten -->
-<link rel="stylesheet" href="~/css/Admin/Dashboard.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Admin/User.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Admin/GrundDashboard.css" asp-append-version="true" />
 
+<!-- Header -->
 <header class="header">
-    <h1>Admin Dashboard</h1>
+    <div class="logo">TRANS<span>NET</span> BW</div>
     <nav class="nav-links">
-        <a href="/Admin/User">User</a>
+        <a href="/Admin/User" class="active">User</a>
         <a href="/Admin/Frageboegen">Fragebögen</a>
         <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
         <a href="/Index">Quit</a>
@@ -18,47 +19,53 @@
 </header>
 
 <!-- Info Bereich -->
-<div class="main-content" id="users">
+<div class="main-content">
     <h2>User</h2>
     <p>Hier kannst du Benutzer verwalten und deren Rollen einsehen oder ändern.</p>
 </div>
 
-<br />
-<br />
-
-<!-- Ausgabe User -->
-<table style="width: 100%; border-collapse: collapse;">
-    <thead style="background-color: #00c896; color: white;">
-        <tr>
-            <th style="padding: 10px; border: 1px solid #ccc;">ID</th>
-            <th style="padding: 10px; border: 1px solid #ccc;">Benutzername</th>
-            <th style="padding: 10px; border: 1px solid #ccc;">Passwort</th>
-            <th style="padding: 10px; border: 1px solid #ccc;">Role</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var user in Model.UserList)
-        {
-            <tr style="background-color: #06666f; color: white;">
-                <td style="padding: 10px; border: 1px solid #ccc;">@user.ID</td>
-                <td style="padding: 10px; border: 1px solid #ccc;">@user.Username</td>
-                <td style="padding: 10px; border: 1px solid #ccc;">@user.Password</td>
-                <td style="padding: 10px; border: 1px solid #ccc;">@user.Role</td>
+<!-- User Tabelle -->
+<div class="main-content">
+    <table class="user-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Benutzername</th>
+                <th>Passwort</th>
+                <th>Role</th>
+                <th>Delete</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.UserList)
+            {   
+                <tr>
+                    <td>@user.ID</td>
+                    <td>@user.Username</td>
+                    <td>@user.Password</td>
+                    <td>@user.Role</td>
+                    <td>
+                        <form method="post" asp-page-handler="Loeschen" style="display:inline;">
+                            <input type="hidden" name="id" value="@user.ID" />
+                            <button type="submit">🗑️</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
-<!-- Neuen Benutzer anlegen  => Nur sichtbar für Admins -->
+<!-- Neues Benutzerformular -->
 <div class="main-content">
     <h2>Neuen Benutzer anlegen</h2>
 
     <form method="post">
         <label>Benutzername:</label>
-        <input type="text" asp-for="Username" />
+        <input type="text" asp-for="Username" placeholder="Benutzernamen eingeben" />
 
         <label>Passwort:</label>
-        <input type="password" asp-for="Password" />
+        <input type="password" asp-for="Password" placeholder="Passwort eingeben" />
 
         <label>Rolle wählen:</label>
         <select asp-for="Role">
@@ -75,3 +82,6 @@
         <p class="message">@Model.Message</p>
     }
 </div>
+
+
+

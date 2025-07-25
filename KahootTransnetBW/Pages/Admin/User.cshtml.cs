@@ -14,7 +14,7 @@ namespace KahootTransnetBW.Pages.Admin
         }
 
 
-        // Admin User Klasse
+        // Liste der User
         public class User
         {
             public int ID { get; set; }
@@ -52,6 +52,33 @@ namespace KahootTransnetBW.Pages.Admin
             catch (Exception ex)
             {
                 Console.WriteLine($"Fehler beim Abrufen der Benutzer: {ex.Message}");
+            }
+        }
+
+
+        //Löschen von einem User 
+        public IActionResult OnPostLoeschen(int id)
+        {
+            try
+            {
+                var db = new SQLconnection.DatenbankZugriff();
+                using var connection = db.GetConnection();
+                connection.Open();
+
+                string query = "DELETE FROM dasboarduser WHERE ID_User = @id;";
+                using var cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@id", id);
+                cmd.ExecuteNonQuery();
+
+                GetAllUsers();  // Liste neu laden
+
+                return RedirectToPage();  // Seite neu laden
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Fehler beim Löschen: {ex.Message}");
+                ModelState.AddModelError("", "Löschen fehlgeschlagen.");
+                return Page();  // Seite mit Fehler neu rendern
             }
         }
 
@@ -106,7 +133,6 @@ namespace KahootTransnetBW.Pages.Admin
                 return Page();
             }
         }
-
     }
 
 

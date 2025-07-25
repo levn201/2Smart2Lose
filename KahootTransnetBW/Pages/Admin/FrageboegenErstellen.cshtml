@@ -4,18 +4,18 @@
     ViewData["Title"] = "Admin Dashboard - Fragebögen Erstellen";
 }
 
-<link rel="stylesheet" href="~/css/Admin/Dashboard.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Admin/GrundDashboard.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/Admin/FrageboegenErstellen.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/Admin/FrageboegenPopUp.css" asp-append-version="true" />
 
 
 
-<!-- Header Menu -->
+<!-- Header -->
 <header class="header">
-    <h1>Admin Dashboard</h1>
+    <div class="logo">TRANS<span>NET</span> BW</div>
     <nav class="nav-links">
         <a href="/Admin/User">User</a>
-        <a href="/Admin/Frageboegen">Fragebögen</a>
+        <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
         <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
         <a href="/Index">Quit</a>
     </nav>
@@ -26,94 +26,98 @@
     <p>Erstelle einen neuen Fragebogen mit individuellen Fragen und Einstellungen.</p>
 </div>
 
-<!-- Hier wird der Titel eingeladen mit der URzeit Joincode und  -->
-<div class="main-content">
-    <h2>Neues Quiz erstellen</h2>
 
-    <form method="post">
-        <label for="quizTitle">Quiz-Titel:</label>
-        <input type="text" id="quizTitle" name="Titel" placeholder="Titel des Quizzes eingeben" value="@Model.Titel" />
+<body>
+    <!-- Hier wird der Titel eingeladen mit der URzeit Joincode und  -->
+    <div class="main-content">
+        <h2>Neues Quiz erstellen</h2>
 
-        @if (!string.IsNullOrEmpty(Model.TitelError))
-        {
-            <p class="message">@Model.TitelError</p>
-        }
-        <button type="submit">Quiz erstellen</button>
-    </form>
-</div>
+        <form method="post">
+            <label for="quizTitle">Quiz-Titel:</label>
+            <input type="text" id="quizTitle" name="Titel" placeholder="Titel des Quizzes eingeben" value="@Model.Titel" />
+
+            @if (!string.IsNullOrEmpty(Model.TitelError))
+            {
+                <p class="message">@Model.TitelError</p>
+            }
+            <button type="submit">Quiz erstellen</button>
+        </form>
+    </div>
 
 
-<!-- Das Popup -->
-<div id="quizPopup" class="popup-overlay" style="display: none;">
-    <form method="post" asp-page-handler="AddFrage" class="popup-content">
-        <!-- Übergibt JoinNumber und Titel korrekt an den Server -->
-        <input type="hidden" asp-for="JoinNumber" />
-        <input type="hidden" asp-for="Titel" />
+    <!-- Das Popup -->
+    <div id="quizPopup" class="popup-overlay" style="display: none;">
+        <form method="post" asp-page-handler="AddFrage" class="popup-content">
+            <!-- Übergibt JoinNumber und Titel korrekt an den Server -->
+            <input type="hidden" asp-for="JoinNumber" />
+            <input type="hidden" asp-for="Titel" />
 
-        <div class="JoinID-anzeige">@Model.JoinNumber</div>
-        <div class="fragtitel-anzeige">@Model.Titel</div>
+            <div class="JoinID-anzeige">@Model.JoinNumber</div>
+            <div class="fragtitel-anzeige">@Model.Titel</div>
 
-        <h2>Frage erstellen</h2>
+            <h2>Frage erstellen</h2>
 
-        <textarea name="Fragestellung" class="frage vollbreite" placeholder="Geben Sie hier die Frage ein"></textarea>
+            <textarea name="Fragestellung" class="frage vollbreite" placeholder="Geben Sie hier die Frage ein"></textarea>
 
-        <div class="antwort-grid">
-            <div class="antwort-card bg-1">
-                <input type="checkbox" name="IstAntwort1Richtig" value="true" class="checkmark" />
-                <textarea name="Antwort1" placeholder="Antwortoption 1"></textarea>
+            <div class="antwort-grid">
+                <div class="antwort-card bg-1">
+                    <input type="checkbox" name="IstAntwort1Richtig" value="true" class="checkmark" />
+                    <textarea name="Antwort1" placeholder="Antwortoption 1"></textarea>
+                </div>
+                <div class="antwort-card bg-2">
+                    <input type="checkbox" name="IstAntwort2Richtig" value="true" class="checkmark" />
+                    <textarea name="Antwort2" placeholder="Antwortoption 2"></textarea>
+                </div>
+                <div class="antwort-card bg-3">
+                    <input type="checkbox" name="IstAntwort3Richtig" value="true" class="checkmark" />
+                    <textarea name="Antwort3" placeholder="Antwortoption 3"></textarea>
+                </div>
+                <div class="antwort-card bg-4">
+                    <input type="checkbox" name="IstAntwort4Richtig" value="true" class="checkmark" />
+                    <textarea name="Antwort4" placeholder="Antwortoption 4"></textarea>
+                </div>
             </div>
-            <div class="antwort-card bg-2">
-                <input type="checkbox" name="IstAntwort2Richtig" value="true" class="checkmark" />
-                <textarea name="Antwort2" placeholder="Antwortoption 2"></textarea>
+
+            <div class="button-row">
+                <button type="submit">Frage speichern</button>
+                <button type="button" onclick="closeQuizPopup()">Abbrechen</button>
             </div>
-            <div class="antwort-card bg-3">
-                <input type="checkbox" name="IstAntwort3Richtig" value="true" class="checkmark" />
-                <textarea name="Antwort3" placeholder="Antwortoption 3"></textarea>
-            </div>
-            <div class="antwort-card bg-4">
-                <input type="checkbox" name="IstAntwort4Richtig" value="true" class="checkmark" />
-                <textarea name="Antwort4" placeholder="Antwortoption 4"></textarea>
-            </div>
-        </div>
 
-        <div class="button-row">
-            <button type="submit">Frage speichern</button>
-            <button type="button" onclick="closeQuizPopup()">Abbrechen</button>
-        </div>
+            @if (!string.IsNullOrEmpty(Model.FragenError))
+            {
+                <p class="message">@Model.FragenError</p>
+            }
+        </form>
+    </div>
 
-        @if (!string.IsNullOrEmpty(Model.FragenError))
-        {
-            <p class="message">@Model.FragenError</p>
-        }
-    </form>
-</div>
-
-<script>
-    function openQuizPopup(skipValidation = false) {
-        const titleField = document.getElementById("quizTitle");
-        const title = titleField ? titleField.value : "";
-
-        if (!skipValidation && title.trim() === "") {
-            alert("Bitte geben Sie einen Quiz-Titel ein.");
-            return;
-        }
-
-        document.getElementById("quizPopup").style.display = "flex";
-        document.body.style.overflow = "hidden";
-    }
-
-    function closeQuizPopup() {
-        document.getElementById("quizPopup").style.display = "none";
-        document.body.style.overflow = "";
-    }
-</script>
-
-@if (ViewData["ShowPopup"] != null && (bool)ViewData["ShowPopup"])
-{
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            openQuizPopup(true);
-        });
+        function openQuizPopup(skipValidation = false) {
+            const titleField = document.getElementById("quizTitle");
+            const title = titleField ? titleField.value : "";
+
+            if (!skipValidation && title.trim() === "") {
+                alert("Bitte geben Sie einen Quiz-Titel ein.");
+                return;
+            }
+
+            document.getElementById("quizPopup").style.display = "flex";
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeQuizPopup() {
+            document.getElementById("quizPopup").style.display = "none";
+            document.body.style.overflow = "";
+        }
     </script>
-}
+
+    @if (ViewData["ShowPopup"] != null && (bool)ViewData["ShowPopup"])
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                openQuizPopup(true);
+            });
+        </script>
+    }
+</body>
+
 
