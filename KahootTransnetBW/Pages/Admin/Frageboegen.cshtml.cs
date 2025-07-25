@@ -30,7 +30,7 @@ namespace KahootTransnetBW.Pages.Admin
                 using var connection = db.GetConnection();
                 connection.Open();
 
-                string query = "SELECT Join_ID, Titel, ErstelltAm FROM Fragebogen;";
+                string query = "SELECT Join_ID, Titel, ErstelltAm FROM Fragebogen ORDER BY Join_ID ASC;";
                 using var cmd = new MySqlCommand(query, connection);
                 using var reader = cmd.ExecuteReader();
 
@@ -59,8 +59,12 @@ namespace KahootTransnetBW.Pages.Admin
                 using var connection = db.GetConnection();
                 connection.Open();
 
-                string query = "DELETE FROM Fragebogen WHERE Join_ID = @id;";
-                using var cmd = new MySqlCommand(query, connection);
+                string query = "DELETE FROM Fragebogen WHERE Join_ID = @id;" +
+                                "DELETE FROM Frage WHERE FragebogenID = @id";
+
+
+                string SecQuery = ";";
+                using var cmd = new MySqlCommand(query,connection);
                 cmd.Parameters.AddWithValue("@id", id);
                 int count = cmd.ExecuteNonQuery();
 

@@ -11,6 +11,7 @@ namespace KahootTransnetBW.Pages
 
         public void OnGet()
         {
+
         }
 
         [BindProperty]
@@ -18,6 +19,8 @@ namespace KahootTransnetBW.Pages
 
         public string ErrorMessage { get; set; }
 
+
+        // Eingabe Feld => VErweis auf Seiten oder Login ins Spiel
         public IActionResult OnPost()
         {
             try
@@ -36,7 +39,7 @@ namespace KahootTransnetBW.Pages
                     case "2":
                         return RedirectToPage("/Admin/FrageboegenErstellen");
                     case "3":
-                        return RedirectToPage("/Viewer/AddName");
+                        return RedirectToPage("/Admin/Frageerstellen");
                 }
 
                 // Allgemeine PIN-Prüfung gegen Datenbank
@@ -51,7 +54,7 @@ namespace KahootTransnetBW.Pages
                 using var reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    return RedirectToPage("/Viewer/AddName");
+                    return RedirectToPage("/1Viewer/Playground");
                 }
                 else
                 {

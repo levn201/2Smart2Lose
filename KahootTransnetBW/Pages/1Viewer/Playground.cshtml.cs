@@ -1,14 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace KahootTransnetBW.Pages.Viewer
+namespace KahootTransnetBW.Pages._1Viewer
 {
-    public class PlayQuizzModel : PageModel
+    public class PlaygroundModel : PageModel
     {
+
         public void OnGet()
         {
+            
         }
 
-        
+
     }
 }

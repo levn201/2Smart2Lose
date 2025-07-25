@@ -53,30 +53,40 @@
     gap: 15px;
 }
 
+
     .input-group input[type="number"] {
         padding: 10px;
-        border-radius: 8px;
-        border: none;
+        border-radius: 8px !important;
+        border: 2px solid #ccc;
         width: 100%;
         max-width: 250px;
         font-size: 16px;
         text-align: center;
+        outline: none;
+        transition: border-color 0.3s ease;
+        appearance: none;
     }
+
+        .input-group input:focus {
+            border-color: #00c896;
+        }
 
     .input-group button {
         padding: 10px 20px;
         background-color: #00c896;
         color: white;
         border: none;
-        border-radius: 8px;
+        border-radius: 8px !important;
         cursor: pointer;
         font-size: 16px;
         transition: background-color 0.3s ease;
+        appearance: none;
     }
 
         .input-group button:hover {
             background-color: #00a47a;
         }
+
 
 #error {
     margin-top: 15px;

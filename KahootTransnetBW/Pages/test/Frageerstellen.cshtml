@@ -1,0 +1,142 @@
+﻿@page
+@model FrageerstellenModel
+@{
+}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamische Fragen</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 30px auto;
+            background: #fafafa;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .question-block {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 4px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 10px 14px;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .btn-add {
+            background: #2563eb;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .btn-remove {
+            background: #dc2626;
+            color: white;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quiz-Erstellung</h1>
+
+    <form method="post" asp-page-handler="Speichern">
+        <div id="questions-container">
+            <!-- Eine Startfrage -->
+            <div class="question-block">
+                <label>Frage:</label>
+                <input type="text" name="Quiz.Questions[0].Text" placeholder="Frage eingeben" class="form-control" />
+
+                <div class="answers-container">
+                    <div class="answer-block">
+                        <input type="text" name="Quiz.Questions[0].Answers[0].Text" placeholder="Antwort eingeben" />
+                        <label>
+                            <input type="checkbox" name="Quiz.Questions[0].Answers[0].IsCorrect" />
+                            Richtig
+                        </label>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="addAnswer(this)">+ Antwort hinzufügen</button>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="addQuestion()">+ Frage hinzufügen</button>
+        <br><br>
+        <button type="submit" class="btn btn-success">Speichern</button>
+    </form>
+
+    <script>
+        let questionCount = 1;
+
+        function addQuestion() {
+            const container = document.getElementById('questions-container');
+            const qIndex = questionCount++;
+
+            const newQuestion = document.createElement('div');
+            newQuestion.classList.add('question-block');
+            newQuestion.innerHTML = `
+                <label>Frage:</label>
+                <input type="text" name="Quiz.Questions[${qIndex}].Text" placeholder="Frage eingeben" class="form-control" />
+                <div class="answers-container">
+                    <div class="answer-block">
+                        <input type="text" name="Quiz.Questions[${qIndex}].Answers[0].Text" placeholder="Antwort eingeben" />
+                        <label>
+                            <input type="checkbox" name="Quiz.Questions[${qIndex}].Answers[0].IsCorrect" />
+                            Richtig
+                        </label>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="addAnswer(this)">+ Antwort hinzufügen</button>
+            `;
+            container.appendChild(newQuestion);
+        }
+
+        function addAnswer(button) {
+            const answersContainer = button.parentElement.querySelector('.answers-container');
+            const questionIndex = Array.from(document.querySelectorAll('.question-block')).indexOf(button.closest('.question-block'));
+            const answerCount = answersContainer.querySelectorAll('.answer-block').length;
+
+            const newAnswer = document.createElement('div');
+            newAnswer.classList.add('answer-block');
+            newAnswer.innerHTML = `
+                <input type="text" name="Quiz.Questions[${questionIndex}].Answers[${answerCount}].Text" placeholder="Antwort eingeben" />
+                <label>
+                    <input type="checkbox" name="Quiz.Questions[${questionIndex}].Answers[${answerCount}].IsCorrect" />
+                    Richtig
+                </label>
+            `;
+            answersContainer.appendChild(newAnswer);
+        }
+    </script>
+</body>
+</html>

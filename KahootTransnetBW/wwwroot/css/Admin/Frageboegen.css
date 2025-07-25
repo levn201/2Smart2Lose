@@ -26,7 +26,7 @@
     }
 
     .survey-table tbody tr:hover {
-        background-color: #0c7485; /* Hover für Tabelle */
+        background-color: #0c7485; 
     }
 
     .survey-table form {
