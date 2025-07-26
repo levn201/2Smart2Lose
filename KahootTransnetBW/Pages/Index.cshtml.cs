@@ -54,7 +54,8 @@ namespace KahootTransnetBW.Pages
                 using var reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    return RedirectToPage("/1Viewer/Playground");
+                    return RedirectToPage("/1Viewer/Playground", new { gamePin = GamePin, index = 0 });
+
                 }
                 else
                 {

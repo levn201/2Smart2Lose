@@ -14,7 +14,7 @@ namespace KahootTransnetBW.Pages.Admin
         {
             StatusMessage = "Bereit zum Testen.";
         }
-
+        // Auslesen 
         public void OnPostTestVerbindung()
         {
             //Verbindung zur Datenbank 
@@ -30,7 +30,6 @@ namespace KahootTransnetBW.Pages.Admin
                 StatusMessage = "Fehler bei Verbindung: " + ex.Message;
             }
         }
-
 
         // Einschreiben
         public void OnPostEintragHinzufuegen()
@@ -55,6 +54,7 @@ namespace KahootTransnetBW.Pages.Admin
             }
         }
 
+        // Logs 
         public void OnPostEintraegeAnzeigen()
         {
             var db = new DatenbankZugriff(); // ?? Instanz erzeugen

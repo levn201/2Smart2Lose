@@ -4,12 +4,9 @@
     ViewData["Title"] = "Kahoot | Geb dein Bestes :D";
 }
 
-
 <link rel="stylesheet" href="~/css/Playground/GrundViewer.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/Playground/Playground.css asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Playground/Playground.css" asp-append-version="true" />
 
-
-<!-- Header -->
 <header class="header">
     <div class="logo">TRANS<span>NET</span> BW</div>
     <nav class="nav-links">
@@ -17,49 +14,36 @@
     </nav>
 </header>
 
+<body>
+    <h2>Fragen aus der Datenbank</h2>
 
-<h2>   Hier wird gespielt        </h2>
-<!-- Das Popup -->
-<div id="quizPopup" class="popup-overlay" style="display: none;">
-    <form method="post" asp-page-handler="AddFrage" class="popup-content">
-        <!-- Übergibt JoinNumber und Titel korrekt an den Server -->
-        @* <input type="hidden" asp-for="JoinNumber" />
-        <input type="hidden" asp-for="Titel" />
-
-        <div class="JoinID-anzeige">@Model.JoinNumber</div>
-        <div class="fragtitel-anzeige">@Model.Titel</div> *@
-
-        <h2>Frage erstellen</h2>
-
-        <textarea name="Fragestellung" class="frage vollbreite" placeholder="Geben Sie hier die Frage ein"></textarea>
-
-        <div class="antwort-grid">
-            <div class="antwort-card bg-1">
-                <input type="checkbox" name="IstAntwort1Richtig" value="true" class="checkmark" />
-                <textarea name="Antwort1" placeholder="Antwortoption 1"></textarea>
-            </div>
-            <div class="antwort-card bg-2">
-                <input type="checkbox" name="IstAntwort2Richtig" value="true" class="checkmark" />
-                <textarea name="Antwort2" placeholder="Antwortoption 2"></textarea>
-            </div>
-            <div class="antwort-card bg-3">
-                <input type="checkbox" name="IstAntwort3Richtig" value="true" class="checkmark" />
-                <textarea name="Antwort3" placeholder="Antwortoption 3"></textarea>
-            </div>
-            <div class="antwort-card bg-4">
-                <input type="checkbox" name="IstAntwort4Richtig" value="true" class="checkmark" />
-                <textarea name="Antwort4" placeholder="Antwortoption 4"></textarea>
+    @foreach (var frage in Model.FragenChecken)
+    {
+        <div class="frage-block">
+            <h3>@frage.DB_Fragestellung</h3>
+            <div class="antwort-grid">
+                <div class="antwort-card bg-1" onclick="toggleCard(this)">
+                    <input type="checkbox" class="checkmark" />
+                    <label>@frage.DB_Antwort1</label>
+                </div>
+                <div class="antwort-card bg-2" onclick="toggleCard(this)">
+                    <input type="checkbox" class="checkmark" />
+                    <label>@frage.DB_Antwort2</label>
+                </div>
+                <div class="antwort-card bg-3" onclick="toggleCard(this)">
+                    <input type="checkbox" class="checkmark" />
+                    <label>@frage.DB_Antwort3</label>
+                </div>
+                <div class="antwort-card bg-4" onclick="toggleCard(this)">
+                    <input type="checkbox" class="checkmark" />
+                    <label>@frage.DB_Antwort4</label>
+                </div>
             </div>
         </div>
+    }
 
-        <div class="button-row">
-            <button type="submit">Frage speichern</button>
-            <button type="button" onclick="closeQuizPopup()">Abbrechen</button>
-        </div>
-
-        @* @if (!string.IsNullOrEmpty(Model.FragenError))
-        {
-            <p class="message">@Model.FragenError</p>
-        } *@
-    </form>
-</div>
+    <div class="button-row">
+        <button type="submit">Check dein Ergebnis</button>
+        <button type="button" onclick="closeQuizPopup()">Abbrechen</button>
+    </div>
+</body>
