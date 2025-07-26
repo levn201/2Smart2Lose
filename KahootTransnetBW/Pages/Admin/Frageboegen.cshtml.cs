@@ -60,7 +60,7 @@ namespace KahootTransnetBW.Pages.Admin
                 connection.Open();
 
                 string query = "DELETE FROM Fragebogen WHERE Join_ID = @id;" + //Löschen aus der Titel und Fragebogen Datenbank 
-                                "DELETE FROM Frage WHERE FragebogenID = @id";
+                                "DELETE FROM Fragen WHERE FragebogenID = @id";
 
 
                 string SecQuery = ";";

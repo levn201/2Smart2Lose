@@ -144,7 +144,7 @@ namespace KahootTransnetBW.Pages.Admin
                 connection.Open();
 
                 string query = @"
-                    INSERT INTO Frage (
+                    INSERT INTO Fragen (
                         FragebogenID,
                         Fragestellung,
                         Antwort1,
@@ -200,7 +200,6 @@ namespace KahootTransnetBW.Pages.Admin
                 return Page();
             }
         }
-
 
     }
 }
