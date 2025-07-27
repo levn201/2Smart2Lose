@@ -32,4 +32,5 @@ app.UseAuthorization(); // ✅ funktioniert jetzt
 
 app.MapRazorPages();
 
+
 app.Run();

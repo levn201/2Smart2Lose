@@ -42,8 +42,13 @@
         </div>
     }
 
-    <div class="button-row">
-        <button type="submit">Check dein Ergebnis</button>
-        <button type="button" onclick="closeQuizPopup()">Abbrechen</button>
-    </div>
+    <form method="post">
+        <input type="hidden" asp-for="CurrentOffset" />
+        <input type="hidden" asp-for="GamePin" />
+
+        <button type="submit" asp-page-handler="NextQuestion">Nächste Frage</button>
+
+        <p>Frage @(Model.CurrentOffset + 1) von @Model.QuestionCount</p>
+    </form>
+
 </body>
