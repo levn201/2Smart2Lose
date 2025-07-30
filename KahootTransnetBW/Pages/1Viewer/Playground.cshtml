@@ -17,38 +17,135 @@
 <body>
     <h2>Fragen aus der Datenbank</h2>
 
-    @foreach (var frage in Model.FragenChecken)
-    {
-        <div class="frage-block">
-            <h3>@frage.DB_Fragestellung</h3>
-            <div class="antwort-grid">
-                <div class="antwort-card bg-1" onclick="toggleCard(this)">
-                    <input type="checkbox" class="checkmark" />
-                    <label>@frage.DB_Antwort1</label>
-                </div>
-                <div class="antwort-card bg-2" onclick="toggleCard(this)">
-                    <input type="checkbox" class="checkmark" />
-                    <label>@frage.DB_Antwort2</label>
-                </div>
-                <div class="antwort-card bg-3" onclick="toggleCard(this)">
-                    <input type="checkbox" class="checkmark" />
-                    <label>@frage.DB_Antwort3</label>
-                </div>
-                <div class="antwort-card bg-4" onclick="toggleCard(this)">
-                    <input type="checkbox" class="checkmark" />
-                    <label>@frage.DB_Antwort4</label>
-                </div>
-            </div>
-        </div>
-    }
-
     <form method="post">
         <input type="hidden" asp-for="CurrentOffset" />
         <input type="hidden" asp-for="GamePin" />
 
-        <button type="submit" asp-page-handler="NextQuestion">Nächste Frage</button>
+        <div class="quiz-info">
+            <p>Frage @(Model.CurrentOffset + 1) von @Model.QuestionCount</p>
+        </div>
 
-        <p>Frage @(Model.CurrentOffset + 1) von @Model.QuestionCount</p>
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="error-message">@Model.ErrorMessage</div>
+        }
+
+        @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+        {
+            <div class="success-message">@Model.SuccessMessage</div>
+        }
+
+        @foreach (var frage in Model.FragenChecken)
+        {
+            <div class="frage-block">
+                <h3>@frage.DB_Fragestellung</h3>
+
+                <div class="antwort-grid">
+                    <div class="antwort-card bg-1" onclick="selectAnswer(this, 1)">
+                        <input type="checkbox"
+                               class="checkmark"
+                               asp-for="UserAnswer.C_IstAntwort1Richtig"
+                               onchange="updateSelection(this, 1)" />
+                        <label>@frage.DB_Antwort1</label>
+                    </div>
+                    <div class="antwort-card bg-2" onclick="selectAnswer(this, 2)">
+                        <input type="checkbox"
+                               class="checkmark"
+                               asp-for="UserAnswer.C_IstAntwort2Richtig"
+                               onchange="updateSelection(this, 2)" />
+                        <label>@frage.DB_Antwort2</label>
+                    </div>
+                    <div class="antwort-card bg-3" onclick="selectAnswer(this, 3)">
+                        <input type="checkbox"
+                               class="checkmark"
+                               asp-for="UserAnswer.C_IstAntwort3Richtig"
+                               onchange="updateSelection(this, 3)" />
+                        <label>@frage.DB_Antwort3</label>
+                    </div>
+                    <div class="antwort-card bg-4" onclick="selectAnswer(this, 4)">
+                        <input type="checkbox"
+                               class="checkmark"
+                               asp-for="UserAnswer.C_IstAntwort4Richtig"
+                               onchange="updateSelection(this, 4)" />
+                        <label>@frage.DB_Antwort4</label>
+                    </div>
+                </div>
+
+            </div>
+        }
+
+        <div class="quiz-controls">
+            <button type="submit" asp-page-handler="CheckAnswer" class="btn btn-primary">
+                !Antwort Prüfen
+            </button>
+
+            <button type="submit" asp-page-handler="NextQuestion" class="btn btn-success">
+                Nächste Frage
+            </button>
+            <button type="submit" asp-page-handler="FinishQuiz" class="btn btn-success">
+                !Quiz Beenden
+            </button>
+        </div>
     </form>
 
 </body>
+
+
+@* <script>
+    // Stellt sicher, dass nur eine Antwort ausgewählt werden kann
+    function selectAnswer(cardElement, answerNumber) {
+        // Alle anderen Checkboxen deaktivieren
+        const allCheckboxes = document.querySelectorAll('.checkmark');
+        const allCards = document.querySelectorAll('.antwort-card');
+
+        // Alle Karten zurücksetzen
+        allCards.forEach(card => {
+            card.classList.remove('selected');
+        });
+
+        allCheckboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+
+        // Aktuelle Auswahl aktivieren
+        const currentCheckbox = cardElement.querySelector('.checkmark');
+        currentCheckbox.checked = true;
+        cardElement.classList.add('selected');
+
+        // Event nicht weiter propagieren
+        event.stopPropagation();
+    }
+
+    function updateSelection(checkbox, answerNumber) {
+        const card = checkbox.closest('.antwort-card');
+
+        if (checkbox.checked) {
+            // Alle anderen abwählen
+            const allCheckboxes = document.querySelectorAll('.checkmark');
+            const allCards = document.querySelectorAll('.antwort-card');
+
+            allCheckboxes.forEach(cb => {
+                if (cb !== checkbox) {
+                    cb.checked = false;
+                }
+            });
+
+            allCards.forEach(c => {
+                if (c !== card) {
+                    c.classList.remove('selected');
+                }
+            });
+
+            card.classList.add('selected');
+        } else {
+            card.classList.remove('selected');
+        }
+    }
+
+    // Verhindert, dass das Klicken auf die Checkbox das Card-Click auslöst
+    document.querySelectorAll('.checkmark').forEach(checkbox => {
+        checkbox.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+</script> *@
