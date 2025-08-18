@@ -13,127 +13,155 @@
         <a href="/Index">Quit</a>
     </nav>
 </header>
+a
+<h2>Fragen aus der Datenbank</h2>
 
-<body>
-    <h2>Fragen aus der Datenbank</h2>
+<form method="post">
+    <input type="hidden" asp-for="CurrentOffset" />
+    <input type="hidden" asp-for="GamePin" />
 
-    <form method="post">
-        <input type="hidden" asp-for="CurrentOffset" />
-        <input type="hidden" asp-for="GamePin" />
+    <!-- Wie viele Fragen -->
+    <div class="quiz-info">
+        <p>Frage @(Model.CurrentOffset + 1) von @Model.QuestionCount</p>
+    </div>
 
-        <div class="quiz-info">
-            <p>Frage @(Model.CurrentOffset + 1) von @Model.QuestionCount</p>
-        </div>
+    <div class="error-message">@Model.ErrorMessage</div>
 
-        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-        {
-            <div class="error-message">@Model.ErrorMessage</div>
-        }
+    <div class="success-message">@Model.SuccessMessage</div>
 
-        @if (!string.IsNullOrEmpty(Model.SuccessMessage))
-        {
-            <div class="success-message">@Model.SuccessMessage</div>
-        }
+    <p id="">Fragen ID: @Model.GamePin</p>
 
-        @foreach (var frage in Model.FragenChecken)
-        {
-            <div class="frage-block">
-                <h3>@frage.DB_Fragestellung</h3>
+    @if (Model.FragenChecken.Any())
+    {
+        var frage = Model.FragenChecken.First();
 
-                <div class="antwort-grid">
-                    <div class="antwort-card bg-1" onclick="selectAnswer(this, 1)">
-                        <input type="checkbox"
-                               class="checkmark"
-                               asp-for="UserAnswer.C_IstAntwort1Richtig"
-                               onchange="updateSelection(this, 1)" />
-                        <label>@frage.DB_Antwort1</label>
-                    </div>
-                    <div class="antwort-card bg-2" onclick="selectAnswer(this, 2)">
-                        <input type="checkbox"
-                               class="checkmark"
-                               asp-for="UserAnswer.C_IstAntwort2Richtig"
-                               onchange="updateSelection(this, 2)" />
-                        <label>@frage.DB_Antwort2</label>
-                    </div>
-                    <div class="antwort-card bg-3" onclick="selectAnswer(this, 3)">
-                        <input type="checkbox"
-                               class="checkmark"
-                               asp-for="UserAnswer.C_IstAntwort3Richtig"
-                               onchange="updateSelection(this, 3)" />
-                        <label>@frage.DB_Antwort3</label>
-                    </div>
-                    <div class="antwort-card bg-4" onclick="selectAnswer(this, 4)">
-                        <input type="checkbox"
-                               class="checkmark"
-                               asp-for="UserAnswer.C_IstAntwort4Richtig"
-                               onchange="updateSelection(this, 4)" />
-                        <label>@frage.DB_Antwort4</label>
-                    </div>
+        <div class="frage-block">
+
+            <h3>@frage.DB_Fragestellung</h3>
+
+            <!-- Vierecke mit clickern -->
+            <div class="antwort-grid">
+                <div class="antwort-card bg-1" onclick="selectAnswer(this)">
+                    <input type="checkbox" class="checkmark"
+                           asp-for="UserAnswer.C_IstAntwort1Richtig"
+                           onchange="updateSelection(this)" />
+                    <label>@frage.DB_Antwort1</label>
                 </div>
-
+                <div class="antwort-card bg-2" onclick="selectAnswer(this)">
+                    <input type="checkbox" class="checkmark"
+                           asp-for="UserAnswer.C_IstAntwort2Richtig"
+                           onchange="updateSelection(this)" />
+                    <label>@frage.DB_Antwort2</label>
+                </div>
+                <div class="antwort-card bg-3" onclick="selectAnswer(this)">
+                    <input type="checkbox" class="checkmark"
+                           asp-for="UserAnswer.C_IstAntwort3Richtig"
+                           onchange="updateSelection(this)" />
+                    <label>@frage.DB_Antwort3</label>
+                </div>
+                <div class="antwort-card bg-4" onclick="selectAnswer(this)">
+                    <input type="checkbox" class="checkmark"
+                           asp-for="UserAnswer.C_IstAntwort4Richtig"
+                           onchange="updateSelection(this)" />
+                    <label>@frage.DB_Antwort4</label>
+                </div>
             </div>
-        }
+        </div>
+    }
 
-        <div class="quiz-controls">
-            <button type="submit" asp-page-handler="CheckAnswer" class="btn btn-primary">
-                !Antwort Prüfen
-            </button>
 
-            <button type="submit" asp-page-handler="NextQuestion" class="btn btn-success">
-                Nächste Frage
-            </button>
-            <button type="submit" asp-page-handler="FinishQuiz" class="btn btn-success">
+    <!-- Fragebereich -->
+    <div class="quiz-controls">
+
+        <!--
+            Button Prüfen soll da sein, nach dem Prüfen kann man zur nächsten Frage
+            Button Nächste Frage soll wenn geprüft wurde kommen
+            Button Beenden soll kommen wenn keien fragen mehr geladen werden können
+        -->
+
+        <button type="submit" asp-page-handler="CheckAnswer" class="btn btn-primary">
+            !Antwort Prüfen
+        </button>
+
+
+        <button type="submit" asp-page-handler="NextQuestion" class="btn btn-success">
+            Nächste Frage
+        </button>
+
+        <!-- Wenn letzte frage da ist -->
+        @if (Model.CurrentOffset == Model.HowManyQuestions())
+        {
+            <button type="submit" asp-page-handler="FinishQuiz" class="btn btn-danger">
                 !Quiz Beenden
             </button>
-        </div>
-    </form>
+        }
 
-</body>
+    </div>
+</form>
 
 
-@* <script>
-    // Stellt sicher, dass nur eine Antwort ausgewählt werden kann
-    function selectAnswer(cardElement, answerNumber) {
-        // Alle anderen Checkboxen deaktivieren
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    function selectAnswer(cardElement) {
         const allCheckboxes = document.querySelectorAll('.checkmark');
         const allCards = document.querySelectorAll('.antwort-card');
 
-        // Alle Karten zurücksetzen
-        allCards.forEach(card => {
-            card.classList.remove('selected');
-        });
+        allCards.forEach(card => card.classList.remove('selected'));
+        allCheckboxes.forEach(cb => cb.checked = false);
 
-        allCheckboxes.forEach(checkbox => {
-            checkbox.checked = false;
-        });
-
-        // Aktuelle Auswahl aktivieren
         const currentCheckbox = cardElement.querySelector('.checkmark');
         currentCheckbox.checked = true;
         cardElement.classList.add('selected');
-
-        // Event nicht weiter propagieren
-        event.stopPropagation();
     }
 
-    function updateSelection(checkbox, answerNumber) {
+    function updateSelection(checkbox) {
         const card = checkbox.closest('.antwort-card');
 
         if (checkbox.checked) {
-            // Alle anderen abwählen
-            const allCheckboxes = document.querySelectorAll('.checkmark');
-            const allCards = document.querySelectorAll('.antwort-card');
-
-            allCheckboxes.forEach(cb => {
-                if (cb !== checkbox) {
-                    cb.checked = false;
-                }
+            document.querySelectorAll('.checkmark').forEach(cb => {
+                if (cb !== checkbox) cb.checked = false;
             });
 
-            allCards.forEach(c => {
-                if (c !== card) {
-                    c.classList.remove('selected');
-                }
+            document.querySelectorAll('.antwort-card').forEach(c => {
+                if (c !== card) c.classList.remove('selected');
             });
 
             card.classList.add('selected');
@@ -142,10 +170,7 @@
         }
     }
 
-    // Verhindert, dass das Klicken auf die Checkbox das Card-Click auslöst
-    document.querySelectorAll('.checkmark').forEach(checkbox => {
-        checkbox.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
+    document.querySelectorAll('.checkmark').forEach(cb => {
+        cb.addEventListener('click', e => e.stopPropagation());
     });
-</script> *@
+</script>

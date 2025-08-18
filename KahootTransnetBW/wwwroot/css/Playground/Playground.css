@@ -2,12 +2,17 @@
    PLAYGROUND.CSS - Auflistung aller erstellten Fragebögen 
    ========================================================================== */
 
-
 .frage-block {
+    text-align: center;
     margin: 20px 0;
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 8px;
+}
+
+.infos {
+    display: flex;
+    gap: 40%;
 }
 
 .antwort-grid {
