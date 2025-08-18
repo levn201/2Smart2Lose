@@ -36,6 +36,8 @@ namespace KahootTransnetBW.Pages._1Viewer
         {
             CurrentOffset = currentOffset;
             GamePin = gamePin;
+
+
             QuestionCount = HowManyQuestions();
             LadeFrage(currentOffset);
 
@@ -115,20 +117,85 @@ namespace KahootTransnetBW.Pages._1Viewer
             return RedirectToPage(new { GamePin = GamePin, CurrentOffset = CurrentOffset });
         }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
         // Button: ANTWORTEN PRÜFEN         => Checkt ob die antworten richtig sind 
         public IActionResult OnPostCheckAnswer()
         {
-            // Hier wird geckeckt ob die antowrten richtig sind 
+            // Wichtig: Frage erneut laden, damit die Werte nicht verloren gehen
+            LadeFrage(CurrentOffset);
+
+            // Überprüfen ob eine Frage geladen wurde
+            if (FragenChecken.Count == 0)
+            {
+                ErrorMessage = "Keine Frage gefunden.";
+                return Page();
+            }
+
+            var dbFrage = FragenChecken[0]; 
+            bool isCorrect = false;
+
+            // Überprüfen ob die Benutzerantworten mit den richtigen Antworten übereinstimmen
+            if (dbFrage.DB_IstAntwort1Richtig == UserAnswer.C_IstAntwort1Richtig &&
+                dbFrage.DB_IstAntwort2Richtig == UserAnswer.C_IstAntwort2Richtig &&
+                dbFrage.DB_IstAntwort3Richtig == UserAnswer.C_IstAntwort3Richtig &&
+                dbFrage.DB_IstAntwort4Richtig == UserAnswer.C_IstAntwort4Richtig)
+            {
+                isCorrect = true;
+                SuccessMessage = "Richtig! Alle Antworten sind korrekt.";
+                ErrorMessage = null; 
+            }
+            else
+            {
+                ErrorMessage = "Falsch! Bitte überprüfen Sie Ihre Antworten.";
+                SuccessMessage = null; 
+            }
+
+
+            // SpeichereAntwortErgebnis(GamePin, CurrentOffset, isCorrect);
+
             return Page();
         }
 
+        // Optional: Methode zum Speichern der Antwort in der Datenbank
+        //private void SpeichereAntwortErgebnis(int gamePin, int questionOffset, bool isCorrect)
+        //{
+        //    var db = new SQLconnection.DatenbankZugriff();
+        //    using var connection = db.GetConnection();
+        //    connection.Open();
+
+        //    string query = @"
+        
+
+        //    using var cmd = new MySqlCommand(query, connection);
+        //    cmd.Parameters.AddWithValue("@GamePin", gamePin);
+        //    cmd.Parameters.AddWithValue("@QuestionOffset", questionOffset);
+        //    cmd.Parameters.AddWithValue("@IstRichtig", isCorrect);
+        //    cmd.Parameters.AddWithValue("@ZeitStempel", DateTime.Now);
+
+        //    cmd.ExecuteNonQuery();
+        //}
+
         // Button: QUIZZ BEENDEN            => Beendet nach der letzten Frage und speichert den stand 
+
+
+
         public IActionResult OnPostFinishQuiz()
         {
             // Hier wird geckeckt ob die antowrten richtig sind 
             return Page();
         }
-
 
         public class FragenChecknerModel
         {

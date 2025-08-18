@@ -80,7 +80,7 @@ a
         -->
 
         <button type="submit" asp-page-handler="CheckAnswer" class="btn btn-primary">
-            !Antwort Prüfen
+            Antwort Prüfen
         </button>
 
 
@@ -89,7 +89,7 @@ a
         </button>
 
         <!-- Wenn letzte frage da ist -->
-        @if (Model.CurrentOffset == Model.HowManyQuestions())
+        @if (Model.CurrentOffset + 1 == Model.HowManyQuestions())
         {
             <button type="submit" asp-page-handler="FinishQuiz" class="btn btn-danger">
                 !Quiz Beenden
