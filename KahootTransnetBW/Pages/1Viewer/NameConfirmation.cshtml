@@ -20,15 +20,16 @@
 
 <!-- Nicknamen eingeben für die Bestenliste -->
 <div class="text-center">
-
     <div class="main-content">
         <h1>Gleich geht es los!</h1>
         <p>Gib den Namen ein, um beizutreten:</p>
 
         <form method="post">
             <div class="input-group">
-                <input type="text" asp-for="nickname" required placeholder="Wie darf man dich nennen" />
-                <button type="submit">Beitreten</button>
+                <input type="text" asp-for="Nickname" required placeholder="Wie darf man dich nennen" />
+                <button type="submit" asp-page-handler="LogName" class="btn btn-success">
+                    Nächste Frage
+                </button>
             </div>
         </form>
 

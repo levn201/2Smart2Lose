@@ -11,8 +11,11 @@ namespace KahootTransnetBW.Pages
 
         public void OnGet()
         {
-
+           
         }
+
+        public string TestEingabe { get; set; } = "Test";
+
 
         [BindProperty]
         public string GamePin { get; set; }
@@ -51,11 +54,13 @@ namespace KahootTransnetBW.Pages
                 using var cmd = new MySqlCommand(query, connection);
                 cmd.Parameters.AddWithValue("@joinID", GamePin);
 
+
+
                 using var reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
+                    //HttpContext.Session.SetString("GamePin", GamePin);    einschreiben in den httpContext 
                     return RedirectToPage("/1Viewer/Playground", new { gamePin = GamePin, index = 0 });
-
                 }
                 else
                 {

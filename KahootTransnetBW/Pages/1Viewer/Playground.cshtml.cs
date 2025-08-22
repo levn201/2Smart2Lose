@@ -1,8 +1,9 @@
+using KahootTransnetBW.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
-using KahootTransnetBW.Model;
 using MySqlX.XDevAPI;
+using System.Net.NetworkInformation;
 using System.Web;
 
 
@@ -13,22 +14,31 @@ namespace KahootTransnetBW.Pages._1Viewer
 {
     public class PlaygroundModel : PageModel
     {
-
+        [BindProperty]
+        public FragenInputModel UserAnswer { get; set; } = new();
         public List<FragenChecknerModel> FragenChecken { get; set; } = new();
+
 
         [BindProperty(SupportsGet = true)]
         public int GamePin { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public string UserName { get; set; }
+
+
+
         [BindProperty]
         public int CurrentOffset { get; set; }
-
-
         public int QuestionCount { get; set; }
+
+
+        public int playerPoints { get; set; }
+
+        
         public string ErrorMessage { get; set; }
         public string SuccessMessage { get; set; }
 
-        [BindProperty]
-        public FragenInputModel UserAnswer { get; set; } = new();
+        
 
 
         // Erst geladen                     => Lädt aktuellen Offset und GamePin
@@ -37,6 +47,7 @@ namespace KahootTransnetBW.Pages._1Viewer
             CurrentOffset = currentOffset;
             GamePin = gamePin;
 
+            // UserName = HttpContext.Session.GetString("Name");    auslesen aus dem httpContext
 
             QuestionCount = HowManyQuestions();
             LadeFrage(currentOffset);
@@ -108,7 +119,6 @@ namespace KahootTransnetBW.Pages._1Viewer
             QuestionCount = HowManyQuestions();
         }
 
-
         // Button: NÄCHSTE                  => Geht zur nächsten Frage 
         public IActionResult OnPostNextQuestion()
         {
@@ -116,19 +126,6 @@ namespace KahootTransnetBW.Pages._1Viewer
             // Gibt immer die werte nach dem hoch setzten 
             return RedirectToPage(new { GamePin = GamePin, CurrentOffset = CurrentOffset });
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         // Button: ANTWORTEN PRÜFEN         => Checkt ob die antworten richtig sind 
         public IActionResult OnPostCheckAnswer()
@@ -168,31 +165,14 @@ namespace KahootTransnetBW.Pages._1Viewer
             return Page();
         }
 
-        // Optional: Methode zum Speichern der Antwort in der Datenbank
-        //private void SpeichereAntwortErgebnis(int gamePin, int questionOffset, bool isCorrect)
-        //{
-        //    var db = new SQLconnection.DatenbankZugriff();
-        //    using var connection = db.GetConnection();
-        //    connection.Open();
-
-        //    string query = @"
-        
-
-        //    using var cmd = new MySqlCommand(query, connection);
-        //    cmd.Parameters.AddWithValue("@GamePin", gamePin);
-        //    cmd.Parameters.AddWithValue("@QuestionOffset", questionOffset);
-        //    cmd.Parameters.AddWithValue("@IstRichtig", isCorrect);
-        //    cmd.Parameters.AddWithValue("@ZeitStempel", DateTime.Now);
-
-        //    cmd.ExecuteNonQuery();
-        //}
-
         // Button: QUIZZ BEENDEN            => Beendet nach der letzten Frage und speichert den stand 
-
-
-
         public IActionResult OnPostFinishQuiz()
         {
+            var db = new SQLconnection.DatenbankZugriff();
+            using var connection = db.GetConnection();
+            connection.Open();
+
+
             // Hier wird geckeckt ob die antowrten richtig sind 
             return Page();
         }

@@ -79,16 +79,20 @@ a
             Button Beenden soll kommen wenn keien fragen mehr geladen werden können
         -->
 
+        <!-- Antwort Prüfen Button - immer sichtbar -->
         <button type="submit" asp-page-handler="CheckAnswer" class="btn btn-primary">
             Antwort Prüfen
         </button>
 
+        <!-- Nächste Frage Button - nur sichtbar wenn Frage geprüft UND nicht letzte Frage -->
+        @if (Model.CurrentOffset + 1 < Model.HowManyQuestions())
+        {
+            <button type="submit" asp-page-handler="NextQuestion" class="btn btn-success">
+                Nächste Frage
+            </button>
+        }
 
-        <button type="submit" asp-page-handler="NextQuestion" class="btn btn-success">
-            Nächste Frage
-        </button>
-
-        <!-- Wenn letzte frage da ist -->
+        <!-- Quiz Beenden Button - nur bei letzter Frage nach Prüfung -->
         @if (Model.CurrentOffset + 1 == Model.HowManyQuestions())
         {
             <button type="submit" asp-page-handler="FinishQuiz" class="btn btn-danger">
