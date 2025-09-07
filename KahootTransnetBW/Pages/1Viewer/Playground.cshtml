@@ -84,7 +84,6 @@ a
             Antwort Prüfen
         </button>
 
-        <!-- Nächste Frage Button - nur sichtbar wenn Frage geprüft UND nicht letzte Frage -->
         @if (Model.CurrentOffset + 1 < Model.HowManyQuestions())
         {
             <button type="submit" asp-page-handler="NextQuestion" class="btn btn-success">
@@ -92,11 +91,11 @@ a
             </button>
         }
 
-        <!-- Quiz Beenden Button - nur bei letzter Frage nach Prüfung -->
+        <!-- Quiz Beenden Button: Wenn es die letzte Frage ist -->
         @if (Model.CurrentOffset + 1 == Model.HowManyQuestions())
         {
             <button type="submit" asp-page-handler="FinishQuiz" class="btn btn-danger">
-                !Quiz Beenden
+                Quiz Beenden
             </button>
         }
 

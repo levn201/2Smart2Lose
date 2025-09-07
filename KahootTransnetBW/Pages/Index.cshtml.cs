@@ -43,6 +43,8 @@ namespace KahootTransnetBW.Pages
                         return RedirectToPage("/Admin/FrageboegenErstellen");
                     case "3":
                         return RedirectToPage("/Admin/Frageerstellen");
+                    case "123":
+                        return RedirectToPage("/testPages/startPage");
                 }
 
                 // Allgemeine PIN-Prüfung gegen Datenbank
