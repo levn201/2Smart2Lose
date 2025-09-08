@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
 using KahootTransnetBW.Model;
+using Microsoft.AspNetCore.Http;
 
 
 namespace KahootTransnetBW.Pages
@@ -14,11 +15,8 @@ namespace KahootTransnetBW.Pages
            
         }
 
-        public string TestEingabe { get; set; } = "Test";
-
-
         [BindProperty]
-        public string GamePin { get; set; }
+        public int GamePin { get; set; }
 
         public string ErrorMessage { get; set; }
 
@@ -28,22 +26,16 @@ namespace KahootTransnetBW.Pages
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(GamePin))
-                {
-                    ErrorMessage = "Der Game-PIN darf nicht leer sein.";
-                    return Page();
-                }
-
-                // Spezialfälle zuerst prüfen
+                // testSwtche um schenller auf seiten zu kommen
                 switch (GamePin)
                 {
-                    case "111":
+                    case 111:
                         return RedirectToPage("/Admin/DatabaseCheck");
-                    case "2":
+                    case 2:
                         return RedirectToPage("/Admin/FrageboegenErstellen");
-                    case "3":
+                    case 3:
                         return RedirectToPage("/Admin/Frageerstellen");
-                    case "123":
+                    case 123:
                         return RedirectToPage("/testPages/startPage");
                 }
 
@@ -61,8 +53,8 @@ namespace KahootTransnetBW.Pages
                 using var reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    //HttpContext.Session.SetString("GamePin", GamePin);    einschreiben in den httpContext 
-                    return RedirectToPage("/1Viewer/Playground", new { gamePin = GamePin, index = 0 });
+                    HttpContext.Session.SetInt32("GameNumber", GamePin);
+                    return RedirectToPage("/1Viewer/NameConfirmation");
                 }
                 else
                 {

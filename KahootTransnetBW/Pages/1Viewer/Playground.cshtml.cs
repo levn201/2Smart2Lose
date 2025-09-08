@@ -5,6 +5,7 @@ using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI;
 using System.Net.NetworkInformation;
 using System.Web;
+using Microsoft.AspNetCore.Http;
 
 
 
@@ -19,10 +20,7 @@ namespace KahootTransnetBW.Pages._1Viewer
         public List<FragenChecknerModel> FragenChecken { get; set; } = new();
 
 
-        [BindProperty(SupportsGet = true)]
         public int GamePin { get; set; }
-
-        [BindProperty(SupportsGet = true)]
         public string UserName { get; set; }
 
 
@@ -34,27 +32,32 @@ namespace KahootTransnetBW.Pages._1Viewer
 
         public int playerPoints { get; set; }
 
-        
+
         public string ErrorMessage { get; set; }
         public string SuccessMessage { get; set; }
 
-        
+
 
 
         // Erst geladen                     => Lädt aktuellen Offset und GamePin
-        public void OnGet(int currentOffset, int gamePin)
+        public void OnGet(int currentOffset)
         {
-            CurrentOffset = currentOffset;
-            GamePin = gamePin;
+            loadHTTP();
 
-            // UserName = HttpContext.Session.GetString("Name");    auslesen aus dem httpContext
+            CurrentOffset = currentOffset;
 
             QuestionCount = HowManyQuestions();
             LadeFrage(currentOffset);
-
         }
 
-        // Check Fragen                     => Wie viele Fragen enthält der Fragebogen
+        // Lädt HTTP                        => Nimmt werte aus dem HTTP Sessions und schreibt in die Properties 
+        private void loadHTTP()
+        {
+            GamePin = HttpContext.Session.GetInt32("GameNumber") ?? 0;      //GamePin = gamePin kann weg da jetzt egal wie oft man lädt der bin in GamenUmber drinne steht. 
+            UserName = HttpContext.Session.GetString("Name") ?? "";
+        }
+
+        // Wie viele Fragen                 => Wie viele Fragen enthält der Fragebogen
         public int HowManyQuestions()
         {
             var db = new SQLconnection.DatenbankZugriff();
@@ -123,45 +126,20 @@ namespace KahootTransnetBW.Pages._1Viewer
         public IActionResult OnPostNextQuestion()
         {
             CurrentOffset++;
-            // Gibt immer die werte nach dem hoch setzten 
-            return RedirectToPage(new { GamePin = GamePin, CurrentOffset = CurrentOffset });
+            return RedirectToPage(new { CurrentOffset = CurrentOffset });
         }
+
+
+
+        // gib girhub
+
+
+
+        // NOCH IN NICHT FERTIG 
 
         // Button: ANTWORTEN PRÜFEN         => Checkt ob die antworten richtig sind 
         public IActionResult OnPostCheckAnswer()
         {
-            // Wichtig: Frage erneut laden, damit die Werte nicht verloren gehen
-            LadeFrage(CurrentOffset);
-
-            // Überprüfen ob eine Frage geladen wurde
-            if (FragenChecken.Count == 0)
-            {
-                ErrorMessage = "Keine Frage gefunden.";
-                return Page();
-            }
-
-            var dbFrage = FragenChecken[0]; 
-            bool isCorrect = false;
-
-            // Überprüfen ob die Benutzerantworten mit den richtigen Antworten übereinstimmen
-            if (dbFrage.DB_IstAntwort1Richtig == UserAnswer.C_IstAntwort1Richtig &&
-                dbFrage.DB_IstAntwort2Richtig == UserAnswer.C_IstAntwort2Richtig &&
-                dbFrage.DB_IstAntwort3Richtig == UserAnswer.C_IstAntwort3Richtig &&
-                dbFrage.DB_IstAntwort4Richtig == UserAnswer.C_IstAntwort4Richtig)
-            {
-                isCorrect = true;
-                SuccessMessage = "Richtig! Alle Antworten sind korrekt.";
-                ErrorMessage = null; 
-            }
-            else
-            {
-                ErrorMessage = "Falsch! Bitte überprüfen Sie Ihre Antworten.";
-                SuccessMessage = null; 
-            }
-
-
-            // SpeichereAntwortErgebnis(GamePin, CurrentOffset, isCorrect);
-
             return Page();
         }
 
@@ -172,10 +150,19 @@ namespace KahootTransnetBW.Pages._1Viewer
             using var connection = db.GetConnection();
             connection.Open();
 
+            string query = @"INSERT INTO playerpoints (User_Nickname, SessionPints, GamePin) 
+                     VALUES (@name, @points, @pin);";
 
-            // Hier wird geckeckt ob die antowrten richtig sind 
-            return Page();
+            using var cmd = new MySqlCommand(query, connection);
+            cmd.Parameters.AddWithValue("@pin", GamePin);
+            cmd.Parameters.AddWithValue("@points", playerPoints);
+            cmd.Parameters.AddWithValue("@name", UserName);
+
+            cmd.ExecuteNonQuery(); // <--- Daten werden hier gespeichert
+
+            return RedirectToPage("/1Viewer/FinalResult");
         }
+
 
         public class FragenChecknerModel
         {

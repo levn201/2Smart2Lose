@@ -13,8 +13,10 @@
         <a href="/Index">Quit</a>
     </nav>
 </header>
-a
-<h2>Fragen aus der Datenbank</h2>
+
+
+<!-- Test bereich -->
+<h3> @Model.UserName </h3>
 
 <form method="post">
     <input type="hidden" asp-for="CurrentOffset" />
@@ -25,12 +27,7 @@ a
         <p>Frage @(Model.CurrentOffset + 1) von @Model.QuestionCount</p>
     </div>
 
-    <div class="error-message">@Model.ErrorMessage</div>
-
-    <div class="success-message">@Model.SuccessMessage</div>
-
-    <p id="">Fragen ID: @Model.GamePin</p>
-
+    <!-- fragen Cards werden rein geladen mit Checkboxen  -->
     @if (Model.FragenChecken.Any())
     {
         var frage = Model.FragenChecken.First();

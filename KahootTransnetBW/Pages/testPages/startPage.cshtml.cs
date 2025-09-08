@@ -7,7 +7,8 @@ namespace KahootTransnetBW.Pages.testPages
     public class startPageModel : PageModel
     {
         [BindProperty]
-        public int testNumber { get; set; } // [BindProperty] sorgt dafür, dass der Wert gebunden wird
+        public int testNumber { get; set; } 
+
 
         [BindProperty]
         public string testTitle { get; set; }
