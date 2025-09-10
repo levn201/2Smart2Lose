@@ -7,10 +7,6 @@ using System.Net.NetworkInformation;
 using System.Web;
 using Microsoft.AspNetCore.Http;
 
-
-
-
-
 namespace KahootTransnetBW.Pages._1Viewer
 {
     public class PlaygroundModel : PageModel
@@ -19,45 +15,45 @@ namespace KahootTransnetBW.Pages._1Viewer
         public FragenInputModel UserAnswer { get; set; } = new();
         public List<FragenChecknerModel> FragenChecken { get; set; } = new();
 
-
+        // ZUGANG AUF DIE GAMES 
         public int GamePin { get; set; }
         public string UserName { get; set; }
 
-
-
+        // FRAGEN SWITCHEN
         [BindProperty]
         public int CurrentOffset { get; set; }
         public int QuestionCount { get; set; }
 
 
-        public int playerPoints { get; set; }
+        // PRÜFEN DER ANTWORT 
+        public int PlayerPoints { get; set; }
+        public int RightAnswer {  get; set; }
+        public bool AnswerChecked { get; set; }
+        public bool AnswerCorrect { get; set; }
 
-
+        // MASSAGES
         public string ErrorMessage { get; set; }
         public string SuccessMessage { get; set; }
 
-
-
-
-        // Erst geladen                     => Lädt aktuellen Offset und GamePin
+        // Erst geladen
         public void OnGet(int currentOffset)
         {
             loadHTTP();
-
             CurrentOffset = currentOffset;
-
             QuestionCount = HowManyQuestions();
             LadeFrage(currentOffset);
         }
 
-        // Lädt HTTP                        => Nimmt werte aus dem HTTP Sessions und schreibt in die Properties 
+        // Lädt HTTP SESSIONS
         private void loadHTTP()
         {
-            GamePin = HttpContext.Session.GetInt32("GameNumber") ?? 0;      //GamePin = gamePin kann weg da jetzt egal wie oft man lädt der bin in GamenUmber drinne steht. 
+            GamePin = HttpContext.Session.GetInt32("GameNumber") ?? 0;
             UserName = HttpContext.Session.GetString("Name") ?? "";
+            PlayerPoints = HttpContext.Session.GetInt32("PlayerPoints") ?? 0;
+            RightAnswer = HttpContext.Session.GetInt32("RightAnswer") ?? 0;
         }
 
-        // Wie viele Fragen                 => Wie viele Fragen enthält der Fragebogen
+        // Wie viele Fragen
         public int HowManyQuestions()
         {
             var db = new SQLconnection.DatenbankZugriff();
@@ -71,7 +67,7 @@ namespace KahootTransnetBW.Pages._1Viewer
             return Convert.ToInt32(cmd.ExecuteScalar());
         }
 
-        // Lädt Fragen                      => Lädt alle fragen nach dem offset
+        // Lädt Fragen
         private void LadeFrage(int offset)
         {
             FragenChecken.Clear();
@@ -122,47 +118,82 @@ namespace KahootTransnetBW.Pages._1Viewer
             QuestionCount = HowManyQuestions();
         }
 
-        // Button: NÄCHSTE                  => Geht zur nächsten Frage 
+        // Button: NÄCHSTE
         public IActionResult OnPostNextQuestion()
         {
+            loadHTTP();
             CurrentOffset++;
+
+            // Zurücksetzen des Prüfstatus
+            AnswerChecked = false;
+
             return RedirectToPage(new { CurrentOffset = CurrentOffset });
         }
 
-
-
-        // gib girhub
-
-
-
-        // NOCH IN NICHT FERTIG 
-
-        // Button: ANTWORTEN PRÜFEN         => Checkt ob die antworten richtig sind 
+        // Button: ANTWORTEN PRÜFEN
         public IActionResult OnPostCheckAnswer()
         {
+            loadHTTP();
+            LadeFrage(CurrentOffset);
+
+            var currentQuestion = FragenChecken[0];
+
+            bool isCorrect = false;
+
+            if (            UserAnswer.C_IstAntwort1Richtig == currentQuestion.DB_IstAntwort1Richtig &&
+                            UserAnswer.C_IstAntwort2Richtig == currentQuestion.DB_IstAntwort2Richtig &&
+                            UserAnswer.C_IstAntwort3Richtig == currentQuestion.DB_IstAntwort3Richtig &&
+                            UserAnswer.C_IstAntwort4Richtig == currentQuestion.DB_IstAntwort4Richtig)
+            {
+                isCorrect = true;
+            }
+
+            AnswerChecked = true;
+            AnswerCorrect = isCorrect;
+
+            if (isCorrect)
+            {
+                RightAnswer += 1;
+                PlayerPoints += 100 ;
+                HttpContext.Session.SetInt32("PlayerPoints", PlayerPoints);
+                HttpContext.Session.SetInt32("RightAnswer", RightAnswer);
+            }
+            else
+            {
+                PlayerPoints -= 5;
+                HttpContext.Session.SetInt32("PlayerPoints", PlayerPoints);
+            }
+
+
             return Page();
         }
 
-        // Button: QUIZZ BEENDEN            => Beendet nach der letzten Frage und speichert den stand 
+        // Button: QUIZZ BEENDEN
         public IActionResult OnPostFinishQuiz()
         {
+            loadHTTP();
+
+            PlayerPoints = HttpContext.Session.GetInt32("PlayerPoints") ?? 0;
+
             var db = new SQLconnection.DatenbankZugriff();
             using var connection = db.GetConnection();
             connection.Open();
 
-            string query = @"INSERT INTO playerpoints (User_Nickname, SessionPints, GamePin) 
-                     VALUES (@name, @points, @pin);";
+            string query = @"INSERT INTO playerpoints (User_Nickname, SessionPints, GamePin, CorrectAnswered, PossibleAnswers) 
+                VALUES (@name, @points, @pin, @correct, @possible);";
+
 
             using var cmd = new MySqlCommand(query, connection);
             cmd.Parameters.AddWithValue("@pin", GamePin);
-            cmd.Parameters.AddWithValue("@points", playerPoints);
+            cmd.Parameters.AddWithValue("@points", PlayerPoints);
             cmd.Parameters.AddWithValue("@name", UserName);
+            cmd.Parameters.AddWithValue("@Correct", RightAnswer);
+            cmd.Parameters.AddWithValue("@Possible", HowManyQuestions());
 
-            cmd.ExecuteNonQuery(); // <--- Daten werden hier gespeichert
+            cmd.ExecuteNonQuery();
 
             return RedirectToPage("/1Viewer/FinalResult");
         }
-
 
         public class FragenChecknerModel
         {

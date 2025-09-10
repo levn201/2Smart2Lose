@@ -31,18 +31,23 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    color: #fff; /* weiße Schrift */
+    font-weight: 600;
 }
 
     .antwort-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
 
-    .antwort-card.selected {
-        border-color: #28a745 !important;
-        background-color: #d4edda !important;
+    .antwort-card.selected,
+    .antwort-card.correct,
+    .antwort-card.incorrect {
+        color: #000 !important; 
+        font-weight: 600;
     }
 
+    .antwort-card.selected,
     .antwort-card.correct {
         border-color: #28a745 !important;
         background-color: #d4edda !important;
@@ -53,21 +58,36 @@
         background-color: #f8d7da !important;
     }
 
+
 .bg-1 {
-    background-color: #e3f2fd;
+    background-color: #ffecb3;
 }
+    .bg-1:hover {
+        background-color: #ffd54f;
+    }
 
 .bg-2 {
-    background-color: #f3e5f5;
+    background-color: #bbdefb;
 }
+    .bg-2:hover {
+        background-color: #64b5f6;
+    }
 
 .bg-3 {
-    background-color: #fff3e0;
+    background-color: #e1bee7;
 }
+    .bg-3:hover {
+        background-color: #ba68c8;
+    }
 
 .bg-4 {
-    background-color: #e8f5e8;
+    background-color: #d7ccc8;
 }
+    .bg-4:hover {
+        background-color: #a1887f;
+    }
+}
+
 
 .checkmark {
     width: 18px;

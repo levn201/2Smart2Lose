@@ -1,4 +1,4 @@
-﻿@page
+﻿ @page
 @model KahootTransnetBW.Pages._1Viewer.PlaygroundModel
 @{
     ViewData["Title"] = "Kahoot | Geb dein Bestes :D";
@@ -22,9 +22,10 @@
     <input type="hidden" asp-for="CurrentOffset" />
     <input type="hidden" asp-for="GamePin" />
 
-    <!-- Wie viele Fragen -->
+    <!-- Test anzeigen -->
     <div class="quiz-info">
         <p>Frage @(Model.CurrentOffset + 1) von @Model.QuestionCount</p>
+        <p>Punkte: @Model.PlayerPoints</p>
     </div>
 
     <!-- fragen Cards werden rein geladen mit Checkboxen  -->
@@ -36,30 +37,42 @@
 
             <h3>@frage.DB_Fragestellung</h3>
 
-            <!-- Vierecke mit clickern -->
+            <!-- Antworten und Fragen Cards -->
             <div class="antwort-grid">
-                <div class="antwort-card bg-1" onclick="selectAnswer(this)">
+
+                <div class="antwort-card bg-1 @(Model.AnswerChecked ? (frage.DB_IstAntwort1Richtig ? "correct-answer" : (Model.UserAnswer.C_IstAntwort1Richtig ? "wrong-answer" : "")) : "")"
+                     onclick="@(Model.AnswerChecked ? "" : "selectAnswer(this)")">
                     <input type="checkbox" class="checkmark"
                            asp-for="UserAnswer.C_IstAntwort1Richtig"
-                           onchange="updateSelection(this)" />
+                           onchange="updateSelection(this)"
+                           disabled="@Model.AnswerChecked" />
                     <label>@frage.DB_Antwort1</label>
                 </div>
-                <div class="antwort-card bg-2" onclick="selectAnswer(this)">
+
+                <div class="antwort-card bg-2 @(Model.AnswerChecked ? (frage.DB_IstAntwort2Richtig ? "correct-answer" : (Model.UserAnswer.C_IstAntwort2Richtig ? "wrong-answer" : "")) : "")"
+                     onclick="@(Model.AnswerChecked ? "" : "selectAnswer(this)")">
                     <input type="checkbox" class="checkmark"
                            asp-for="UserAnswer.C_IstAntwort2Richtig"
-                           onchange="updateSelection(this)" />
+                           onchange="updateSelection(this)"
+                           disabled="@Model.AnswerChecked" />
                     <label>@frage.DB_Antwort2</label>
                 </div>
-                <div class="antwort-card bg-3" onclick="selectAnswer(this)">
+
+                <div class="antwort-card bg-3 @(Model.AnswerChecked ? (frage.DB_IstAntwort3Richtig ? "correct-answer" : (Model.UserAnswer.C_IstAntwort3Richtig ? "wrong-answer" : "")) : "")"
+                     onclick="@(Model.AnswerChecked ? "" : "selectAnswer(this)")">
                     <input type="checkbox" class="checkmark"
                            asp-for="UserAnswer.C_IstAntwort3Richtig"
-                           onchange="updateSelection(this)" />
+                           onchange="updateSelection(this)"
+                           disabled="@Model.AnswerChecked" />
                     <label>@frage.DB_Antwort3</label>
                 </div>
-                <div class="antwort-card bg-4" onclick="selectAnswer(this)">
+
+                <div class="antwort-card bg-4 @(Model.AnswerChecked ? (frage.DB_IstAntwort4Richtig ? "correct-answer" : (Model.UserAnswer.C_IstAntwort4Richtig ? "wrong-answer" : "")) : "")"
+                     onclick="@(Model.AnswerChecked ? "" : "selectAnswer(this)")">
                     <input type="checkbox" class="checkmark"
                            asp-for="UserAnswer.C_IstAntwort4Richtig"
-                           onchange="updateSelection(this)" />
+                           onchange="updateSelection(this)"
+                           disabled="@Model.AnswerChecked" />
                     <label>@frage.DB_Antwort4</label>
                 </div>
             </div>
@@ -67,33 +80,33 @@
     }
 
 
-    <!-- Fragebereich -->
+    <!-- Butten unter den Antworten -->
     <div class="quiz-controls">
 
-        <!--
-            Button Prüfen soll da sein, nach dem Prüfen kann man zur nächsten Frage
-            Button Nächste Frage soll wenn geprüft wurde kommen
-            Button Beenden soll kommen wenn keien fragen mehr geladen werden können
-        -->
-
-        <!-- Antwort Prüfen Button - immer sichtbar -->
-        <button type="submit" asp-page-handler="CheckAnswer" class="btn btn-primary">
-            Antwort Prüfen
-        </button>
-
-        @if (Model.CurrentOffset + 1 < Model.HowManyQuestions())
+        @if (!Model.AnswerChecked)
         {
-            <button type="submit" asp-page-handler="NextQuestion" class="btn btn-success">
-                Nächste Frage
+            <!-- Antwort Prüfen Button -->
+            <button type="submit" asp-page-handler="CheckAnswer" class="btn btn-primary">
+                Antwort Prüfen
             </button>
         }
-
-        <!-- Quiz Beenden Button: Wenn es die letzte Frage ist -->
-        @if (Model.CurrentOffset + 1 == Model.HowManyQuestions())
+        else
         {
-            <button type="submit" asp-page-handler="FinishQuiz" class="btn btn-danger">
-                Quiz Beenden
-            </button>
+            <!-- Nächste Frage Button -->
+            @if (Model.CurrentOffset + 1 < Model.HowManyQuestions())
+            {
+                <button type="submit" asp-page-handler="NextQuestion" class="btn btn-success">
+                    Nächste Frage
+                </button>
+            }
+
+            <!-- Quiz Beenden Button -->
+            @if (Model.CurrentOffset + 1 == Model.HowManyQuestions())
+            {
+                <button type="submit" asp-page-handler="FinishQuiz" class="btn btn-danger">
+                    Quiz Beenden
+                </button>
+            }
         }
 
     </div>
@@ -138,7 +151,7 @@
 
 
 
-
+<!-- Für den CHeck mit Hintergrund ob die Antwort richtig ist oder nicht -->
 <script>
     function selectAnswer(cardElement) {
         const allCheckboxes = document.querySelectorAll('.checkmark');
@@ -174,3 +187,35 @@
         cb.addEventListener('click', e => e.stopPropagation());
     });
 </script>
+
+<style>
+    .correct-answer {
+        background-color: #28a745 !important;
+        color: white;
+        border: 3px solid #1e7e34;
+    }
+
+    .wrong-answer {
+        background-color: #dc3545 !important;
+        color: white;
+        border: 3px solid #bd2130;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        padding: 10px;
+        border-radius: 5px;
+        margin: 10px 0;
+        border: 1px solid #c3e6cb;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 5px;
+        margin: 10px 0;
+        border: 1px solid #f5c6cb;
+    }
+</style>
