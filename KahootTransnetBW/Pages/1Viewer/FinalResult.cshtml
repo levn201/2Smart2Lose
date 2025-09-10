@@ -15,6 +15,28 @@
 </header>
 
 
-<h1>Test zum Final Result</h1>
+<!-- Tabelle -->
+<table class="survey-table">
+    <thead>
+        <tr>
+            <th>Punkte</th>
+            <th>Name</th>
+            <th>Statistik</th>
+            <th>Erstellt am</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var list in Model.Player)
+        {
+            <tr>
+                <td>@list.Points</td>
+                <td>@list.Nickname</td>
+                <td>@list.korrekteFagen / @list.alleFragen</td>
+                <td>@list.Time.ToString("dd.MM.yyyy HH:mm")</td>
+
+            </tr>
+        }
+    </tbody>
+</table>
 
 <!-- hier sollte ein diagam rein an dem wir sehen wer die meisten punkte hat und in welchem rahmen mit vlt einem filter im nächsten monat und vlt von heute  -->

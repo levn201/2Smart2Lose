@@ -11,13 +11,16 @@ namespace KahootTransnetBW.Pages._1Viewer
 {
     public class PlaygroundModel : PageModel
     {
+        // LISTEN VON DEN PROPERTY GROUPS 
         [BindProperty]
         public FragenInputModel UserAnswer { get; set; } = new();
         public List<FragenChecknerModel> FragenChecken { get; set; } = new();
 
+
         // ZUGANG AUF DIE GAMES 
         public int GamePin { get; set; }
         public string UserName { get; set; }
+
 
         // FRAGEN SWITCHEN
         [BindProperty]
@@ -34,6 +37,10 @@ namespace KahootTransnetBW.Pages._1Viewer
         // MASSAGES
         public string ErrorMessage { get; set; }
         public string SuccessMessage { get; set; }
+
+
+
+
 
         // Erst geladen
         public void OnGet(int currentOffset)
@@ -74,7 +81,6 @@ namespace KahootTransnetBW.Pages._1Viewer
 
             if (offset >= HowManyQuestions())
             {
-                ErrorMessage = "Keine weiteren Fragen verfügbar.";
                 return;
             }
 
@@ -124,7 +130,6 @@ namespace KahootTransnetBW.Pages._1Viewer
             loadHTTP();
             CurrentOffset++;
 
-            // Zurücksetzen des Prüfstatus
             AnswerChecked = false;
 
             return RedirectToPage(new { CurrentOffset = CurrentOffset });
