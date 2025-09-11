@@ -30,6 +30,8 @@ namespace KahootTransnetBW.Pages._1Viewer
             public int alleFragen {  get; set; }
             public DateTime Time { get; set; }
         }
+
+        // Lädt Alle Werte der Spieler 
         public void loadPLayerList()
         {
             try

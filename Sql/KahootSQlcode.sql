@@ -51,3 +51,5 @@ CREATE TABLE Fragebogen (
     Titel TEXT NOT NULL,
     ErstelltAm DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+
