@@ -47,6 +47,20 @@
 </div>
 
 
+<form method="post">
+    <div class="filter-item">
+        <label asp-for="Filter">Filter</label>
+        <select asp-for="Filter" id="category" class="form-select" onchange="this.form.submit()">
+            <option value="">Alle Kategorien</option>
+            <option value="last24h">Letzten 24h</option>
+            <option value="all">Alle</option>
+        </select>
+    </div>
+</form>
+<!-- Möglickeiten wie: Meine Ergebnisse, Top 15-->
+
+
+
 <table class="survey-table">
     <thead>
         <tr>

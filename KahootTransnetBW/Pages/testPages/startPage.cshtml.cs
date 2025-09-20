@@ -17,6 +17,19 @@ namespace KahootTransnetBW.Pages.testPages
         {
         }
 
+
+
+        [BindProperty]
+        public string ComboResult { get; set; }
+
+        public void OnCombo()
+        {
+            // Hier landet der ausgewählte Wert nach Submit
+            var selectedValue = ComboResult;
+            // z.B. Debug-Ausgabe
+            Console.WriteLine($"Gewählt: {selectedValue}");
+        }
+
         public IActionResult OnPost()
         {
             HttpContext.Session.SetString("Title", testTitle);
