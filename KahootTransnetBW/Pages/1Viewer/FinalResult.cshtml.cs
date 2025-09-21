@@ -41,6 +41,11 @@ namespace KahootTransnetBW.Pages._1Viewer
             ORDER BY SessionPints DESC;";
 
 
+        public string PlaceOne { get; set; }
+        public string PlaceTwo { get; set; } 
+        public string PlaceThree { get; set; }
+
+
         // Start loader
         public void OnGet()
         {
@@ -49,6 +54,7 @@ namespace KahootTransnetBW.Pages._1Viewer
             DBquery = DefaultQuery;
             loadPLayerList();
         }
+
 
         // Filter nach allen und letzten 24 Stunden
         public IActionResult OnPost()
@@ -78,7 +84,7 @@ namespace KahootTransnetBW.Pages._1Viewer
         // Lädt Werte der Spieler 
         private void loadPLayerList()
         {
-            Player.Clear(); 
+            Player.Clear();
 
             try
             {
@@ -94,7 +100,7 @@ namespace KahootTransnetBW.Pages._1Viewer
                 {
                     Player.Add(new PlayerList
                     {
-                        Points = reader.GetInt32("SessionPints"), // Tippfehler bewusst so? (SessionPoints?)
+                        Points = reader.GetInt32("SessionPints"), 
                         Nickname = reader.GetString("User_Nickname"),
                         GamePin = reader.GetInt32("GamePin"),
                         korrekteFagen = reader.GetInt32("CorrectAnswered"),
@@ -102,11 +108,28 @@ namespace KahootTransnetBW.Pages._1Viewer
                         Time = reader.GetDateTime("saveTime")
                     });
                 }
+
+
+                var top3 = Player
+                    .OrderByDescending(p => p.Points)
+                    .Take(3)
+                    .Select(p => p.Nickname)
+                    .ToArray();
+
+                foreach (var name in top3)
+                {
+                    PlaceOne = top3[0];
+                    PlaceTwo = top3[1];
+                    PlaceThree = top3[2];
+                }
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Fehler beim Laden der Daten: {ex.Message}");
             }
         }
+
+
     }
 }
