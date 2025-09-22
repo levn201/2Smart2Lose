@@ -22,7 +22,6 @@ Create Table PlayerPoints(
     saveTime DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
-
 CREATE TABLE Fragen (
     ID INT AUTO_INCREMENT PRIMARY KEY,
     FragebogenID INT NOT NULL,
