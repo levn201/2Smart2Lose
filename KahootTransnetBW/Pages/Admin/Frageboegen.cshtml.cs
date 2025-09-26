@@ -9,9 +9,12 @@ namespace KahootTransnetBW.Pages.Admin
     {
         public void OnGet()
         {
+            //countResults();
             LadeAlleFrageboegen();
+            
         }
- 
+
+
         // Liste der Fragebögen
         public class FragebogenViewModel
         {
@@ -60,7 +63,8 @@ namespace KahootTransnetBW.Pages.Admin
                 connection.Open();
 
                 string query = "DELETE FROM Fragebogen WHERE Join_ID = @id;" + //Löschen aus der Titel und Fragebogen Datenbank 
-                                "DELETE FROM Fragen WHERE FragebogenID = @id";
+                                "DELETE FROM Fragen WHERE FragebogenID = @id;" + 
+                                "DELETE FROM playerpoints WHERE GAMEPIN = @id";
 
                 using var cmd = new MySqlCommand(query,connection);
                 cmd.Parameters.AddWithValue("@id", id);
@@ -78,6 +82,64 @@ namespace KahootTransnetBW.Pages.Admin
                 return StatusCode(500);
             }
         }
-    
+
+
+
+
+        // IN ARBEIT 
+        //----------
+
+
+
+
+
+        // Anschauen des Fragebogens
+        public IActionResult OnPostView(int id)
+        {
+            return Page();
+        }
+
+        // Bearbeiten des Fragebogens 
+        public IActionResult OnPostEdit(int id)
+        {
+            return Page();
+        }
+
+
+
+
+
+
+
+
+        // Für die noch freien Plätze in der Card
+        public int countResults()
+        {
+            var db = new SQLconnection.DatenbankZugriff();
+            using var connection = db.GetConnection();
+            connection.Open();
+
+            string query = @"SELECT COUNT(*) FROM PlayerPoints WHERE GamePin = @ID;";
+            using var cmd = new MySqlCommand(query, connection);
+
+            foreach (var fragebogen in Frageboegen)
+            {
+                cmd.Parameters.Clear();
+                cmd.Parameters.AddWithValue("@ID", fragebogen.JoinId);
+
+                var result = Convert.ToInt32(cmd.ExecuteScalar());
+                // weiterverarbeiten...
+                return result;
+            }
+
+            return 0;
+        }
+
+        // Hier wird geckeckt ob du dieses Quizz erstellt hast
+        public void checkCreater()
+        {
+
+        }
+
     }
 }

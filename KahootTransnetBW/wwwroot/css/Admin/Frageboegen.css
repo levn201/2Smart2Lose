@@ -1,49 +1,230 @@
-﻿
-/* ==========================================================================
-   FRAGEBOEGEN.CSS - Auflistung aller erstellten Fragebögen 
+﻿/* ==========================================================================
+   FRAGEBOEGEN.CSS - Card-basierte Darstellung aller erstellten Fragebögen 
    ========================================================================== */
 
-.survey-table {
-    margin-top: 2%; 
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.95rem;
+.survey-container {
+    margin-top: 2%;
+    padding: 1rem;
 }
 
-    .survey-table thead {
-        background-color: #e9eef1;
-        color: #00434e;
-        text-transform: uppercase;
-        font-weight: 600;
-        letter-spacing: 0.5px;
+.survey-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    max-width: 100%;
+}
+
+/* Responsive: Max 3 Spalten */
+@media (min-width: 768px) {
+    .survey-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        max-width: 100%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .survey-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.survey-card {
+    background-color: #ffffff;
+    border: 1px solid #dce3e8;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 67, 78, 0.08);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+    .survey-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 67, 78, 0.15);
+        border-color: #0c7485;
     }
 
-    .survey-table th,
-    .survey-table td {
-        padding: 1rem;
-        text-align: left;
-        border-bottom: 1px solid #dce3e8;
+    .survey-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #0c7485, #00434e);
     }
 
-    .survey-table tbody tr:hover {
-        background-color: #0c7485; 
+.survey-card-header {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f0f4f7;
+}
+
+.survey-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #00434e;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.4;
+}
+
+.survey-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.survey-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #5a6c75;
+}
+
+.survey-field-label {
+    font-weight: 500;
+    color: #00434e;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.8rem;
+}
+
+.survey-field-value {
+    color: #5a6c75;
+    font-weight: 400;
+}
+
+.survey-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+
+/*Buttons von jeder Card*/
+.survey-btn {
+    flex: 1;
+    background-color: transparent;
+    border: 1px solid #dce3e8;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    color: #00434e;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+    .survey-btn:hover {
+        background-color: #0c7485;
+        color: white;
+        border-color: #0c7485;
+        transform: translateY(-1px);
     }
 
-    .survey-table form {
-        display: inline;
+    .survey-btn.primary {
+        background-color: #0c7485;
+        color: white;
+        border-color: #0c7485;
     }
 
-    .survey-table button {
-        background-color: transparent;
-        border: none;
-        cursor: pointer;
-        font-size: 1.1rem;
-        padding: 0.4rem;
-        border-radius: 6px;
-        transition: background-color 0.2s ease, transform 0.2s ease;
-    }
-
-        .survey-table button:hover {
-            background-color: rgba(206, 220, 0, 0.2);  
-            transform: scale(1.1);   
+        .survey-btn.primary:hover {
+            background-color: #00434e;
+            border-color: #00434e;
         }
+
+    .survey-btn.danger {
+        border-color: #dc3545;
+        color: #dc3545;
+    }
+
+        .survey-btn.danger:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
+
+/* Status Badges */
+.survey-status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+    .survey-status.active {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .survey-status.draft {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .survey-status.closed {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+/* Empty State */
+.survey-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #5a6c75;
+}
+
+.survey-empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* Loading Animation */
+.survey-card.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+    .survey-card.loading::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+/* Mobile Optimierung */
+@media (max-width: 767px) {
+    .survey-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .survey-card {
+        padding: 1rem;
+    }
+
+    .survey-actions {
+        flex-direction: column;
+    }
+
+    .survey-btn {
+        flex: none;
+    }
+}

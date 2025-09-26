@@ -20,36 +20,69 @@
 
 
 
-<!-- Tabelle -->
-<table class="survey-table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Titel</th>
-            <th>Erstellt am</th>
-            <th>Aktionen</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var fragebogen in Model.Frageboegen)
-        {
-            <tr>
-                <td>@fragebogen.JoinId</td>
-                <td>@fragebogen.Titel</td>
-                <td>@fragebogen.ErstelltAm.ToString("dd.MM.yyyy HH:mm")</td>
-                <td>
-                    <!-- Bearbeiten-Button -->
-                    <form method="post" asp-action="Bearbeiten" asp-controller="Fragebogen" style="display:inline;">
-                        <input type="hidden" name="id" value="@fragebogen.JoinId" />
-                        <button type="submit">⚙️</button>
+
+
+
+<!-- card anzeige  -->
+@foreach (var fragebogen in Model.Frageboegen)
+{
+    <div class="survey-container">
+        <div class="survey-grid">
+
+            <div class="survey-card">
+                <div class="survey-card-header">
+                    <h3 class="survey-title">@fragebogen.Titel</h3>
+                </div>
+                <div class="survey-meta">
+                    <div class="survey-field">
+                        <span class="survey-field-label">Join Nummer:</span>
+                        <span class="survey-field-value">@fragebogen.JoinId</span>
+                    </div>
+                    <div class="survey-field">
+                        <span class="survey-field-label">Erstellt am:</span>
+                        <span class="survey-field-value">@fragebogen.ErstelltAm.ToString("dd.MM.yyyy")</span>
+                    </div>
+
+                    <!-- Status wechseln automatisch und auswählbar -->
+                    <div class="survey-field">
+                        <span class="survey-field-label">Kategorie:</span>
+                        <span class="survey-field-value">In Arbeit</span>
+                    </div>
+
+                    <!-- Wie viele Fragebögen wurde schon durchgeführt -->
+                    <div class="survey-field">
+                        <span class="survey-field-label">Antworten:</span>
+                        <span class="survey-field-value">In Arbeit</span>
+                    </div> 
+
+                    <!-- Kategorien mit einem DropDown Menü auswählbar -->
+                    <div class="survey-field">
+                        <span class="survey-field-label">Kategorie:</span>
+                        <span class="survey-field-value">In Arbeit</span>
+                    </div>
+                </div>
+                <div class="survey-actions">
+                    <form asp-action="Details" asp-route-id="@fragebogen.JoinId" method="get" style="display: inline;">
+                        <button type="submit" class="survey-btn primary">
+                            Anzeigen
+                        </button>
                     </form>
-                    <!-- Löschen-Button -->
+                    <form asp-action="Edit" asp-route-id="@fragebogen.JoinId" method="get" style="display: inline;">
+                        <button type="submit" class="survey-btn">
+                            Bearbeiten
+                        </button>
+                    </form>
+
+
                     <form method="post" asp-page-handler="Loeschen" style="display:inline;">
-                        <input type="hidden" name="id" value="@fragebogen.JoinId" />
-                        <button type="submit">🗑️</button>
+                        <input type="hidden" name="id" class="survey-btn danger" value="@fragebogen.JoinId" />
+                        <button type="submit" class="survey-btn danger">
+                            Löschen
+                        </button>
                     </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
