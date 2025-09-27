@@ -1,34 +1,39 @@
 ﻿/* ==========================================================================
-   FRAGEBOEGEN.CSS - Card-basierte Darstellung aller erstellten Fragebögen 
+   FRAGEBOGEN.CSS - Karten-Darstellung aller erstellten Fragebögen 
    ========================================================================== */
 
-.survey-container {
+/* ==========================================================================
+   FRAGEBOGEN CARD SECTION
+   ========================================================================== */
+
+.fragebogen-container {
     margin-top: 2%;
     padding: 1rem;
 }
 
-.survey-grid {
+/* Grid Layout */
+.fragebogen-gitter {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
     max-width: 100%;
+    grid-template-columns: 1fr; /* Mobile: 1 Card pro Reihe */
 }
 
-/* Responsive: Max 3 Spalten */
+/* Responsive Grid */
 @media (min-width: 768px) {
-    .survey-grid {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        max-width: 100%;
+    .fragebogen-gitter {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
-@media (min-width: 1200px) {
-    .survey-grid {
+@media (min-width: 1024px) {
+    .fragebogen-gitter {
         grid-template-columns: repeat(3, 1fr);
     }
 }
 
-.survey-card {
+/* Card Styling */
+.fragebogen-karte {
     background-color: #ffffff;
     border: 1px solid #dce3e8;
     border-radius: 12px;
@@ -39,13 +44,13 @@
     overflow: hidden;
 }
 
-    .survey-card:hover {
+    .fragebogen-karte:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 25px rgba(0, 67, 78, 0.15);
         border-color: #0c7485;
     }
 
-    .survey-card::before {
+    .fragebogen-karte::before {
         content: '';
         position: absolute;
         top: 0;
@@ -55,13 +60,14 @@
         background: linear-gradient(90deg, #0c7485, #00434e);
     }
 
-.survey-card-header {
+/* Card Header */
+.fragebogen-kopf {
     margin-bottom: 1rem;
     padding-bottom: 1rem;
     border-bottom: 1px solid #f0f4f7;
 }
 
-.survey-title {
+.fragebogen-titel {
     font-size: 1.2rem;
     font-weight: 600;
     color: #00434e;
@@ -69,13 +75,14 @@
     line-height: 1.4;
 }
 
-.survey-meta {
+/* Card Info */
+.fragebogen-info {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
 
-.survey-field {
+.fragebogen-feld {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -83,7 +90,7 @@
     color: #5a6c75;
 }
 
-.survey-field-label {
+.feld-label {
     font-weight: 500;
     color: #00434e;
     text-transform: uppercase;
@@ -91,112 +98,46 @@
     font-size: 0.8rem;
 }
 
-.survey-field-value {
+.feld-wert {
     color: #5a6c75;
     font-weight: 400;
 }
 
-.survey-actions {
+/* Card Actions */
+.fragebogen-aktionen {
     margin-top: 1.5rem;
     display: flex;
     justify-content: space-between;
-    gap: 0.5rem;
-}
-
-
-/*Buttons von jeder Card*/
-.survey-btn {
-    flex: 1;
-    background-color: transparent;
-    border: 1px solid #dce3e8;
-    cursor: pointer;
-    font-size: 0.9rem;
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-    color: #00434e;
-    font-weight: 500;
-    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
 }
 
-    .survey-btn:hover {
-        background-color: #0c7485;
-        color: white;
-        border-color: #0c7485;
-        transform: translateY(-1px);
-    }
-
-    .survey-btn.primary {
-        background-color: #0c7485;
-        color: white;
-        border-color: #0c7485;
-    }
-
-        .survey-btn.primary:hover {
-            background-color: #00434e;
-            border-color: #00434e;
-        }
-
-    .survey-btn.danger {
-        border-color: #dc3545;
-        color: #dc3545;
-    }
-
-        .survey-btn.danger:hover {
-            background-color: #dc3545;
-            color: white;
-        }
-
-
-/* Status Badges */
-.survey-status {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-    .survey-status.active {
-        background-color: #d4edda;
-        color: #155724;
-    }
-
-    .survey-status.draft {
-        background-color: #fff3cd;
-        color: #856404;
-    }
-
-    .survey-status.closed {
-        background-color: #f8d7da;
-        color: #721c24;
+    .fragebogen-aktionen form {
+        display: inline-block;
+        margin: 0;
     }
 
 /* Empty State */
-.survey-empty {
+.fragebogen-leer {
     text-align: center;
     padding: 3rem 1rem;
     color: #5a6c75;
 }
 
-.survey-empty-icon {
+.fragebogen-leer-icon {
     font-size: 3rem;
     margin-bottom: 1rem;
     opacity: 0.5;
 }
 
-/* Loading Animation */
-.survey-card.loading {
+/* Loading State */
+.fragebogen-karte.laden {
     opacity: 0.7;
     pointer-events: none;
 }
 
-    .survey-card.loading::after {
+    .fragebogen-karte.laden::after {
         content: '';
         position: absolute;
         top: 0;
@@ -209,22 +150,107 @@
         justify-content: center;
     }
 
-/* Mobile Optimierung */
+/* ==========================================================================
+   BUTTON STYLES
+   ========================================================================== */
+
+.knopf {
+    background-color: #00434e;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.25rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    min-width: 90px;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+}
+
+    .knopf:hover {
+        background-color: #003540;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .knopf:active {
+        transform: translateY(0);
+    }
+
+    /* Button Variants */
+    .knopf.haupt {
+        background-color: #007bff;
+        font-weight: 600;
+    }
+
+        .knopf.haupt:hover {
+            background-color: #0056b3;
+        }
+
+    .knopf.gefahr {
+        background-color: #dc3545;
+    }
+
+        .knopf.gefahr:hover {
+            background-color: #c82333;
+        }
+
+/* ==========================================================================
+   STATUS INDICATORS
+   ========================================================================== */
+
+.status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+    .status.aktiv {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .status.entwurf {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .status.geschlossen {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+/* ==========================================================================
+   RESPONSIVE DESIGN - MOBILE
+   ========================================================================== */
+
 @media (max-width: 767px) {
-    .survey-grid {
+    .fragebogen-gitter {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
 
-    .survey-card {
+    .fragebogen-karte {
         padding: 1rem;
     }
 
-    .survey-actions {
+    .fragebogen-aktionen {
         flex-direction: column;
+        gap: 0.5rem;
     }
 
-    .survey-btn {
-        flex: none;
-    }
+        .fragebogen-aktionen .knopf {
+            width: 100%;
+            min-width: auto;
+        }
 }

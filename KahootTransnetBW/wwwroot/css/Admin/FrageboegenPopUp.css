@@ -1,61 +1,304 @@
-﻿/* ========================================================================== 
-   FRAGEBOEGENPOPUP.CSS - Popup Design
+﻿/* ==========================================================================
+   FRAGEBOEGENPOPUP.CSS - Popup Design für Fragebogen anzeigen
    ========================================================================== */
 
+/* ==========================================================================
+   POPUP SECTION
+   ========================================================================== */
+
+/* Popup Overlay */
 .popup-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 67, 78, 0.8);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 2000;
+    backdrop-filter: blur(2px);
 }
 
+/* Popup Content Container */
 .popup-content {
-    background: #ffffff;
-    padding: 2rem;
+    background-color: #ffffff;
     border-radius: 10px;
-    width: 600px;
-    max-width: 90%;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    max-width: 900px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    animation: popupFadeIn 0.3s ease-out;
+}
+
+@keyframes popupFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Popup Header */
+.popup-header {
+    background-color: #00434e;
+    color: white;
+    padding: 1.5rem 2rem;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+    .popup-header h2 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: white;
+    }
+
+/* Close Button */
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+    .close-btn:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+/* Popup Body */
+.popup-body {
+    padding: 2rem;
     color: #00434e;
 }
 
-    .popup-content h2 {
-        margin-top: 0;
-        font-size: 1.4rem;
-        margin-bottom: 1rem;
-    }
-
-.button-row {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 1.5rem;
+/* Question Container */
+.frage-container {
+    margin-bottom: 2.5rem;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #00434e;
 }
 
-    .button-row button {
+    .frage-container:last-child {
+        margin-bottom: 0;
+    }
+
+    .frage-container h3 {
+        margin: 0 0 1rem 0;
+        color: #00434e;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+.frage-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    color: #00434e;
+    line-height: 1.4;
+}
+
+/* Answer Grid */
+.antwort-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+/* Answer Cards */
+.antwort-card {
+    padding: 1rem;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    background-color: white;
+    position: relative;
+}
+
+    .antwort-card.bg-1 {
+        border-left: 4px solid #007bff;
+    }
+
+    .antwort-card.bg-2 {
+        border-left: 4px solid #28a745;
+    }
+
+    .antwort-card.bg-3 {
+        border-left: 4px solid #ffc107;
+    }
+
+    .antwort-card.bg-4 {
+        border-left: 4px solid #dc3545;
+    }
+
+    /* Correct Answer Highlighting */
+    .antwort-card.richtige-antwort {
+        background-color: #d4edda;
+        border-color: #28a745;
+        border-width: 2px;
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+        border-left: 4px solid #28a745 !important;
+    }
+
+/* Checkbox Styling */
+.checkmark {
+    min-width: 20px;
+    height: 20px;
+    accent-color: #28a745;
+    cursor: default;
+}
+
+/* Answer Text */
+.antwort-text {
+    font-size: 1rem;
+    color: #00434e;
+    line-height: 1.3;
+    flex-grow: 1;
+}
+
+.richtige-antwort .antwort-text {
+    font-weight: 500;
+    color: #155724;
+}
+
+/* Button Row */
+.button-row {
+    padding: 1.5rem 2rem 2rem;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid #e9ecef;
+    background-color: #f8f9fa;
+    border-radius: 0 0 10px 10px;
+}
+
+    /* ==========================================================================
+   POPUP BUTTON STYLES
+   ========================================================================== */
+
+    .popup-body .knopf,
+    .button-row .knopf {
         background-color: #00434e;
         color: white;
         border: none;
-        padding: 0.6rem 1.2rem;
+        padding: 0.75rem 2rem;
         border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 500;
         cursor: pointer;
-        transition: background-color 0.2s ease, transform 0.2s ease;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        font-family: 'Inter', sans-serif;
     }
 
-        .button-row button:hover {
-            background-color: #006a7e;
-            transform: scale(1.05);
+        .popup-body .knopf:hover,
+        .button-row .knopf:hover {
+            background-color: #003540;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
-/* JoinID und Titelanzeige */
-.JoinID-anzeige,
-.fragtitel-anzeige {
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+        .popup-body .knopf:active,
+        .button-row .knopf:active {
+            transform: translateY(0);
+        }
+
+/* ==========================================================================
+   FALLBACK STYLES
+   ========================================================================== */
+
+/* Fallback for no questions in popup */
+.popup-body p {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin: 2rem 0;
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN - POPUP
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .popup-content {
+        width: 95%;
+        max-height: 90vh;
+    }
+
+    .popup-header {
+        padding: 1rem 1.5rem;
+    }
+
+        .popup-header h2 {
+            font-size: 1.2rem;
+        }
+
+    .popup-body {
+        padding: 1.5rem;
+    }
+
+    .frage-container {
+        padding: 1rem;
+    }
+
+    .antwort-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .button-row {
+        padding: 1rem 1.5rem 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .popup-content {
+        width: 98%;
+    }
+
+    .popup-header {
+        padding: 1rem;
+    }
+
+    .popup-body {
+        padding: 1rem;
+    }
+
+    .frage-container {
+        padding: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .antwort-card {
+        padding: 0.75rem;
+    }
 }

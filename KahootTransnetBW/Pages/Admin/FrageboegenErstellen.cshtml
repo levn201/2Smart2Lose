@@ -49,45 +49,76 @@
     <!-- Das Popup -->
     <div id="quizPopup" class="popup-overlay" style="display: none;">
         <form method="post" asp-page-handler="AddFrage" class="popup-content">
-            <!-- Übergibt JoinNumber und Titel korrekt an den Server -->
-            <input type="hidden" asp-for="JoinNumber" />
-            <input type="hidden" asp-for="Titel" />
-
-            <div class="JoinID-anzeige">@Model.JoinNumber</div>
-            <div class="fragtitel-anzeige">@Model.Titel</div>
-
-            <h2>Frage erstellen</h2>
-
-            <textarea name="Fragestellung" class="frage vollbreite" placeholder="Geben Sie hier die Frage ein"></textarea>
-
-            <div class="antwort-grid">
-                <div class="antwort-card bg-1">
-                    <input type="checkbox" name="IstAntwort1Richtig" value="true" class="checkmark" />
-                    <textarea name="Antwort1" placeholder="Antwortoption 1"></textarea>
-                </div>
-                <div class="antwort-card bg-2">
-                    <input type="checkbox" name="IstAntwort2Richtig" value="true" class="checkmark" />
-                    <textarea name="Antwort2" placeholder="Antwortoption 2"></textarea>
-                </div>
-                <div class="antwort-card bg-3">
-                    <input type="checkbox" name="IstAntwort3Richtig" value="true" class="checkmark" />
-                    <textarea name="Antwort3" placeholder="Antwortoption 3"></textarea>
-                </div>
-                <div class="antwort-card bg-4">
-                    <input type="checkbox" name="IstAntwort4Richtig" value="true" class="checkmark" />
-                    <textarea name="Antwort4" placeholder="Antwortoption 4"></textarea>
-                </div>
+            <!-- Popup Header -->
+            <div class="popup-header">
+                <h2>Frage erstellen</h2>
+                <button type="button" onclick="closeQuizPopup()" class="close-btn">&times;</button>
             </div>
 
+            <!-- Popup Body -->
+            <div class="popup-body">
+                <!-- Übergibt JoinNumber und Titel korrekt an den Server -->
+                <input type="hidden" asp-for="JoinNumber" />
+                <input type="hidden" asp-for="Titel" />
+
+                <!-- Quiz-Info Anzeige -->
+                <div class="frage-container">
+                    <div class="fragebogen-feld">
+                        <span class="feld-label">Join-Code:</span>
+                        <span class="feld-wert">@Model.JoinNumber</span>
+                    </div>
+                    <div class="fragebogen-feld">
+                        <span class="feld-label">Quiz-Titel:</span>
+                        <span class="feld-wert">@Model.Titel</span>
+                    </div>
+                </div>
+
+                <!-- Fragestellung -->
+                @* <div class="frage-container">
+                    
+                </div> *@
+
+                <!-- Antwortoptionen -->
+                <div class="frage-container">
+
+                    <h3>Fragestellung</h3>
+                    <textarea name="Fragestellung" class="frage-text" placeholder="Geben Sie hier die Frage ein" rows="3" style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; resize: vertical; font-family: inherit; font-size: 1rem;"></textarea>
+
+                    <h3>Antwortoptionen</h3>
+                    <div class="antwort-grid">
+                        <div class="antwort-card bg-1">
+                            <input type="checkbox" name="IstAntwort1Richtig" value="true" class="checkmark" />
+                            <textarea name="Antwort1" class="antwort-text" placeholder="Antwortoption 1" rows="2" style="border: none; background: transparent; resize: none; font-family: inherit;"></textarea>
+                        </div>
+                        <div class="antwort-card bg-2">
+                            <input type="checkbox" name="IstAntwort2Richtig" value="true" class="checkmark" />
+                            <textarea name="Antwort2" class="antwort-text" placeholder="Antwortoption 2" rows="2" style="border: none; background: transparent; resize: none; font-family: inherit;"></textarea>
+                        </div>
+                        <div class="antwort-card bg-3">
+                            <input type="checkbox" name="IstAntwort3Richtig" value="true" class="checkmark" />
+                            <textarea name="Antwort3" class="antwort-text" placeholder="Antwortoption 3" rows="2" style="border: none; background: transparent; resize: none; font-family: inherit;"></textarea>
+                        </div>
+                        <div class="antwort-card bg-4">
+                            <input type="checkbox" name="IstAntwort4Richtig" value="true" class="checkmark" />
+                            <textarea name="Antwort4" class="antwort-text" placeholder="Antwortoption 4" rows="2" style="border: none; background: transparent; resize: none; font-family: inherit;"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                @if (!string.IsNullOrEmpty(Model.FragenError))
+                {
+                    <div class="frage-container" style="background-color: #f8d7da; border-left-color: #dc3545;">
+                        <p style="color: #721c24; margin: 0; font-weight: 500;">@Model.FragenError</p>
+                    </div>
+                }
+            </div>
+
+            <!-- Button Row -->
             <div class="button-row">
-                <button type="submit">Frage speichern</button>
-                <button type="button" onclick="closeQuizPopup()">Abbrechen</button>
+                <button type="submit" class="knopf haupt">Add speichern</button>
+                <button type="button" onclick="closeQuizPopup()" class="knopf">Abbrechen</button>
             </div>
-
-            @if (!string.IsNullOrEmpty(Model.FragenError))
-            {
-                <p class="message">@Model.FragenError</p>
-            }
         </form>
     </div>
 

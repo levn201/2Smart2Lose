@@ -1,7 +1,8 @@
+using KahootTransnetBW.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
-using KahootTransnetBW.Model;
+using static KahootTransnetBW.Pages._1Viewer.PlaygroundModel;
 
 namespace KahootTransnetBW.Pages.Admin
 {
@@ -10,10 +11,12 @@ namespace KahootTransnetBW.Pages.Admin
         public void OnGet()
         {
             //countResults();
+            loadFragen();
             LadeAlleFrageboegen();
             
         }
 
+        public int GamePin { get; set; }
 
         // Liste der Fragebögen
         public class FragebogenViewModel
@@ -24,7 +27,27 @@ namespace KahootTransnetBW.Pages.Admin
         }
         public List<FragebogenViewModel> Frageboegen { get; set; } = new();
 
-        // Alle Fragebögen werden geladen 
+
+        public class FragenChecknerModel 
+            { 
+                public string DB_Fragestellung { get; set; } 
+                public string DB_Antwort1 { get; set; } 
+                public bool DB_IstAntwort1Richtig { get; set; } 
+                public string DB_Antwort2 { get; set; } 
+                public bool DB_IstAntwort2Richtig { get; set; } 
+                public string DB_Antwort3 { get; set; } 
+                public bool DB_IstAntwort3Richtig { get; set; } 
+                public string DB_Antwort4 { get; set; } 
+                public bool DB_IstAntwort4Richtig { get; set; } 
+            }
+        public List<FragenChecknerModel> FragenChecken { get; set; } = new();
+
+        public void loadFragen()
+        {
+            
+        }
+
+        // Alle Fragebögen werden geladen
         public void LadeAlleFrageboegen()
         {
             try
@@ -96,8 +119,65 @@ namespace KahootTransnetBW.Pages.Admin
         // Anschauen des Fragebogens
         public IActionResult OnPostView(int id)
         {
+            try
+            {
+                GamePin = id;
+                FragenChecken.Clear();
+
+                var db = new SQLconnection.DatenbankZugriff();
+                using var connection = db.GetConnection();
+                connection.Open();
+
+                const string query = @"
+            SELECT 
+                Fragestellung,
+                Antwort1, IstAntwort1Richtig,
+                Antwort2, IstAntwort2Richtig,
+                Antwort3, IstAntwort3Richtig,
+                Antwort4, IstAntwort4Richtig
+            FROM Fragen
+            WHERE FragebogenID = @ID
+            ORDER BY ID;";
+
+                using var cmd = new MySqlCommand(query, connection);
+                cmd.Parameters.AddWithValue("@ID", GamePin);
+
+                using var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    FragenChecken.Add(new FragenChecknerModel
+                    {
+                        DB_Fragestellung = reader.GetString("Fragestellung"),
+                        DB_Antwort1 = reader.GetString("Antwort1"),
+                        DB_IstAntwort1Richtig = reader.GetBoolean("IstAntwort1Richtig"),
+                        DB_Antwort2 = reader.GetString("Antwort2"),
+                        DB_IstAntwort2Richtig = reader.GetBoolean("IstAntwort2Richtig"),
+                        DB_Antwort3 = reader.GetString("Antwort3"),
+                        DB_IstAntwort3Richtig = reader.GetBoolean("IstAntwort3Richtig"),
+                        DB_Antwort4 = reader.GetString("Antwort4"),
+                        DB_IstAntwort4Richtig = reader.GetBoolean("IstAntwort4Richtig")
+                    });
+                }
+
+                // Setze das Flag für das Popup erst NACH dem Laden der Daten
+                ViewData["ShowViewPopup"] = true;
+
+                // Debug-Ausgabe (optional)
+                System.Diagnostics.Debug.WriteLine($"Loaded {FragenChecken.Count} questions for GamePin {GamePin}");
+            }
+            catch (Exception ex)
+            {
+                // Fehlerbehandlung
+                System.Diagnostics.Debug.WriteLine($"Error in OnPostView: {ex.Message}");
+                ViewData["ShowViewPopup"] = false;
+                // Optional: Fehlermeldung an View übergeben
+                ViewData["ErrorMessage"] = "Fehler beim Laden der Fragen.";
+            }
+
             return Page();
         }
+
 
         // Bearbeiten des Fragebogens 
         public IActionResult OnPostEdit(int id)

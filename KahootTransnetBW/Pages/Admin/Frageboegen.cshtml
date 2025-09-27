@@ -5,6 +5,7 @@
 }
 <link rel="stylesheet" href="~/css/Admin/GrundDashboard.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/Admin/Frageboegen.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Admin/FrageboegenPopUp.css" asp-append-version="true" />
 
 <!-- Header -->
 <header class="header">
@@ -19,70 +20,127 @@
 </header>
 
 
-
-
-
-
-<!-- card anzeige  -->
-@foreach (var fragebogen in Model.Frageboegen)
-{
-    <div class="survey-container">
-        <div class="survey-grid">
-
-            <div class="survey-card">
-                <div class="survey-card-header">
-                    <h3 class="survey-title">@fragebogen.Titel</h3>
+<h1> Space für den Filter funktionen</h1>
+<!-- Card anzeige  -->
+<div class="fragebogen-container">
+    <div class="fragebogen-gitter">
+        @foreach (var fragebogen in Model.Frageboegen)
+        {
+            <div class="fragebogen-karte">
+                <div class="fragebogen-kopf">
+                    <h3 class="fragebogen-titel">@fragebogen.Titel</h3>
                 </div>
-                <div class="survey-meta">
-                    <div class="survey-field">
-                        <span class="survey-field-label">Join Nummer:</span>
-                        <span class="survey-field-value">@fragebogen.JoinId</span>
+                <div class="fragebogen-info">
+                    <div class="fragebogen-feld">
+                        <span class="feld-label">Join Nummer:</span>
+                        <span class="feld-wert">@fragebogen.JoinId</span>
                     </div>
-                    <div class="survey-field">
-                        <span class="survey-field-label">Erstellt am:</span>
-                        <span class="survey-field-value">@fragebogen.ErstelltAm.ToString("dd.MM.yyyy")</span>
+                    <div class="fragebogen-feld">
+                        <span class="feld-label">Erstellt am:</span>
+                        <span class="feld-wert">@fragebogen.ErstelltAm.ToString("dd.MM.yyyy")</span>
                     </div>
-
-                    <!-- Status wechseln automatisch und auswählbar -->
-                    <div class="survey-field">
-                        <span class="survey-field-label">Kategorie:</span>
-                        <span class="survey-field-value">In Arbeit</span>
+                    <div class="fragebogen-feld">
+                        <span class="feld-label">Kategorie:</span>
+                        <span class="feld-wert">In Arbeit</span>
                     </div>
-
-                    <!-- Wie viele Fragebögen wurde schon durchgeführt -->
-                    <div class="survey-field">
-                        <span class="survey-field-label">Antworten:</span>
-                        <span class="survey-field-value">In Arbeit</span>
-                    </div> 
-
-                    <!-- Kategorien mit einem DropDown Menü auswählbar -->
-                    <div class="survey-field">
-                        <span class="survey-field-label">Kategorie:</span>
-                        <span class="survey-field-value">In Arbeit</span>
+                    <div class="fragebogen-feld">
+                        <span class="feld-label">Antworten:</span>
+                        <span class="feld-wert">In Arbeit</span>
+                    </div>
+                    <div class="fragebogen-feld">
+                        <span class="feld-label">Autor:</span>
+                        <span class="feld-wert">In Arbeit</span>
                     </div>
                 </div>
-                <div class="survey-actions">
-                    <form asp-action="Details" asp-route-id="@fragebogen.JoinId" method="get" style="display: inline;">
-                        <button type="submit" class="survey-btn primary">
-                            Anzeigen
-                        </button>
-                    </form>
-                    <form asp-action="Edit" asp-route-id="@fragebogen.JoinId" method="get" style="display: inline;">
-                        <button type="submit" class="survey-btn">
-                            Bearbeiten
-                        </button>
+                <div class="fragebogen-aktionen">
+                    <form method="post" asp-page-handler="View" style="display:inline;">
+                        <input type="hidden" name="id" value="@fragebogen.JoinId" />
+                        <button type="submit" class="knopf haupt">Anzeigen</button>
                     </form>
 
+                    <form method="post" asp-page-handler="Edit" style="display:inline;">
+                        <input type="hidden" name="id" value="@fragebogen.JoinId" />
+                        <button type="submit" class="knopf">Bearbeiten</button>
+                    </form>
 
                     <form method="post" asp-page-handler="Loeschen" style="display:inline;">
-                        <input type="hidden" name="id" class="survey-btn danger" value="@fragebogen.JoinId" />
-                        <button type="submit" class="survey-btn danger">
-                            Löschen
-                        </button>
+                        <input type="hidden" name="id" value="@fragebogen.JoinId" />
+                        <button type="submit" class="knopf gefahr">Löschen</button>
                     </form>
                 </div>
             </div>
+        }
+    </div>
+</div>
+
+
+
+
+
+<!-- View-Popup (AUSSERHALB der foreach-Schleife!) -->
+<div id="viewPopup" class="popup-overlay" style="display:none;">
+    <div class="popup-content">
+        <div class="popup-header">
+            <h2>Fragebogen anzeigen - ID: @Model.GamePin</h2>
+            <button type="button" class="close-btn" onclick="closeViewPopup()">×</button>
+        </div>
+
+        <div class="popup-body">
+            @if (Model.FragenChecken != null && Model.FragenChecken.Any())
+            {
+                @for (int i = 0; i < Model.FragenChecken.Count; i++)
+                {
+                    var frage = Model.FragenChecken[i];
+                    <div class="frage-container">
+                        <div class="frage-text">Frage @(i + 1): @frage.DB_Fragestellung</div>
+
+                        <div class="antwort-grid">
+                            <div class="antwort-card bg-1 @(frage.DB_IstAntwort1Richtig ? "richtige-antwort" : "")">
+                                <input type="checkbox" @(frage.DB_IstAntwort1Richtig ? "checked" : "") disabled class="checkmark" />
+                                <div class="antwort-text">@frage.DB_Antwort1</div>
+                            </div>
+                            <div class="antwort-card bg-2 @(frage.DB_IstAntwort2Richtig ? "richtige-antwort" : "")">
+                                <input type="checkbox" @(frage.DB_IstAntwort2Richtig ? "checked" : "") disabled class="checkmark" />
+                                <div class="antwort-text">@frage.DB_Antwort2</div>
+                            </div>
+                            <div class="antwort-card bg-3 @(frage.DB_IstAntwort3Richtig ? "richtige-antwort" : "")">
+                                <input type="checkbox" @(frage.DB_IstAntwort3Richtig ? "checked" : "") disabled class="checkmark" />
+                                <div class="antwort-text">@frage.DB_Antwort3</div>
+                            </div>
+                            <div class="antwort-card bg-4 @(frage.DB_IstAntwort4Richtig ? "richtige-antwort" : "")">
+                                <input type="checkbox" @(frage.DB_IstAntwort4Richtig ? "checked" : "") disabled class="checkmark" />
+                                <div class="antwort-text">@frage.DB_Antwort4</div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>Keine Fragen gefunden.</p>
+            }
         </div>
     </div>
-}
+</div>
 
+<script>
+    function openViewPopup() {
+        document.getElementById("viewPopup").style.display = "flex";
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeViewPopup() {
+        document.getElementById("viewPopup").style.display = "none";
+        document.body.style.overflow = "";
+    }
+</script>
+
+@* Auto-Open nach Post auf Handler View *@
+@if (ViewData["ShowViewPopup"] is bool show && show)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            openViewPopup();
+        });
+    </script>
+}
