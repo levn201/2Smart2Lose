@@ -12,13 +12,25 @@ namespace KahootTransnetBW.Pages
 
         public void OnGet()
         {
-           
+            projectName();
         }
 
         [BindProperty]
         public int GamePin { get; set; }
 
         public string ErrorMessage { get; set; }
+
+        public string ProjektName = "2SMART 2LOSE";
+
+
+
+
+
+        public void projectName()
+        {
+            HttpContext.Session.SetString("projectName", ProjektName);
+        }
+
 
 
         // Eingabe Feld => VErweis auf Seiten oder Login ins Spiel

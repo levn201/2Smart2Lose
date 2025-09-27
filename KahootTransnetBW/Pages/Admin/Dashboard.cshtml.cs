@@ -9,9 +9,10 @@ namespace KahootTransnetBW.Pages.Admin
     {
 
         public string StatusMessage { get; set; }
-
+        public string WebsiteName { get; set; }
         public void OnGet()
         {
+            WebsiteName = HttpContext.Session.GetString("projectName") ?? "";
             StatusMessage = "Bereit zum Testen.";
         }
         // Auslesen 

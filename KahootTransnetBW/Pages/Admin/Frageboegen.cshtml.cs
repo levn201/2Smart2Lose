@@ -9,14 +9,15 @@ namespace KahootTransnetBW.Pages.Admin
     public class FragebögenModel : PageModel
     {
         public void OnGet()
-        {
-            //countResults();
+        {   
+            WebsiteName = HttpContext.Session.GetString("projectName") ?? "";
             loadFragen();
             LadeAlleFrageboegen();
             
         }
 
         public int GamePin { get; set; }
+        public string WebsiteName { get; set; }
 
         // Liste der Fragebögen
         public class FragebogenViewModel

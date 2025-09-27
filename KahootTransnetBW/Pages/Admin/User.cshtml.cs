@@ -10,9 +10,11 @@ namespace KahootTransnetBW.Pages.Admin
     {
         public void OnGet()
         {
+            WebsiteName = HttpContext.Session.GetString("projectName") ?? "";
             GetAllUsers();
         }
 
+        public string WebsiteName { get; set; }
 
         // Liste der User
         public class User

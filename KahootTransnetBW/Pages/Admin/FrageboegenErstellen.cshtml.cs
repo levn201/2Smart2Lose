@@ -21,10 +21,12 @@ namespace KahootTransnetBW.Pages.Admin
         [BindProperty]
         public int FragebogenJoinId { get; set; }
 
+        public string WebsiteName { get; set; }
 
         // Macht JoinNumber gleich wie FragebogenID 
         public void OnGet()
         {
+            WebsiteName = HttpContext.Session.GetString("projectName") ?? "";
             FragebogenJoinId = JoinNumber;
         }
 
