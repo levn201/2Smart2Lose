@@ -11,24 +11,28 @@ namespace KahootTransnetBW.Pages.Admin
         public void OnGet()
         {   
             WebsiteName = HttpContext.Session.GetString("projectName") ?? "";
-            loadFragen();
             LadeAlleFrageboegen();
-            
         }
 
         public int GamePin { get; set; }
+        public int countPlayer { get; set; }
         public string WebsiteName { get; set; }
 
-        // Liste der Fragebögen
+
+
+        // DB Fragebogen TAbelle
         public class FragebogenViewModel
         {
             public int JoinId { get; set; }
             public string Titel { get; set; }
+            public string Autor { get; set; }
+            public string Kategorie { get; set; }
+
             public DateTime ErstelltAm { get; set; }
         }
         public List<FragebogenViewModel> Frageboegen { get; set; } = new();
 
-
+        // DB Fragen Tabelle
         public class FragenChecknerModel 
             { 
                 public string DB_Fragestellung { get; set; } 
@@ -43,10 +47,8 @@ namespace KahootTransnetBW.Pages.Admin
             }
         public List<FragenChecknerModel> FragenChecken { get; set; } = new();
 
-        public void loadFragen()
-        {
-            
-        }
+
+
 
         // Alle Fragebögen werden geladen
         public void LadeAlleFrageboegen()
@@ -57,7 +59,7 @@ namespace KahootTransnetBW.Pages.Admin
                 using var connection = db.GetConnection();
                 connection.Open();
 
-                string query = "SELECT Join_ID, Titel, ErstelltAm FROM Fragebogen ORDER BY Join_ID ASC;";
+                string query = "SELECT Join_ID, Titel, Autor, Kategorie, ErstelltAm FROM Fragebogen ORDER BY Join_ID ASC;";
                 using var cmd = new MySqlCommand(query, connection);
                 using var reader = cmd.ExecuteReader();
 
@@ -67,6 +69,8 @@ namespace KahootTransnetBW.Pages.Admin
                     {
                         JoinId = reader.GetInt32("Join_ID"),
                         Titel = reader.GetString("Titel"),
+                        Autor = reader.GetString("Autor"),
+                        Kategorie = reader.GetString("Kategorie"),
                         ErstelltAm = reader.GetDateTime("ErstelltAm")
                     });
                 }
@@ -107,19 +111,10 @@ namespace KahootTransnetBW.Pages.Admin
             }
         }
 
-
-
-
-        // IN ARBEIT 
-        //----------
-
-
-
-
-
-        // Anschauen des Fragebogens
+        // Anschauen Button 
         public IActionResult OnPostView(int id)
         {
+            countResults(id);
             try
             {
                 GamePin = id;
@@ -179,6 +174,34 @@ namespace KahootTransnetBW.Pages.Admin
             return Page();
         }
 
+        // Wie viele Ergbenisse gibt es
+        public void countResults(int id)
+        {
+            GamePin = id;
+            var db = new SQLconnection.DatenbankZugriff();
+            using var connection = db.GetConnection();
+            connection.Open();
+
+            string query = @"SELECT COUNT(*) FROM PlayerPoints WHERE GamePin = @ID;";
+            using var cmd = new MySqlCommand(query, connection);
+
+            int totalCount = 0;
+
+            foreach (var fragebogen in Frageboegen)
+            {
+                cmd.Parameters.Clear();
+                cmd.Parameters.AddWithValue("@ID", GamePin);
+
+                var result = Convert.ToInt32(cmd.ExecuteScalar());
+                countPlayer += result;
+            }
+        }
+
+
+
+
+
+
 
         // Bearbeiten des Fragebogens 
         public IActionResult OnPostEdit(int id)
@@ -193,28 +216,7 @@ namespace KahootTransnetBW.Pages.Admin
 
 
 
-        // Für die noch freien Plätze in der Card
-        public int countResults()
-        {
-            var db = new SQLconnection.DatenbankZugriff();
-            using var connection = db.GetConnection();
-            connection.Open();
-
-            string query = @"SELECT COUNT(*) FROM PlayerPoints WHERE GamePin = @ID;";
-            using var cmd = new MySqlCommand(query, connection);
-
-            foreach (var fragebogen in Frageboegen)
-            {
-                cmd.Parameters.Clear();
-                cmd.Parameters.AddWithValue("@ID", fragebogen.JoinId);
-
-                var result = Convert.ToInt32(cmd.ExecuteScalar());
-                // weiterverarbeiten...
-                return result;
-            }
-
-            return 0;
-        }
+        
 
         // Hier wird geckeckt ob du dieses Quizz erstellt hast
         public void checkCreater()

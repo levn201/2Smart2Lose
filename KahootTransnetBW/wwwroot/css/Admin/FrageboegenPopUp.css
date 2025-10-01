@@ -302,3 +302,143 @@
         padding: 0.75rem;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ==========================================================================
+   KATEGORIEN-DROPDOWN (SELECT)
+   ========================================================================== */
+
+/* Container + Label */
+.filter-item {
+    position: relative;
+    margin: 1rem 0 1.25rem;
+}
+
+    .filter-item label {
+        display: block;
+        font-weight: 600;
+        color: #00434e;
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.2px;
+    }
+
+/* Select: Grundstil */
+.form-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 100%;
+    padding: 0.9rem 3rem 0.9rem 1rem; /* Platz rechts für den Pfeil */
+    font-size: 1rem;
+    line-height: 1.2;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    background-color: #ffffff;
+    /* Pfeil + dezenter Verlauf als Hintergrund */
+    background-image:
+    /* Pfeil (Inline-SVG, damit keine externe Datei nötig ist) */
+    url("data:image/svg+xml;utf8,\
+        <svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2300434e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>\
+        <polyline points='6 9 12 15 18 9'/></svg>"), linear-gradient(#ffffff, #ffffff);
+    background-repeat: no-repeat, no-repeat;
+    background-position: right 0.9rem center, 0 0;
+    background-size: 20px 20px, 100% 100%;
+    color: #00434e;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.05s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    outline: none;
+    cursor: pointer;
+}
+
+    /* Hover */
+    .form-select:hover {
+        border-color: #d7dde2;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    }
+
+    /* Fokus: gut sichtbar & barrierearm */
+    .form-select:focus {
+        border-color: #2b7a86; /* etwas heller als #00434e */
+        box-shadow: 0 0 0 4px rgba(0, 67, 78, 0.15);
+    }
+
+    /* Aktiv-Klick (kleiner Tap-Effekt) */
+    .form-select:active {
+        transform: translateY(1px);
+    }
+
+    /* Disabled-Zustand */
+    .form-select:disabled {
+        background-color: #f4f6f7;
+        color: #7d8a8e;
+        border-color: #e3e7ea;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+    /* Fehlerzustand optional ergänzen, wenn Validierung fehlschlägt */
+    .form-select.is-invalid {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.12);
+    }
+
+    /* Kompakte Variante optional (wenn du sie brauchst) */
+    .form-select.form-select--sm {
+        padding: 0.6rem 2.5rem 0.6rem 0.8rem;
+        font-size: 0.95rem;
+        border-radius: 8px;
+    }
+
+/* Hell/Dunkel-Kontrast in farbigen Bereichen (falls Select in dunklem Header steht) */
+.popup-header .form-select,
+.popup-header .filter-item label {
+    color: #ffffff;
+}
+
+.popup-header .form-select {
+    background-color: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.25);
+    box-shadow: none;
+}
+
+    .popup-header .form-select:hover {
+        border-color: rgba(255,255,255,0.35);
+    }
+
+    .popup-header .form-select:focus {
+        border-color: #ffffff;
+        box-shadow: 0 0 0 4px rgba(255,255,255,0.18);
+        background-image: url("data:image/svg+xml;utf8,\
+        <svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>\
+        <polyline points='6 9 12 15 18 9'/></svg>"), linear-gradient(rgba(255,255,255,0.12), rgba(255,255,255,0.12));
+    }
+
+/* Optional: zarte animierte Umrandung beim Laden */
+@keyframes selectGlow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0,67,78,0.0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 4px rgba(0,67,78,0.08);
+    }
+}
+
+.form-select.appear {
+    animation: selectGlow 0.6s ease-out both;
+}

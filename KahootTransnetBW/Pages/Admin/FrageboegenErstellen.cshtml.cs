@@ -21,15 +21,22 @@ namespace KahootTransnetBW.Pages.Admin
         [BindProperty]
         public int FragebogenJoinId { get; set; }
 
+
+        [BindProperty]
+        public string CreaterName { get; set; }
+
+        [BindProperty]
+        public string Kategorie { get; set; } 
+
         public string WebsiteName { get; set; }
 
         // Macht JoinNumber gleich wie FragebogenID 
         public void OnGet()
         {
             WebsiteName = HttpContext.Session.GetString("projectName") ?? "";
+            Kategorie = HttpContext.Session.GetString("countFragen") ?? "";
             FragebogenJoinId = JoinNumber;
         }
-
 
         // Random Join Number wird einmal beim Titel einschrirben durchgeführt und übertragen 
         public int RandomNum()
@@ -62,8 +69,8 @@ namespace KahootTransnetBW.Pages.Admin
 
 
         // Titel Speichert und übertragen an das PopUp
-        public string loadError { get; set; }
         public string TitelError { get; set; }
+
 
         public IActionResult OnPost()
         {
@@ -75,17 +82,18 @@ namespace KahootTransnetBW.Pages.Admin
 
             try
             {
-  
                 JoinNumber = RandomNum(); // speichere die ID im Property
-
+                CreaterName = HttpContext.Session.GetString("createrName") ?? "";
                 var db = new SQLconnection.DatenbankZugriff();
                 using var connection = db.GetConnection();
                 connection.Open();
 
-                string query = "INSERT INTO Fragebogen (Titel, Join_ID) VALUES (@titel, @Join_ID)";
+                string query = "INSERT INTO Fragebogen (Titel, Join_ID, Autor, Kategorie) VALUES (@titel, @Join_ID, @Autor, @kategorie)";
                 using var cmd = new MySqlCommand(query, connection);
                 cmd.Parameters.AddWithValue("@titel", Titel);
                 cmd.Parameters.AddWithValue("@Join_ID", JoinNumber);
+                cmd.Parameters.AddWithValue("@Autor", CreaterName);
+                cmd.Parameters.AddWithValue("@kategorie", Kategorie);
 
                 cmd.ExecuteNonQuery();
 
@@ -203,5 +211,33 @@ namespace KahootTransnetBW.Pages.Admin
             }
         }
 
+
+
+
+        public IActionResult OnPostKategorie()
+        {
+            if (Kategorie == "Unternehmen")
+            {
+                Kategorie = "Unternehmen";
+                HttpContext.Session.SetString("kategorie", Kategorie);
+            }
+            else if (Kategorie == "Sicherheit")
+            {
+                Kategorie = "Sicherheit";
+                HttpContext.Session.SetString("kategorie", Kategorie);
+            }
+            else if (Kategorie == "Technik")
+            {
+                Kategorie = "Technik";
+                HttpContext.Session.SetString("kategorie", Kategorie);
+            }
+            else if (Kategorie == "Skills")
+            {
+                Kategorie = "Skills";
+                HttpContext.Session.SetString("kategorie", Kategorie);
+            }
+            
+            return Page();
+        }
     }
 }

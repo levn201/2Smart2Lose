@@ -12,7 +12,7 @@ namespace KahootTransnetBW.Pages
 
         public void OnGet()
         {
-            projectName();
+            HttpContext.Session.SetString("projectName", ProjektName);
         }
 
         [BindProperty]
@@ -20,16 +20,8 @@ namespace KahootTransnetBW.Pages
 
         public string ErrorMessage { get; set; }
 
-        public string ProjektName = "2SMART 2LOSE";
+        public string ProjektName = "2Smart2Lose";
 
-
-
-
-
-        public void projectName()
-        {
-            HttpContext.Session.SetString("projectName", ProjektName);
-        }
 
 
 
@@ -123,10 +115,12 @@ namespace KahootTransnetBW.Pages
 
                     if (role == "Creater")
                     {
+                        HttpContext.Session.SetString("createrName", Username);
                         return RedirectToPage("/Creater/DashboardCreater"); //Ansicht für Creater Ohne User USW 
                     }
                     else
                     {
+                        HttpContext.Session.SetString("createrName", Username);
                         return RedirectToPage("/Admin/Dashboard"); // Admin Bereich mit vollen berechtig
                     }
                 }
@@ -146,9 +140,6 @@ namespace KahootTransnetBW.Pages
                 ErrorMessage = $"Allgemeiner Fehler: {ex.Message}";
                 return Page();
             }
-
-            // ?? Fallback für alle anderen Fälle
-            return Page();
         }
 
 
