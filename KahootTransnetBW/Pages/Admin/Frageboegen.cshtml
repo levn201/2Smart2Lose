@@ -20,7 +20,7 @@
 </header>
 
 
-<h1> Space für den Filter funktionen</h1>
+<h1> Test1231241234214242143234 </h1>
 <!-- Card anzeige  -->
 <div class="fragebogen-container">
     <div class="fragebogen-gitter">
@@ -78,13 +78,60 @@
 
 
 <!-- View-Popup (AUSSERHALB der foreach-Schleife!) -->
+
+
+<script>
+    // View Popup
+    function openViewPopup() {
+        document.getElementById("viewPopup").style.display = "flex";
+        document.body.style.overflow = "hidden";
+    }
+    function closeViewPopup() {
+        document.getElementById("viewPopup").style.display = "none";
+        document.body.style.overflow = "";
+    }
+    // Edit Popup
+    function openEditPopup() {
+        document.getElementById("editPopup").style.display = "flex";
+        document.body.style.overflow = "hidden";
+    }
+    function closeEditPopup() {
+        document.getElementById("editPopup").style.display = "none";
+        document.body.style.overflow = "";
+    }
+</script>
+
+
+@if (ViewData["ShowViewPopup"] is bool showView && showView)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            openViewPopup();
+        });
+    </script>
+}
+
+
+
+@if (ViewData["ShowEditPopup"] is bool showEdit && showEdit)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            openEditPopup();
+        });
+    </script>
+}
+
+
+
+
+<!-- View Popup -->
 <div id="viewPopup" class="popup-overlay" style="display:none;">
     <div class="popup-content">
         <div class="popup-header">
             <h2>Fragebogen anzeigen - ID: @Model.GamePin</h2>
             <button type="button" class="close-btn" onclick="closeViewPopup()">×</button>
         </div>
-
         <div class="popup-body">
             @if (Model.FragenChecken != null && Model.FragenChecken.Any())
             {
@@ -93,7 +140,6 @@
                     var frage = Model.FragenChecken[i];
                     <div class="frage-container">
                         <div class="frage-text">Frage @(i + 1): @frage.DB_Fragestellung</div>
-
                         <div class="antwort-grid">
                             <div class="antwort-card bg-1 @(frage.DB_IstAntwort1Richtig ? "richtige-antwort" : "")">
                                 <input type="checkbox" @(frage.DB_IstAntwort1Richtig ? "checked" : "") disabled class="checkmark" />
@@ -123,24 +169,103 @@
     </div>
 </div>
 
-<script>
-    function openViewPopup() {
-        document.getElementById("viewPopup").style.display = "flex";
-        document.body.style.overflow = "hidden";
-    }
+<!-- Bearbeiten Popup -->
+<div id="editPopup" class="popup-overlay" style="display:none;">
+    <div class="popup-content">
+        <div class="popup-header">
+            <h2>Fragebogen bearbeiten - ID: @Model.GamePin</h2>
+            <button type="button" class="close-btn" onclick="closeEditPopup()">×</button>
+        </div>
+        <div class="popup-body">
+            <form method="post" asp-page-handler="SaveEdit">
+                <input type="hidden" name="fragebogenId" value="@Model.GamePin" />
 
-    function closeViewPopup() {
-        document.getElementById("viewPopup").style.display = "none";
-        document.body.style.overflow = "";
-    }
-</script>
+                @if (Model.FragenChecken != null && Model.FragenChecken.Any())
+                {
+                    @for (int i = 0; i < Model.FragenChecken.Count; i++)
+                    {
+                        var frage = Model.FragenChecken[i];
+                        <div class="frage-container">
+                            <div class="frage-input-group">
+                                <label>Frage @(i + 1):</label>
+                                <input type="text"
+                                       name="Fragen[@i].Fragestellung"
+                                       value="@frage.DB_Fragestellung"
+                                       class="frage-input"
+                                       required />
+                            </div>
 
-@* Auto-Open nach Post auf Handler View *@
-@if (ViewData["ShowViewPopup"] is bool show && show)
-{
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            openViewPopup();
-        });
-    </script>
-}
+                            <div class="antwort-grid">
+                                <div class="antwort-edit-card bg-1">
+                                    <input type="checkbox"
+                                           name="Fragen[@i].IstAntwort1Richtig"
+                                           value="true"
+                                           @(frage.DB_IstAntwort1Richtig ? "checked" : "")
+                                           class="checkmark-edit" />
+                                    <input type="hidden" name="Fragen[@i].IstAntwort1Richtig" value="false" />
+                                    <input type="text"
+                                           name="Fragen[@i].Antwort1"
+                                           value="@frage.DB_Antwort1"
+                                           class="antwort-input"
+                                           placeholder="Antwort 1"
+                                           required />
+                                </div>
+                                <div class="antwort-edit-card bg-2">
+                                    <input type="checkbox"
+                                           name="Fragen[@i].IstAntwort2Richtig"
+                                           value="true"
+                                           @(frage.DB_IstAntwort2Richtig ? "checked" : "")
+                                           class="checkmark-edit" />
+                                    <input type="hidden" name="Fragen[@i].IstAntwort2Richtig" value="false" />
+                                    <input type="text"
+                                           name="Fragen[@i].Antwort2"
+                                           value="@frage.DB_Antwort2"
+                                           class="antwort-input"
+                                           placeholder="Antwort 2"
+                                           required />
+                                </div>
+                                <div class="antwort-edit-card bg-3">
+                                    <input type="checkbox"
+                                           name="Fragen[@i].IstAntwort3Richtig"
+                                           value="true"
+                                           @(frage.DB_IstAntwort3Richtig ? "checked" : "")
+                                           class="checkmark-edit" />
+                                    <input type="hidden" name="Fragen[@i].IstAntwort3Richtig" value="false" />
+                                    <input type="text"
+                                           name="Fragen[@i].Antwort3"
+                                           value="@frage.DB_Antwort3"
+                                           class="antwort-input"
+                                           placeholder="Antwort 3"
+                                           required />
+                                </div>
+                                <div class="antwort-edit-card bg-4">
+                                    <input type="checkbox"
+                                           name="Fragen[@i].IstAntwort4Richtig"
+                                           value="true"
+                                           @(frage.DB_IstAntwort4Richtig ? "checked" : "")
+                                           class="checkmark-edit" />
+                                    <input type="hidden" name="Fragen[@i].IstAntwort4Richtig" value="false" />
+                                    <input type="text"
+                                           name="Fragen[@i].Antwort4"
+                                           value="@frage.DB_Antwort4"
+                                           class="antwort-input"
+                                           placeholder="Antwort 4"
+                                           required />
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>Keine Fragen gefunden.</p>
+                }
+
+                <div class="popup-footer">
+                    <button type="button" class="btn-secondary" onclick="closeEditPopup()">Abbrechen</button>
+                    <button type="submit" class="btn-primary">Speichern</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
