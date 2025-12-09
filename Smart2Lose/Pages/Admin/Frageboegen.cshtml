@@ -1,0 +1,271 @@
+﻿@page
+@model Smart2Lose.Pages.Admin.FragebögenModel
+@{
+    ViewData["Title"] = "Admin Dashboard - Fragebögen";
+}
+<link rel="stylesheet" href="~/css/Admin/GrundDashboard.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Admin/Frageboegen.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Admin/FrageboegenPopUp.css" asp-append-version="true" />
+
+<!-- Header -->
+<header class="header">
+    <div class="logo">@Model.pn.Name</div>
+    <nav class="nav-links">
+        <a href="/Admin/Dashboard">Dashboard</a>
+        <a href="/Admin/User">User</a>
+        <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
+        <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
+        <a href="/Index">Quit</a>
+    </nav>
+</header>
+
+
+<h1> Test1231241234214242143234 </h1>
+<!-- Card anzeige  -->
+<div class="fragebogen-container">
+    <div class="fragebogen-gitter">
+        @foreach (var fragebogen in Model.Frageboegen)
+        {
+            <div class="fragebogen-karte">
+                <div class="fragebogen-kopf">
+                    <h3 class="fragebogen-titel">@fragebogen.Titel</h3>
+                </div>
+                <div class="fragebogen-info">
+                    <div class="fragebogen-feld">
+                        <span class="feld-label">Join Nummer:</span>
+                        <span class="feld-wert">@fragebogen.JoinId</span>
+                    </div>
+                    <div class="fragebogen-feld">
+                        <span class="feld-label">Erstellt am:</span>
+                        <span class="feld-wert">@fragebogen.ErstelltAm.ToString("dd.MM.yyyy")</span>
+                    </div>
+                    <div class="fragebogen-feld">
+                        <span class="feld-label">Kategorie:</span>
+                        <span class="feld-wert">@fragebogen.Kategorie</span>
+                    </div>
+                    <div class="fragebogen-feld">
+                        <span class="feld-label">Antworten:</span>
+                        <span class="feld-wert">@Model.countPlayer</span>
+                    </div>
+                    <div class="fragebogen-feld">
+                        <span class="feld-label">Autor:</span>
+                        <span class="feld-wert">@fragebogen.Autor</span>
+                    </div>
+                </div>
+                <div class="fragebogen-aktionen">
+                    <form method="post" asp-page-handler="View" style="display:inline;">
+                        <input type="hidden" name="id" value="@fragebogen.JoinId" />
+                        <button type="submit" class="knopf haupt">Anzeigen</button>
+                    </form>
+
+                    <form method="post" asp-page-handler="Edit" style="display:inline;">
+                        <input type="hidden" name="id" value="@fragebogen.JoinId" />
+                        <button type="submit" class="knopf">Bearbeiten</button>
+                    </form>
+
+                    <form method="post" asp-page-handler="Loeschen" style="display:inline;">
+                        <input type="hidden" name="id" value="@fragebogen.JoinId" />
+                        <button type="submit" class="knopf gefahr">Löschen</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+
+
+
+<!-- View-Popup (AUSSERHALB der foreach-Schleife!) -->
+
+
+<script>
+    // View Popup
+    function openViewPopup() {
+        document.getElementById("viewPopup").style.display = "flex";
+        document.body.style.overflow = "hidden";
+    }
+    function closeViewPopup() {
+        document.getElementById("viewPopup").style.display = "none";
+        document.body.style.overflow = "";
+    }
+    // Edit Popup
+    function openEditPopup() {
+        document.getElementById("editPopup").style.display = "flex";
+        document.body.style.overflow = "hidden";
+    }
+    function closeEditPopup() {
+        document.getElementById("editPopup").style.display = "none";
+        document.body.style.overflow = "";
+    }
+</script>
+
+
+@if (ViewData["ShowViewPopup"] is bool showView && showView)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            openViewPopup();
+        });
+    </script>
+}
+
+
+
+@if (ViewData["ShowEditPopup"] is bool showEdit && showEdit)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            openEditPopup();
+        });
+    </script>
+}
+
+
+
+
+<!-- View Popup -->
+<div id="viewPopup" class="popup-overlay" style="display:none;">
+    <div class="popup-content">
+        <div class="popup-header">
+            <h2>Fragebogen anzeigen - ID: @Model.GamePin</h2>
+            <button type="button" class="close-btn" onclick="closeViewPopup()">×</button>
+        </div>
+        <div class="popup-body">
+            @if (Model.FragenChecken != null && Model.FragenChecken.Any())
+            {
+                @for (int i = 0; i < Model.FragenChecken.Count; i++)
+                {
+                    var frage = Model.FragenChecken[i];
+                    <div class="frage-container">
+                        <div class="frage-text">Frage @(i + 1): @frage.DB_Fragestellung</div>
+                        <div class="antwort-grid">
+                            <div class="antwort-card bg-1 @(frage.DB_IstAntwort1Richtig ? "richtige-antwort" : "")">
+                                <input type="checkbox" @(frage.DB_IstAntwort1Richtig ? "checked" : "") disabled class="checkmark" />
+                                <div class="antwort-text">@frage.DB_Antwort1</div>
+                            </div>
+                            <div class="antwort-card bg-2 @(frage.DB_IstAntwort2Richtig ? "richtige-antwort" : "")">
+                                <input type="checkbox" @(frage.DB_IstAntwort2Richtig ? "checked" : "") disabled class="checkmark" />
+                                <div class="antwort-text">@frage.DB_Antwort2</div>
+                            </div>
+                            <div class="antwort-card bg-3 @(frage.DB_IstAntwort3Richtig ? "richtige-antwort" : "")">
+                                <input type="checkbox" @(frage.DB_IstAntwort3Richtig ? "checked" : "") disabled class="checkmark" />
+                                <div class="antwort-text">@frage.DB_Antwort3</div>
+                            </div>
+                            <div class="antwort-card bg-4 @(frage.DB_IstAntwort4Richtig ? "richtige-antwort" : "")">
+                                <input type="checkbox" @(frage.DB_IstAntwort4Richtig ? "checked" : "") disabled class="checkmark" />
+                                <div class="antwort-text">@frage.DB_Antwort4</div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>Keine Fragen gefunden.</p>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Bearbeiten Popup -->
+<div id="editPopup" class="popup-overlay" style="display:none;">
+    <div class="popup-content">
+        <div class="popup-header">
+            <h2>Fragebogen bearbeiten - ID: @Model.GamePin</h2>
+            <button type="button" class="close-btn" onclick="closeEditPopup()">×</button>
+        </div>
+        <div class="popup-body">
+            <form method="post" asp-page-handler="SaveEdit">
+                <input type="hidden" name="fragebogenId" value="@Model.GamePin" />
+
+                @if (Model.FragenChecken != null && Model.FragenChecken.Any())
+                {
+                    @for (int i = 0; i < Model.FragenChecken.Count; i++)
+                    {
+                        var frage = Model.FragenChecken[i];
+                        <div class="frage-container">
+                            <div class="frage-input-group">
+                                <label>Frage @(i + 1):</label>
+                                <input type="text"
+                                       name="Fragen[@i].Fragestellung"
+                                       value="@frage.DB_Fragestellung"
+                                       class="frage-input"
+                                       required />
+                            </div>
+
+                            <div class="antwort-grid">
+                                <div class="antwort-edit-card bg-1">
+                                    <input type="checkbox"
+                                           name="Fragen[@i].IstAntwort1Richtig"
+                                           value="true"
+                                           @(frage.DB_IstAntwort1Richtig ? "checked" : "")
+                                           class="checkmark-edit" />
+                                    <input type="hidden" name="Fragen[@i].IstAntwort1Richtig" value="false" />
+                                    <input type="text"
+                                           name="Fragen[@i].Antwort1"
+                                           value="@frage.DB_Antwort1"
+                                           class="antwort-input"
+                                           placeholder="Antwort 1"
+                                           required />
+                                </div>
+                                <div class="antwort-edit-card bg-2">
+                                    <input type="checkbox"
+                                           name="Fragen[@i].IstAntwort2Richtig"
+                                           value="true"
+                                           @(frage.DB_IstAntwort2Richtig ? "checked" : "")
+                                           class="checkmark-edit" />
+                                    <input type="hidden" name="Fragen[@i].IstAntwort2Richtig" value="false" />
+                                    <input type="text"
+                                           name="Fragen[@i].Antwort2"
+                                           value="@frage.DB_Antwort2"
+                                           class="antwort-input"
+                                           placeholder="Antwort 2"
+                                           required />
+                                </div>
+                                <div class="antwort-edit-card bg-3">
+                                    <input type="checkbox"
+                                           name="Fragen[@i].IstAntwort3Richtig"
+                                           value="true"
+                                           @(frage.DB_IstAntwort3Richtig ? "checked" : "")
+                                           class="checkmark-edit" />
+                                    <input type="hidden" name="Fragen[@i].IstAntwort3Richtig" value="false" />
+                                    <input type="text"
+                                           name="Fragen[@i].Antwort3"
+                                           value="@frage.DB_Antwort3"
+                                           class="antwort-input"
+                                           placeholder="Antwort 3"
+                                           required />
+                                </div>
+                                <div class="antwort-edit-card bg-4">
+                                    <input type="checkbox"
+                                           name="Fragen[@i].IstAntwort4Richtig"
+                                           value="true"
+                                           @(frage.DB_IstAntwort4Richtig ? "checked" : "")
+                                           class="checkmark-edit" />
+                                    <input type="hidden" name="Fragen[@i].IstAntwort4Richtig" value="false" />
+                                    <input type="text"
+                                           name="Fragen[@i].Antwort4"
+                                           value="@frage.DB_Antwort4"
+                                           class="antwort-input"
+                                           placeholder="Antwort 4"
+                                           required />
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>Keine Fragen gefunden.</p>
+                }
+
+                <div class="popup-footer">
+                    <button type="button" class="btn-secondary" onclick="closeEditPopup()">Abbrechen</button>
+                    <button type="submit" class="btn-primary">Speichern</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

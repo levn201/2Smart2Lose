@@ -1,0 +1,85 @@
+﻿@page
+@model Smart2Lose.Pages._1Viewer.FinalResultModel
+@{
+    ViewData["Title"] = "Kahoot | How is the best";
+}
+
+<link rel="stylesheet" href="~/css/Playground/GrundViewer.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Playground/FinalResult.css" asp-append-version="true" />
+
+<header class="header">
+    <div class="logo">TRANS<span>NET</span> BW</div>
+    <nav class="nav-links">
+        <a href="/Index">Quit</a>
+    </nav>
+</header>
+
+
+<div class="podium-container">
+    <h1 class="podium-title">Siegerehrung</h1>
+
+    <div class="podium">
+
+        <div class="place">
+            <div class="platform second">2</div>
+            <div class="winner-name">
+                <div class="winner-title">Zweiter Platz</div>
+                @Model.PlaceTwo
+            </div>
+        </div>
+
+        <div class="place">
+            <div class="platform first">1</div>
+            <div class="winner-name">
+                <div class="winner-title">Gewinner</div>
+                @Model.PlaceOne
+            </div>
+        </div>
+
+        <div class="place">
+            <div class="platform third">3</div>
+            <div class="winner-name">
+                <div class="winner-title">Dritter Platz</div>
+                @Model.PlaceThree
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<form method="post">
+    <div class="filter-item">
+        <label asp-for="Filter">Filter</label>
+        <select asp-for="Filter" id="category" class="form-select" onchange="this.form.submit()">
+            <option value="">Alle Kategorien</option>
+            <option value="last24h">Letzten 24h</option>
+            <option value="all">Alle</option>
+        </select>
+    </div>
+</form>
+<!-- Möglickeiten wie: Meine Ergebnisse, Top 15-->
+
+
+
+<table class="survey-table">
+    <thead>
+        <tr>
+            <th>Punkte</th>
+            <th>Name</th>
+            <th>Statistik</th>
+            <th>Erstellt am</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var list in Model.Player)
+        {
+            <tr>
+                <td>@list.Points</td>
+                <td>@list.Nickname</td>
+                <td>@list.korrekteFagen / @list.alleFragen</td>
+                <td>@list.Time.ToString("dd.MM.yyyy HH:mm")</td>
+
+            </tr>
+        }
+    </tbody>
+</table>

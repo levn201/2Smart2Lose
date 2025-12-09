@@ -1,0 +1,42 @@
+﻿@page
+@model Smart2Lose.Pages._1Viewer.NameConfirmationModel
+@{
+    ViewData["Title"] = "Kahoot | Namen eingeben";
+}
+
+
+<link rel="stylesheet" href="~/css/Playground/GrundViewer.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Playground/NameConfirmation.css" asp-append-version="true" />
+
+
+<!-- Header -->
+<header class="header">
+    <div class="logo">TRANS<span>NET</span> BW</div>
+    <nav class="nav-links">
+        <a href="/Index">Quit</a>
+    </nav>
+</header>
+
+
+<!-- Nicknamen eingeben für die Bestenliste -->
+<div class="text-center">
+    <div class="main-content">
+        <h1>Gleich geht es los!</h1>
+        <p>Gib den Namen ein, um beizutreten:</p>
+
+        <form method="post">
+            <div class="input-group">
+                <input type="text" asp-for="Nickname" required placeholder="Wie darf man dich nennen" />
+                <button type="submit" asp-page-handler="LogName" class="btn btn-success">
+                    Nächste Frage
+                </button>
+            </div>
+        </form>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <p style="color: red;">@Model.ErrorMessage</p>
+        }
+    </div>
+
+</div>

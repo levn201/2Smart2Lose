@@ -1,0 +1,42 @@
+﻿@page
+@model Smart2Lose.Pages.Admin.DashboardModel
+@{
+    ViewData["Title"] = "Kahoot | Admin Dashboard";
+}
+
+<link rel="stylesheet" href="~/css/Admin/GrundDashboard.css" asp-append-version="true" />
+
+<!-- Header -->
+<header class="header">
+    <div class="logo">@Model.pn.Name</div>
+    <nav class="nav-links">
+        <a href="/Admin/Dashboard">Dashboard</a>
+        <a href="/Admin/User">User</a>
+        <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
+        <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
+        <a href="/Index">Quit</a>
+    </nav>
+</header>
+
+<div class="main-content" id="users">
+    <h2>Verwaltungsbereich</h2>
+    <p>Hier hast du eine übersicht über alles was in diesem Programm passiert .</p>
+</div>
+
+
+<form method="post" asp-page-handler="TestVerbindung">
+    <button type="submit">Verbindung testen</button>
+</form>
+
+<form method="post" asp-page-handler="EintragHinzufuegen">
+    <button type="submit">Eintrag hinzufügen</button>
+</form>
+
+<form method="post" asp-page-handler="EintraegeAnzeigen">
+    <button type="submit">Einträge anzeigen</button>
+</form>
+
+<hr />
+
+<h3>Status:</h3>
+<pre>@Model.StatusMessage</pre>

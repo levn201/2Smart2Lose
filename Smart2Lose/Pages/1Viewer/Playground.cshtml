@@ -1,0 +1,207 @@
+﻿@page "{currentOffset:int?}"
+@model Smart2Lose.Pages._1Viewer.PlaygroundModel
+@{
+    ViewData["Title"] = "Kahoot | Geb dein Bestes :D";
+}
+
+<link rel="stylesheet" href="~/css/Playground/GrundViewer.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Playground/Playground.css" asp-append-version="true" />
+
+<header class="header">
+    <div class="logo">TRANS<span>NET</span> BW</div>
+    <nav class="nav-links">
+        <a href="/Index">Quit</a>
+    </nav>
+</header>
+
+<!-- Spielername -->
+<h3>@Model.sd.UserName</h3>
+
+<form method="post">
+
+    <!-- Hidden Offset zum Posten -->
+    <input type="hidden" name="currentOffset" value="@Model.CurrentOffset" />
+
+    <!-- Quiz Info -->
+    <div class="quiz-info">
+        <p>Frage @(Model.CurrentOffset + 1) von @Model.QuestionCount</p>
+        <p>Punkte: @Model.fp.PlayerPoints</p>
+    </div>
+
+    <!-- Fragenkarten -->
+    @if (Model.FragenChecken.Any())
+    {
+        var frage = Model.FragenChecken.First();
+
+        <div class="frage-block">
+
+            <h3>@frage.DB_Fragestellung</h3>
+
+            <div class="antwort-grid">
+
+                <!-- Antwort 1 -->
+                <div class="antwort-card bg-1 @(Model.fp.AnswerChecked
+                                         ? (frage.DB_IstAntwort1Richtig ? "correct-answer"
+                                         : (Model.UserAnswer.C_IstAntwort1Richtig ? "wrong-answer" : ""))
+                                         : "")"
+                 onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
+
+                    <input type="checkbox" class="checkmark"
+                           asp-for="UserAnswer.C_IstAntwort1Richtig"
+                           onchange="updateSelection(this)"
+                           disabled="@Model.fp.AnswerChecked" />
+                    <label>@frage.DB_Antwort1</label>
+                </div>
+
+                <!-- Antwort 2 -->
+                <div class="antwort-card bg-2 @(Model.fp.AnswerChecked
+                                     ? (frage.DB_IstAntwort2Richtig ? "correct-answer"
+                                     : (Model.UserAnswer.C_IstAntwort2Richtig ? "wrong-answer" : ""))
+                                     : "")"
+                 onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
+
+                    <input type="checkbox" class="checkmark"
+                           asp-for="UserAnswer.C_IstAntwort2Richtig"
+                           onchange="updateSelection(this)"
+                           disabled="@Model.fp.AnswerChecked" />
+                    <label>@frage.DB_Antwort2</label>
+                </div>
+
+                <!-- Antwort 3 -->
+                <div class="antwort-card bg-3 @(Model.fp.AnswerChecked
+                                     ? (frage.DB_IstAntwort3Richtig ? "correct-answer"
+                                     : (Model.UserAnswer.C_IstAntwort3Richtig ? "wrong-answer" : ""))
+                                     : "")"
+                 onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
+
+                    <input type="checkbox" class="checkmark"
+                           asp-for="UserAnswer.C_IstAntwort3Richtig"
+                           onchange="updateSelection(this)"
+                           disabled="@Model.fp.AnswerChecked" />
+                    <label>@frage.DB_Antwort3</label>
+                </div>
+
+                <!-- Antwort 4 -->
+                <div class="antwort-card bg-4 @(Model.fp.AnswerChecked
+                                     ? (frage.DB_IstAntwort4Richtig ? "correct-answer"
+                                     : (Model.UserAnswer.C_IstAntwort4Richtig ? "wrong-answer" : ""))
+                                     : "")"
+                 onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
+
+                    <input type="checkbox" class="checkmark"
+                           asp-for="UserAnswer.C_IstAntwort4Richtig"
+                           onchange="updateSelection(this)"
+                           disabled="@Model.fp.AnswerChecked" />
+                    <label>@frage.DB_Antwort4</label>
+                </div>
+
+            </div>
+        </div>
+        }
+
+    <!-- Buttons -->
+    <div class="quiz-controls">
+
+        @if (!Model.fp.AnswerChecked)
+        {
+            <button type="submit" asp-page-handler="CheckAnswer" class="btn btn-primary">
+                Antwort Prüfen
+            </button>
+        }
+        else
+        {
+            @if (Model.CurrentOffset + 1 < Model.QuestionCount)
+            {
+                <button type="submit" asp-page-handler="NextQuestion" class="btn btn-success">
+                    Nächste Frage
+                </button>
+            }
+
+            @if (Model.CurrentOffset + 1 == Model.QuestionCount)
+            {
+                <button type="submit" asp-page-handler="FinishQuiz" class="btn btn-danger">
+                    Quiz Beenden
+                </button>
+            }
+        }
+
+    </div>
+</form>
+
+
+<!-- ========================================================= -->
+<!-- JAVASCRIPT (komplett repariert + deiner Logik angepasst) -->
+<!-- ========================================================= -->
+
+<script>
+
+    // Klick auf Karte → Checkbox auswählen
+    function selectAnswer(cardElement) {
+        const allCheckboxes = document.querySelectorAll('.checkmark');
+        const allCards = document.querySelectorAll('.antwort-card');
+
+        // Alles zurücksetzen
+        allCards.forEach(card => card.classList.remove('selected'));
+        allCheckboxes.forEach(cb => cb.checked = false);
+
+        // Ausgewählte Karte aktivieren
+        const currentCheckbox = cardElement.querySelector('.checkmark');
+        currentCheckbox.checked = true;
+        cardElement.classList.add('selected');
+    }
+
+    // Checkbox direkt angeklickt
+    function updateSelection(checkbox) {
+        const card = checkbox.closest('.antwort-card');
+
+        if (checkbox.checked) {
+
+            // alle anderen deaktivieren
+            document.querySelectorAll('.checkmark').forEach(cb => {
+                if (cb !== checkbox) cb.checked = false;
+            });
+
+            // Karten-Markierungen zurücksetzen
+            document.querySelectorAll('.antwort-card').forEach(c => {
+                if (c !== card) c.classList.remove('selected');
+            });
+
+            // aktuelle markieren
+            card.classList.add('selected');
+
+        } else {
+            card.classList.remove('selected');
+        }
+    }
+
+    // Checkbox-Klick nicht doppelt auslösen
+    document.querySelectorAll('.checkmark').forEach(cb => {
+        cb.addEventListener('click', e => e.stopPropagation());
+    });
+
+</script>
+
+
+<!-- ========================================================= -->
+<!-- Antwort-Farben -->
+<!-- ========================================================= -->
+
+<style>
+    .correct-answer {
+        background-color: #28a745 !important;
+        color: white;
+        border: 3px solid #1e7e34;
+    }
+
+    .wrong-answer {
+        background-color: #dc3545 !important;
+        color: white;
+        border: 3px solid #bd2130;
+    }
+
+    .selected {
+        border: 3px solid #0056b3 !important;
+        transform: scale(1.03);
+        transition: 0.2s ease;
+    }
+</style>
