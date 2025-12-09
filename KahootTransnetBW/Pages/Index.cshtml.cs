@@ -12,17 +12,17 @@ namespace KahootTransnetBW.Pages
 
         public void OnGet()
         {
-            HttpContext.Session.SetString("projectName", ProjektName);
         }
 
+
+        public projektName pn = new projektName();
+
+        public string ErrorMessage { get; set; } = string.Empty;
+
+
+
         [BindProperty]
-        public int GamePin { get; set; }
-
-        public string ErrorMessage { get; set; }
-
-        public string ProjektName = "2Smart2Lose";
-
-
+        public SpielDurchlauf session { get; set; } = new SpielDurchlauf();
 
 
         // Eingabe Feld => VErweis auf Seiten oder Login ins Spiel
@@ -31,7 +31,7 @@ namespace KahootTransnetBW.Pages
             try
             {
                 // testSwtche um schenller auf seiten zu kommen
-                switch (GamePin)
+                switch (session.GameID)
                 {
                     case 111:
                         return RedirectToPage("/Admin/DatabaseCheck");
@@ -50,14 +50,14 @@ namespace KahootTransnetBW.Pages
 
                 string query = "SELECT Join_ID FROM Fragebogen WHERE Join_ID = @joinID";
                 using var cmd = new MySqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@joinID", GamePin);
+                cmd.Parameters.AddWithValue("@joinID", session.GameID);
 
 
 
                 using var reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    HttpContext.Session.SetInt32("GameNumber", GamePin);
+                    HttpContext.Session.SetInt32("GameNumber", session.GameID);
                     return RedirectToPage("/1Viewer/NameConfirmation");
                 }
                 else
@@ -78,22 +78,15 @@ namespace KahootTransnetBW.Pages
             }
         }
 
-        
-
-
-        //Anmelde Fenster 
         [BindProperty]
-        public string Username { get; set; }
-
-        [BindProperty]
-        public string Password { get; set; }
+        public User loginU { get; set; } = new User();
 
         //Login zu den Dashboards 
         public IActionResult OnPostLoginRequired()
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
+                if (string.IsNullOrWhiteSpace(loginU.Username) || string.IsNullOrWhiteSpace(loginU.Password))
                 {
                     ErrorMessage = "Benutzername und Passwort dürfen nicht leer sein.";
                     return Page();
@@ -105,8 +98,8 @@ namespace KahootTransnetBW.Pages
 
                 string query = "SELECT * FROM DasboardUser WHERE Username = @username AND Password = @password";
                 using var cmd = new MySqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@username", Username);
-                cmd.Parameters.AddWithValue("@password", Password);
+                cmd.Parameters.AddWithValue("@username", loginU.Username);
+                cmd.Parameters.AddWithValue("@password", loginU.Password);
 
                 using var reader = cmd.ExecuteReader();
                 if (reader.Read())
@@ -115,12 +108,12 @@ namespace KahootTransnetBW.Pages
 
                     if (role == "Creater")
                     {
-                        HttpContext.Session.SetString("createrName", Username);
+                        HttpContext.Session.SetString("createrName", loginU.Username);
                         return RedirectToPage("/Creater/DashboardCreater"); //Ansicht für Creater Ohne User USW 
                     }
                     else
                     {
-                        HttpContext.Session.SetString("createrName", Username);
+                        HttpContext.Session.SetString("createrName", loginU.Username);
                         return RedirectToPage("/Admin/Dashboard"); // Admin Bereich mit vollen berechtig
                     }
                 }

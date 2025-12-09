@@ -10,58 +10,22 @@ namespace KahootTransnetBW.Pages.Admin
     {
         public void OnGet()
         {   
-            WebsiteName = HttpContext.Session.GetString("projectName") ?? "";
             LadeAlleFrageboegen();
         }
 
+
+        public projektName pn = new projektName(); // Projektname holen
         public int GamePin { get; set; }
         public int countPlayer { get; set; }
-        public string WebsiteName { get; set; }
-
-        // Aktualliserte Felder => für den bergleich mit den Datenbank einträgen 
-        public class FrageEditModel
-        {
-            public string Fragestellung { get; set; }
-            public string Antwort1 { get; set; }
-            public bool IstAntwort1Richtig { get; set; }
-            public string Antwort2 { get; set; }
-            public bool IstAntwort2Richtig { get; set; }
-            public string Antwort3 { get; set; }
-            public bool IstAntwort3Richtig { get; set; }
-            public string Antwort4 { get; set; }
-            public bool IstAntwort4Richtig { get; set; }
-        }
-        [BindProperty]
-        public List<FrageEditModel> Fragen { get; set; } = new();
-
         [BindProperty]
         public int FragebogenId { get; set; }
 
-        // DB Fragebogen TAbelle
-        public class FragebogenViewModel
-        {
-            public int JoinId { get; set; }
-            public string Titel { get; set; }
-            public string Autor { get; set; }
-            public string Kategorie { get; set; }
-            public DateTime ErstelltAm { get; set; }
-        }
-        public List<FragebogenViewModel> Frageboegen { get; set; } = new();
 
-        // DB Fragen Tabelle
-        public class FragenChecknerModel 
-            { 
-                public string DB_Fragestellung { get; set; } 
-                public string DB_Antwort1 { get; set; } 
-                public bool DB_IstAntwort1Richtig { get; set; } 
-                public string DB_Antwort2 { get; set; } 
-                public bool DB_IstAntwort2Richtig { get; set; } 
-                public string DB_Antwort3 { get; set; } 
-                public bool DB_IstAntwort3Richtig { get; set; } 
-                public string DB_Antwort4 { get; set; } 
-                public bool DB_IstAntwort4Richtig { get; set; } 
-            }
-        public List<FragenChecknerModel> FragenChecken { get; set; } = new();
+
+        [BindProperty]
+        public List<Fragen> Fragen { get; set; } = new(); // Fragen zum bearbeiten (Fragestellung, Antworten, Richtig/Falsch)
+        public List<Fragebogen> Frageboegen { get; set; } = new(); // DB Fragebogen (Titel, Autor, Kategorie, ErstelltAm)
+        public List<FragenDB> FragenChecken { get; set; } = new(); // DB Fragen Tabelle (Fragestellung, Antworten, Richtig/Falsch)
 
 
 
@@ -81,7 +45,7 @@ namespace KahootTransnetBW.Pages.Admin
 
                 while (reader.Read())
                 {
-                    Frageboegen.Add(new FragebogenViewModel
+                    Frageboegen.Add(new Fragebogen
                     {
                         JoinId = reader.GetInt32("Join_ID"),
                         Titel = reader.GetString("Titel"),
@@ -134,7 +98,7 @@ namespace KahootTransnetBW.Pages.Admin
 
                 while (reader.Read())
                 {
-                    FragenChecken.Add(new FragenChecknerModel
+                    FragenChecken.Add(new FragenDB
                     {
                         DB_Fragestellung = reader.GetString("Fragestellung"),
                         DB_Antwort1 = reader.GetString("Antwort1"),
@@ -222,7 +186,7 @@ namespace KahootTransnetBW.Pages.Admin
 
                 while (reader.Read())
                 {
-                    FragenChecken.Add(new FragenChecknerModel
+                    FragenChecken.Add(new FragenDB
                     {
                         DB_Fragestellung = reader.GetString("Fragestellung"),
                         DB_Antwort1 = reader.GetString("Antwort1"),
@@ -252,7 +216,7 @@ namespace KahootTransnetBW.Pages.Admin
         }
 
         // Card - Bearebiten Button => Speichern der editierten Fragen
-        public IActionResult OnPostSaveEdit(int fragebogenId, List<FrageEditModel> Fragen)
+        public IActionResult OnPostSaveEdit(int fragebogenId, List<Fragen> Fragen)
         {
             if (Fragen == null || !Fragen.Any())
             {

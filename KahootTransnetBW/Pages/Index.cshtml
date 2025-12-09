@@ -17,8 +17,8 @@
 
             <h2>Login</h2>
             <form method="post" asp-page-handler="LoginRequired">
-                <input type="text" asp-for="Username" required placeholder="Username" />
-                <input type="password" asp-for="Password" required placeholder="Passwort" />
+                <input type="text" asp-for="loginU.Username" required placeholder="Username" />
+                <input type="password" asp-for="loginU.Password" required placeholder="Passwort" />
                 <button type="submit">Einloggen</button>
                 @if (!string.IsNullOrEmpty(Model.ErrorMessage))
                 {
@@ -39,12 +39,12 @@
 
 
     <div class="main-content">
-        <h1>Willkommen bei @Model.ProjektName</h1>
+        <h1>Willkommen bei @Model.pn.Name</h1>
         <p>Gib den Game-PIN ein, um beizutreten:</p>
 
         <form method="post">
             <div class="input-group">
-                <input type="number" asp-for="GamePin" value="" required placeholder="Game-PIN eingeben" />
+                <input type="number" asp-for="session.GameID" value="" required placeholder="Game-PIN eingeben" />
                 <button type="submit">Beitreten</button>
             </div>
         </form>

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using static KahootTransnetBW.Model.SQLconnection;
+using KahootTransnetBW.Model;
 
 namespace KahootTransnetBW.Pages.Admin
 {
@@ -9,12 +10,16 @@ namespace KahootTransnetBW.Pages.Admin
     {
 
         public string StatusMessage { get; set; }
-        public string WebsiteName { get; set; }
         public void OnGet()
         {
-            WebsiteName = HttpContext.Session.GetString("projectName") ?? "";
             StatusMessage = "Bereit zum Testen.";
         }
+
+        public projektName pn = new projektName();
+
+
+
+
         // Auslesen 
         public void OnPostTestVerbindung()
         {

@@ -1,4 +1,4 @@
-﻿ @page
+﻿@page "{currentOffset:int?}"
 @model KahootTransnetBW.Pages._1Viewer.PlaygroundModel
 @{
     ViewData["Title"] = "Kahoot | Geb dein Bestes :D";
@@ -14,21 +14,21 @@
     </nav>
 </header>
 
-
-<!-- Test bereich -->
-<h3> @Model.UserName </h3>
+<!-- Spielername -->
+<h3>@Model.sd.UserName</h3>
 
 <form method="post">
-    <input type="hidden" asp-for="CurrentOffset" />
-    <input type="hidden" asp-for="GamePin" />
 
-    <!-- Test anzeigen -->
+    <!-- Hidden Offset zum Posten -->
+    <input type="hidden" name="currentOffset" value="@Model.CurrentOffset" />
+
+    <!-- Quiz Info -->
     <div class="quiz-info">
         <p>Frage @(Model.CurrentOffset + 1) von @Model.QuestionCount</p>
-        <p>Punkte: @Model.PlayerPoints</p>
+        <p>Punkte: @Model.fp.PlayerPoints</p>
     </div>
 
-    <!-- fragen Cards werden rein geladen mit Checkboxen  -->
+    <!-- Fragenkarten -->
     @if (Model.FragenChecken.Any())
     {
         var frage = Model.FragenChecken.First();
@@ -37,71 +37,87 @@
 
             <h3>@frage.DB_Fragestellung</h3>
 
-            <!-- Antworten und Fragen Cards -->
             <div class="antwort-grid">
 
-                <div class="antwort-card bg-1 @(Model.AnswerChecked ? (frage.DB_IstAntwort1Richtig ? "correct-answer" : (Model.UserAnswer.C_IstAntwort1Richtig ? "wrong-answer" : "")) : "")"
-                     onclick="@(Model.AnswerChecked ? "" : "selectAnswer(this)")">
+                <!-- Antwort 1 -->
+                <div class="antwort-card bg-1 @(Model.fp.AnswerChecked
+                                         ? (frage.DB_IstAntwort1Richtig ? "correct-answer"
+                                         : (Model.UserAnswer.C_IstAntwort1Richtig ? "wrong-answer" : ""))
+                                         : "")"
+                 onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
+
                     <input type="checkbox" class="checkmark"
                            asp-for="UserAnswer.C_IstAntwort1Richtig"
                            onchange="updateSelection(this)"
-                           disabled="@Model.AnswerChecked" />
+                           disabled="@Model.fp.AnswerChecked" />
                     <label>@frage.DB_Antwort1</label>
                 </div>
 
-                <div class="antwort-card bg-2 @(Model.AnswerChecked ? (frage.DB_IstAntwort2Richtig ? "correct-answer" : (Model.UserAnswer.C_IstAntwort2Richtig ? "wrong-answer" : "")) : "")"
-                     onclick="@(Model.AnswerChecked ? "" : "selectAnswer(this)")">
+                <!-- Antwort 2 -->
+                <div class="antwort-card bg-2 @(Model.fp.AnswerChecked
+                                     ? (frage.DB_IstAntwort2Richtig ? "correct-answer"
+                                     : (Model.UserAnswer.C_IstAntwort2Richtig ? "wrong-answer" : ""))
+                                     : "")"
+                 onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
+
                     <input type="checkbox" class="checkmark"
                            asp-for="UserAnswer.C_IstAntwort2Richtig"
                            onchange="updateSelection(this)"
-                           disabled="@Model.AnswerChecked" />
+                           disabled="@Model.fp.AnswerChecked" />
                     <label>@frage.DB_Antwort2</label>
                 </div>
 
-                <div class="antwort-card bg-3 @(Model.AnswerChecked ? (frage.DB_IstAntwort3Richtig ? "correct-answer" : (Model.UserAnswer.C_IstAntwort3Richtig ? "wrong-answer" : "")) : "")"
-                     onclick="@(Model.AnswerChecked ? "" : "selectAnswer(this)")">
+                <!-- Antwort 3 -->
+                <div class="antwort-card bg-3 @(Model.fp.AnswerChecked
+                                     ? (frage.DB_IstAntwort3Richtig ? "correct-answer"
+                                     : (Model.UserAnswer.C_IstAntwort3Richtig ? "wrong-answer" : ""))
+                                     : "")"
+                 onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
+
                     <input type="checkbox" class="checkmark"
                            asp-for="UserAnswer.C_IstAntwort3Richtig"
                            onchange="updateSelection(this)"
-                           disabled="@Model.AnswerChecked" />
+                           disabled="@Model.fp.AnswerChecked" />
                     <label>@frage.DB_Antwort3</label>
                 </div>
 
-                <div class="antwort-card bg-4 @(Model.AnswerChecked ? (frage.DB_IstAntwort4Richtig ? "correct-answer" : (Model.UserAnswer.C_IstAntwort4Richtig ? "wrong-answer" : "")) : "")"
-                     onclick="@(Model.AnswerChecked ? "" : "selectAnswer(this)")">
+                <!-- Antwort 4 -->
+                <div class="antwort-card bg-4 @(Model.fp.AnswerChecked
+                                     ? (frage.DB_IstAntwort4Richtig ? "correct-answer"
+                                     : (Model.UserAnswer.C_IstAntwort4Richtig ? "wrong-answer" : ""))
+                                     : "")"
+                 onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
+
                     <input type="checkbox" class="checkmark"
                            asp-for="UserAnswer.C_IstAntwort4Richtig"
                            onchange="updateSelection(this)"
-                           disabled="@Model.AnswerChecked" />
+                           disabled="@Model.fp.AnswerChecked" />
                     <label>@frage.DB_Antwort4</label>
                 </div>
+
             </div>
         </div>
-    }
+        }
 
-
-    <!-- Butten unter den Antworten -->
+    <!-- Buttons -->
     <div class="quiz-controls">
 
-        @if (!Model.AnswerChecked)
+        @if (!Model.fp.AnswerChecked)
         {
-            <!-- Antwort Prüfen Button -->
             <button type="submit" asp-page-handler="CheckAnswer" class="btn btn-primary">
                 Antwort Prüfen
             </button>
         }
         else
         {
-            <!-- Nächste Frage Button -->
-            @if (Model.CurrentOffset + 1 < Model.HowManyQuestions())
+            @if (Model.CurrentOffset + 1 < Model.QuestionCount)
             {
                 <button type="submit" asp-page-handler="NextQuestion" class="btn btn-success">
                     Nächste Frage
                 </button>
             }
 
-            <!-- Quiz Beenden Button -->
-            @if (Model.CurrentOffset + 1 == Model.HowManyQuestions())
+            @if (Model.CurrentOffset + 1 == Model.QuestionCount)
             {
                 <button type="submit" asp-page-handler="FinishQuiz" class="btn btn-danger">
                     Quiz Beenden
@@ -113,80 +129,62 @@
 </form>
 
 
+<!-- ========================================================= -->
+<!-- JAVASCRIPT (komplett repariert + deiner Logik angepasst) -->
+<!-- ========================================================= -->
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- Für den CHeck mit Hintergrund ob die Antwort richtig ist oder nicht -->
 <script>
+
+    // Klick auf Karte → Checkbox auswählen
     function selectAnswer(cardElement) {
         const allCheckboxes = document.querySelectorAll('.checkmark');
         const allCards = document.querySelectorAll('.antwort-card');
 
+        // Alles zurücksetzen
         allCards.forEach(card => card.classList.remove('selected'));
         allCheckboxes.forEach(cb => cb.checked = false);
 
+        // Ausgewählte Karte aktivieren
         const currentCheckbox = cardElement.querySelector('.checkmark');
         currentCheckbox.checked = true;
         cardElement.classList.add('selected');
     }
 
+    // Checkbox direkt angeklickt
     function updateSelection(checkbox) {
         const card = checkbox.closest('.antwort-card');
 
         if (checkbox.checked) {
+
+            // alle anderen deaktivieren
             document.querySelectorAll('.checkmark').forEach(cb => {
                 if (cb !== checkbox) cb.checked = false;
             });
 
+            // Karten-Markierungen zurücksetzen
             document.querySelectorAll('.antwort-card').forEach(c => {
                 if (c !== card) c.classList.remove('selected');
             });
 
+            // aktuelle markieren
             card.classList.add('selected');
+
         } else {
             card.classList.remove('selected');
         }
     }
 
+    // Checkbox-Klick nicht doppelt auslösen
     document.querySelectorAll('.checkmark').forEach(cb => {
         cb.addEventListener('click', e => e.stopPropagation());
     });
+
 </script>
+
+
+<!-- ========================================================= -->
+<!-- Antwort-Farben -->
+<!-- ========================================================= -->
 
 <style>
     .correct-answer {
@@ -201,21 +199,9 @@
         border: 3px solid #bd2130;
     }
 
-    .alert-success {
-        background-color: #d4edda;
-        color: #155724;
-        padding: 10px;
-        border-radius: 5px;
-        margin: 10px 0;
-        border: 1px solid #c3e6cb;
-    }
-
-    .alert-danger {
-        background-color: #f8d7da;
-        color: #721c24;
-        padding: 10px;
-        border-radius: 5px;
-        margin: 10px 0;
-        border: 1px solid #f5c6cb;
+    .selected {
+        border: 3px solid #0056b3 !important;
+        transform: scale(1.03);
+        transition: 0.2s ease;
     }
 </style>

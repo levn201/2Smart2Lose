@@ -9,7 +9,7 @@
 
 <!-- Header -->
 <header class="header">
-    <div class="logo">TRANS<span>NET</span> BW</div>
+    <div class="logo">@Model.pn.Name</div>
     <nav class="nav-links">
         <a href="/Admin/Dashboard">Dashboard</a>
         <a href="/Admin/User" class="active">User</a>
@@ -57,13 +57,13 @@
 
     <form method="post">
         <label>Benutzername:</label>
-        <input type="text" asp-for="Username" placeholder="Benutzernamen eingeben" />
+        <input type="text" asp-for="U.Username" placeholder="Benutzernamen eingeben" />
 
         <label>Passwort:</label>
-        <input type="password" asp-for="Password" placeholder="Passwort eingeben" />
+        <input type="password" asp-for="U.Password" placeholder="Passwort eingeben" />
 
         <label>Rolle wählen:</label>
-        <select asp-for="Role">
+        <select asp-for="U.Role">
             <option value="">Bitte wählen</option>
             <option value="Admin">Admin</option>
             <option value="Creater">Creater</option>

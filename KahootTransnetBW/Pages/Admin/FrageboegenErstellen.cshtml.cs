@@ -10,6 +10,12 @@ namespace KahootTransnetBW.Pages.Admin
 {
     public class FrageboegenErstellenModel : PageModel
     {
+        public projektName pn = new projektName(); // Projektname holen
+
+
+
+
+
 
 
         [BindProperty(SupportsGet = true)]
@@ -28,12 +34,9 @@ namespace KahootTransnetBW.Pages.Admin
         [BindProperty]
         public string Kategorie { get; set; } 
 
-        public string WebsiteName { get; set; }
-
         // Macht JoinNumber gleich wie FragebogenID 
         public void OnGet()
         {
-            WebsiteName = HttpContext.Session.GetString("projectName") ?? "";
             Kategorie = HttpContext.Session.GetString("countFragen") ?? "";
             FragebogenJoinId = JoinNumber;
         }

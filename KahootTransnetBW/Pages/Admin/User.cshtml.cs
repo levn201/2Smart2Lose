@@ -10,21 +10,16 @@ namespace KahootTransnetBW.Pages.Admin
     {
         public void OnGet()
         {
-            WebsiteName = HttpContext.Session.GetString("projectName") ?? "";
             GetAllUsers();
         }
 
-        public string WebsiteName { get; set; }
-
-        // Liste der User
-        public class User
-        {
-            public int ID { get; set; }
-            public string Username { get; set; }
-            public string Password { get; set; }
-            public string Role { get; set; }
-        }
         public List<User> UserList { get; set; } = new();
+
+        public string Message { get; set; } = string.Empty;
+
+        public projektName pn = new projektName(); // Projektname Klasse
+
+        public User U = new User();
 
 
         // Auslesen aller User 
@@ -85,20 +80,10 @@ namespace KahootTransnetBW.Pages.Admin
         }
 
 
-        // User Anlegen
-        [BindProperty]
-        public string Username { get; set; }
-        [BindProperty]
-        public string Password { get; set; }
-        [BindProperty]
-        public string Role { get; set; }
-        public string Message { get; set; }
-
-
         // Einschreiben neuer User 
         public IActionResult OnPost()
         {
-            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(Role))
+            if (string.IsNullOrWhiteSpace(U.Username) || string.IsNullOrWhiteSpace(U.Password) || string.IsNullOrWhiteSpace(U.Role))
             {
                 Message = "Alle Felder müssen ausgefüllt sein.";
                 return Page();
@@ -113,15 +98,15 @@ namespace KahootTransnetBW.Pages.Admin
                 string query = "INSERT INTO DasboardUser (Username, Password, Role) VALUES (@username, @password, @role);";
 
                 using var cmd = new MySqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@username", Username);
-                cmd.Parameters.AddWithValue("@password", Password); // Später bitte Passwort-Hash!
-                cmd.Parameters.AddWithValue("@role", Role);
+                cmd.Parameters.AddWithValue("@username", U.Username);
+                cmd.Parameters.AddWithValue("@password", U.Password);
+                cmd.Parameters.AddWithValue("@role", U.Role);
 
                 cmd.ExecuteNonQuery();
 
                 GetAllUsers();
 
-                Message = $"Benutzer erfolgreich als {Role} gespeichert.";
+                Message = $"Benutzer erfolgreich als {U.Role} gespeichert.";
                 return Page();
             }
             catch (MySqlException ex)

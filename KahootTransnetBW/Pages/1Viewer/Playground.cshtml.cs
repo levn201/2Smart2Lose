@@ -13,32 +13,22 @@ namespace KahootTransnetBW.Pages._1Viewer
     {
         // LISTEN VON DEN PROPERTY GROUPS 
         [BindProperty]
-        public FragenInputModel UserAnswer { get; set; } = new();
-        public List<FragenChecknerModel> FragenChecken { get; set; } = new();
+        public FragenInput UserAnswer { get; set; } = new();
+        public List<FragenDB> FragenChecken { get; set; } = new();
 
 
-        // ZUGANG AUF DIE GAMES 
-        public int GamePin { get; set; }
-        public string UserName { get; set; }
+        public FragenPruefung fp = new FragenPruefung();
+
+        public SpielDurchlauf sd = new SpielDurchlauf();
 
 
-        // FRAGEN SWITCHEN
         [BindProperty]
         public int CurrentOffset { get; set; }
         public int QuestionCount { get; set; }
 
-
-        // PRÜFEN DER ANTWORT 
-        public int PlayerPoints { get; set; }
-        public int RightAnswer {  get; set; }
-        public bool AnswerChecked { get; set; }
-        public bool AnswerCorrect { get; set; }
-
         // MASSAGES
-        public string ErrorMessage { get; set; }
-        public string SuccessMessage { get; set; }
-
-
+        public string ErrorMessage { get; set; } = string.Empty;
+        public string SuccessMessage { get; set; } = string.Empty;
 
 
 
@@ -47,31 +37,17 @@ namespace KahootTransnetBW.Pages._1Viewer
         {
             loadHTTP();
             CurrentOffset = currentOffset;
-            QuestionCount = HowManyQuestions();
+            QuestionCount = sd.HowManyQuestions();
             LadeFrage(currentOffset);
         }
 
         // Lädt HTTP SESSIONS
         private void loadHTTP()
         {
-            GamePin = HttpContext.Session.GetInt32("GameNumber") ?? 0;
-            UserName = HttpContext.Session.GetString("Name") ?? "";
-            PlayerPoints = HttpContext.Session.GetInt32("PlayerPoints") ?? 0;
-            RightAnswer = HttpContext.Session.GetInt32("RightAnswer") ?? 0;
-        }
-
-        // Wie viele Fragen
-        public int HowManyQuestions()
-        {
-            var db = new SQLconnection.DatenbankZugriff();
-            using var connection = db.GetConnection();
-            connection.Open();
-
-            string query = @"SELECT COUNT(*) FROM Fragen WHERE FragebogenID = @ID;";
-            using var cmd = new MySqlCommand(query, connection);
-            cmd.Parameters.AddWithValue("@ID", GamePin);
-
-            return Convert.ToInt32(cmd.ExecuteScalar());
+            sd.GameID = HttpContext.Session.GetInt32("GameNumber") ?? 0;          // Spiel ID
+            sd.UserName = HttpContext.Session.GetString("Name") ?? "";
+            fp.PlayerPoints = HttpContext.Session.GetInt32("PlayerPoints") ?? 0;
+            fp.RightAnswer = HttpContext.Session.GetInt32("RightAnswer") ?? 0;
         }
 
         // Lädt Fragen
@@ -79,7 +55,7 @@ namespace KahootTransnetBW.Pages._1Viewer
         {
             FragenChecken.Clear();
 
-            if (offset >= HowManyQuestions())
+            if (offset >= sd.HowManyQuestions())
             {
                 return;
             }
@@ -101,13 +77,13 @@ namespace KahootTransnetBW.Pages._1Viewer
                 LIMIT 1 OFFSET @Offset;";
 
             using var cmd = new MySqlCommand(query, connection);
-            cmd.Parameters.AddWithValue("@ID", GamePin);
+            cmd.Parameters.AddWithValue("@ID", sd.GameID);
             cmd.Parameters.AddWithValue("@Offset", offset);
 
             using var reader = cmd.ExecuteReader();
             if (reader.Read())
             {
-                FragenChecken.Add(new FragenChecknerModel
+                FragenChecken.Add(new FragenDB
                 {
                     DB_Fragestellung = reader.GetString("Fragestellung"),
                     DB_Antwort1 = reader.GetString("Antwort1"),
@@ -121,7 +97,7 @@ namespace KahootTransnetBW.Pages._1Viewer
                 });
             }
 
-            QuestionCount = HowManyQuestions();
+            QuestionCount = sd.HowManyQuestions();
         }
 
         // Button: NÄCHSTE
@@ -130,7 +106,7 @@ namespace KahootTransnetBW.Pages._1Viewer
             loadHTTP();
             CurrentOffset++;
 
-            AnswerChecked = false;
+            fp.AnswerChecked = false;
 
             return RedirectToPage(new { CurrentOffset = CurrentOffset });
         }
@@ -153,20 +129,20 @@ namespace KahootTransnetBW.Pages._1Viewer
                 isCorrect = true;
             }
 
-            AnswerChecked = true;
-            AnswerCorrect = isCorrect;
+            fp.AnswerChecked = true;
+            fp.AnswerCorrect = isCorrect;
 
             if (isCorrect)
             {
-                RightAnswer += 1;
-                PlayerPoints += 100 ;
-                HttpContext.Session.SetInt32("PlayerPoints", PlayerPoints);
-                HttpContext.Session.SetInt32("RightAnswer", RightAnswer);
+                fp.RightAnswer += 1;
+                fp.PlayerPoints += 100 ;
+                HttpContext.Session.SetInt32("PlayerPoints", fp.PlayerPoints);
+                HttpContext.Session.SetInt32("RightAnswer", fp.RightAnswer);
             }
             else
             {
-                PlayerPoints -= 5;
-                HttpContext.Session.SetInt32("PlayerPoints", PlayerPoints);
+                fp.PlayerPoints -= 5;
+                HttpContext.Session.SetInt32("PlayerPoints", fp.PlayerPoints);
             }
 
 
@@ -178,7 +154,7 @@ namespace KahootTransnetBW.Pages._1Viewer
         {
             loadHTTP();
 
-            PlayerPoints = HttpContext.Session.GetInt32("PlayerPoints") ?? 0;
+            fp.PlayerPoints = HttpContext.Session.GetInt32("PlayerPoints") ?? 0;
 
             var db = new SQLconnection.DatenbankZugriff();
             using var connection = db.GetConnection();
@@ -189,36 +165,15 @@ namespace KahootTransnetBW.Pages._1Viewer
 
 
             using var cmd = new MySqlCommand(query, connection);
-            cmd.Parameters.AddWithValue("@pin", GamePin);
-            cmd.Parameters.AddWithValue("@points", PlayerPoints);
-            cmd.Parameters.AddWithValue("@name", UserName);
-            cmd.Parameters.AddWithValue("@Correct", RightAnswer);
-            cmd.Parameters.AddWithValue("@Possible", HowManyQuestions());
+            cmd.Parameters.AddWithValue("@pin", sd.GameID);
+            cmd.Parameters.AddWithValue("@points", fp.PlayerPoints);
+            cmd.Parameters.AddWithValue("@name", sd.UserName);
+            cmd.Parameters.AddWithValue("@Correct", fp.RightAnswer);
+            cmd.Parameters.AddWithValue("@Possible", sd.HowManyQuestions());
 
             cmd.ExecuteNonQuery();
 
             return RedirectToPage("/1Viewer/FinalResult");
-        }
-
-        public class FragenChecknerModel
-        {
-            public string DB_Fragestellung { get; set; }
-            public string DB_Antwort1 { get; set; }
-            public bool DB_IstAntwort1Richtig { get; set; }
-            public string DB_Antwort2 { get; set; }
-            public bool DB_IstAntwort2Richtig { get; set; }
-            public string DB_Antwort3 { get; set; }
-            public bool DB_IstAntwort3Richtig { get; set; }
-            public string DB_Antwort4 { get; set; }
-            public bool DB_IstAntwort4Richtig { get; set; }
-        }
-
-        public class FragenInputModel
-        {
-            public bool C_IstAntwort1Richtig { get; set; }
-            public bool C_IstAntwort2Richtig { get; set; }
-            public bool C_IstAntwort3Richtig { get; set; }
-            public bool C_IstAntwort4Richtig { get; set; }
         }
     }
 }
