@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
 using Smart2Lose.Model;
 using Microsoft.AspNetCore.Http;
+using Smart2Lose.Helper;
 
 
 namespace Smart2Lose.Pages

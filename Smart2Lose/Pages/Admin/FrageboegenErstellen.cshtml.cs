@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using MySql.Data.MySqlClient;
 using Smart2Lose.Model;
 using Mysqlx.Crud;
+using Smart2Lose.Helper;
 
 
 namespace Smart2Lose.Pages.Admin

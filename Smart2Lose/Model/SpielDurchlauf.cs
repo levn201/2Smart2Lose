@@ -1,4 +1,5 @@
 ﻿using MySql.Data.MySqlClient;
+using Smart2Lose.Helper;
 
 
 namespace Smart2Lose.Model

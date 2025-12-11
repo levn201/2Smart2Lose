@@ -1,8 +1,8 @@
-using Smart2Lose.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
 using static Smart2Lose.Pages.Admin.FragebögenModel;
+using Smart2Lose.Helper;
 
 
 

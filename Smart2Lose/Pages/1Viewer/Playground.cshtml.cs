@@ -6,6 +6,7 @@ using MySqlX.XDevAPI;
 using System.Net.NetworkInformation;
 using System.Web;
 using Microsoft.AspNetCore.Http;
+using Smart2Lose.Helper;
 
 namespace Smart2Lose.Pages._1Viewer
 {
