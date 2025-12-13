@@ -1,7 +1,7 @@
 Create Database KahootDatabase;
 use KahootDatabase; 
 
-
+-- Passwört Superbase 21481TNghello!
 -- Drop table AdminUser; 							Tabelle Löschen
 -- Delete from fragebogen where Join_ID = 1212;		Inhalt löschen 
                         
