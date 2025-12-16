@@ -22,9 +22,6 @@ namespace Smart2Lose.Pages
         public SpielDurchlauf session { get; set; } = new SpielDurchlauf();
 
 
-
-
-
         // Eingabe Feld => VErweis auf Seiten oder Login ins Spiel
         public IActionResult OnPost()
         {
@@ -38,9 +35,9 @@ namespace Smart2Lose.Pages
                     case 2:
                         return RedirectToPage("/Admin/FrageboegenErstellen");
                     case 3:
-                        return RedirectToPage("/Admin/Frageerstellen");
+                        return RedirectToPage("/Account/Login");
                     case 123:
-                        return RedirectToPage("/testPages/startPage");
+                        return RedirectToPage("/Account/Register");
                 }
 
                 // Allgemeine PIN-Prüfung gegen Datenbank

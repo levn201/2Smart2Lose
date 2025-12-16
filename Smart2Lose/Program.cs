@@ -1,33 +1,77 @@
-﻿using Smart2Lose.Model;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using MySql.Data.MySqlClient;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Smart2Lose.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ EINMALIG Builder verwenden
+// =======================
+// SERVICES
+// =======================
+
+// Razor Pages
 builder.Services.AddRazorPages();
 
-// ✅ Session konfigurieren
-builder.Services.AddDistributedMemoryCache(); // Für Session-Speicherung im Arbeitsspeicher
-
-
+// Session
+builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(20);  // Timeout für Session nach 20 Minuten
-    options.Cookie.HttpOnly = true;                  // Sicherheitsoptionen
-    options.Cookie.IsEssential = true;               // Notwendig für Funktionalität
+    options.IdleTimeout = TimeSpan.FromMinutes(20);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 
-// ✅ ConnectionString auslesen
-string connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
+// DbContext (MySQL + Pomelo)
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseMySql(
+        connectionString,
+        ServerVersion.AutoDetect(connectionString)
+    ));
 
+// ASP.NET Core Identity
+builder.Services
+    .AddIdentity<IdentityUser, IdentityRole>(options =>
+    {
+        options.Password.RequiredLength = 6;
+        options.Password.RequireDigit = true;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.User.RequireUniqueEmail = true;
+
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+        options.Lockout.MaxFailedAccessAttempts = 5;
+        options.Lockout.AllowedForNewUsers = true;
+    })
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+// Cookie-Konfiguration für Identity
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+    options.ExpireTimeSpan = TimeSpan.FromHours(2);
+    options.SlidingExpiration = true;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
 
 var app = builder.Build();
 
-// ✅ Middleware-Konfiguration
+// =======================
+// ROLLEN-INITIALISIERUNG
+// =======================
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await Smart2Lose.Data.RoleSeeder.SeedRolesAsync(services);
+}
+
+// =======================
+// MIDDLEWARE (REIHENFOLGE IST KRITISCH)
+// =======================
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
@@ -36,12 +80,11 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
-app.UseSession(); // Füge dies vor Routing hinzu
-
 app.UseRouting();
 
-app.UseAuthorization(); // ✅ funktioniert jetzt
+app.UseSession();          // 1️⃣ Session
+app.UseAuthentication();   // 2️⃣ Identity Authentication
+app.UseAuthorization();    // 3️⃣ Identity Authorization
 
 app.MapRazorPages();
 

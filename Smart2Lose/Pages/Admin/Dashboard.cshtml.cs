@@ -1,14 +1,17 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
-using Smart2Lose.Model;
 using Smart2Lose.Helper;
+using Smart2Lose.Model;
 using static Smart2Lose.Helper.SQLconnection;
 
 namespace Smart2Lose.Pages.Admin
 {
+    [Authorize(Roles = "Admin,Moderator")]
     public class DashboardModel : PageModel
     {
 
+ 
         public string StatusMessage { get; set; }
         public void OnGet()
         {

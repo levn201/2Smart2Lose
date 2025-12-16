@@ -1,7 +1,4 @@
-﻿
-
-using Azure.Identity;
-using Smart2Lose.Model;
+﻿using Smart2Lose.Model;
 
 namespace Smart2Lose.Helper
 {
