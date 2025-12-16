@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
 using static Smart2Lose.Pages.Admin.FragebögenModel;
 using Smart2Lose.Helper;
+using Smart2Lose.Model;
 
 
 
@@ -10,6 +11,11 @@ namespace Smart2Lose.Pages._1Viewer
 {
     public class FinalResultModel : PageModel
     {
+
+
+        public projektName pn = new projektName();
+        public Filter f = new Filter();
+
         // Einschreiben der Filter 
         public int GamePin { get; set; }
         public List<PlayerList> Player { get; set; } = new();
@@ -30,17 +36,7 @@ namespace Smart2Lose.Pages._1Viewer
         public string DBquery { get; set; }
 
         // Verschiedenen Queries für den Filter 
-        string DefaultQuery = @"
-            SELECT SessionPints, User_Nickname, GamePin, CorrectAnswered, PossibleAnswers, saveTime
-            FROM PlayerPoints
-            WHERE GamePin = @GamePin
-            ORDER BY SessionPints DESC;";
-        string Last24hQuery = @"
-            SELECT SessionPints, User_Nickname, GamePin, CorrectAnswered, PossibleAnswers, saveTime
-            FROM PlayerPoints
-            WHERE GamePin = @GamePin
-              AND saveTime >= NOW() - INTERVAL 24 HOUR
-            ORDER BY SessionPints DESC;";
+
 
         // Rangliste 
         public string PlaceOne { get; set; }
@@ -53,7 +49,7 @@ namespace Smart2Lose.Pages._1Viewer
         {
             GamePin = HttpContext.Session.GetInt32("GameNumber") ?? 0;
 
-            DBquery = DefaultQuery;
+            DBquery = f.DefaultQuery;
             loadPLayerList();
         }
 
@@ -64,17 +60,17 @@ namespace Smart2Lose.Pages._1Viewer
 
             if (string.IsNullOrEmpty(Filter) || Filter == "all")
             {
-                DBquery = DefaultQuery;
+                DBquery = f.DefaultQuery;
             }
                 
             else if (Filter == "last24h")
             {
-                DBquery = Last24hQuery;
+                DBquery =  f.Last24hQuery;
             }
 
             else
             {
-                DBquery = DefaultQuery;
+                DBquery = f.DefaultQuery;
             }
                 
 

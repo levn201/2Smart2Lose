@@ -12,6 +12,8 @@ namespace Smart2Lose.Pages._1Viewer
 
         }
 
+        public projektName pn = new projektName();
+
         [BindProperty] 
         public string Nickname { get; set; }
         public string ErrorMessage { get; set; }

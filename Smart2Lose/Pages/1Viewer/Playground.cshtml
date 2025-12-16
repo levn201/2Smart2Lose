@@ -8,14 +8,11 @@
 <link rel="stylesheet" href="~/css/Playground/Playground.css" asp-append-version="true" />
 
 <header class="header">
-    <div class="logo">TRANS<span>NET</span> BW</div>
+    <div class="logo">@Model.pn.Name</div>
     <nav class="nav-links">
         <a href="/Index">Quit</a>
     </nav>
 </header>
-
-<!-- Spielername -->
-<h3>@Model.sd.UserName</h3>
 
 <form method="post">
 
@@ -29,19 +26,19 @@
     </div>
 
     <!-- Fragenkarten -->
-    @if (Model.FragenChecken.Any())
+    @if (Model.FragenDB.Any())
     {
-        var frage = Model.FragenChecken.First();
+        var frage = Model.FragenDB.First();
 
         <div class="frage-block">
 
-            <h3>@frage.DB_Fragestellung</h3>
+            <h3>@frage.Fragestellung</h3>
 
             <div class="antwort-grid">
 
                 <!-- Antwort 1 -->
                 <div class="antwort-card bg-1 @(Model.fp.AnswerChecked
-                                         ? (frage.DB_IstAntwort1Richtig ? "correct-answer"
+                                         ? (frage.IstAntwort1Richtig ? "correct-answer"
                                          : (Model.UserAnswer.C_IstAntwort1Richtig ? "wrong-answer" : ""))
                                          : "")"
                  onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
@@ -50,12 +47,12 @@
                            asp-for="UserAnswer.C_IstAntwort1Richtig"
                            onchange="updateSelection(this)"
                            disabled="@Model.fp.AnswerChecked" />
-                    <label>@frage.DB_Antwort1</label>
+                    <label>@frage.Antwort1</label>
                 </div>
 
                 <!-- Antwort 2 -->
                 <div class="antwort-card bg-2 @(Model.fp.AnswerChecked
-                                     ? (frage.DB_IstAntwort2Richtig ? "correct-answer"
+                                     ? (frage.IstAntwort2Richtig ? "correct-answer"
                                      : (Model.UserAnswer.C_IstAntwort2Richtig ? "wrong-answer" : ""))
                                      : "")"
                  onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
@@ -64,12 +61,12 @@
                            asp-for="UserAnswer.C_IstAntwort2Richtig"
                            onchange="updateSelection(this)"
                            disabled="@Model.fp.AnswerChecked" />
-                    <label>@frage.DB_Antwort2</label>
+                    <label>@frage.Antwort2</label>
                 </div>
 
                 <!-- Antwort 3 -->
                 <div class="antwort-card bg-3 @(Model.fp.AnswerChecked
-                                     ? (frage.DB_IstAntwort3Richtig ? "correct-answer"
+                                     ? (frage.IstAntwort3Richtig ? "correct-answer"
                                      : (Model.UserAnswer.C_IstAntwort3Richtig ? "wrong-answer" : ""))
                                      : "")"
                  onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
@@ -78,12 +75,12 @@
                            asp-for="UserAnswer.C_IstAntwort3Richtig"
                            onchange="updateSelection(this)"
                            disabled="@Model.fp.AnswerChecked" />
-                    <label>@frage.DB_Antwort3</label>
+                    <label>@frage.Antwort3</label>
                 </div>
 
                 <!-- Antwort 4 -->
                 <div class="antwort-card bg-4 @(Model.fp.AnswerChecked
-                                     ? (frage.DB_IstAntwort4Richtig ? "correct-answer"
+                                     ? (frage.IstAntwort4Richtig ? "correct-answer"
                                      : (Model.UserAnswer.C_IstAntwort4Richtig ? "wrong-answer" : ""))
                                      : "")"
                  onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
@@ -92,7 +89,7 @@
                            asp-for="UserAnswer.C_IstAntwort4Richtig"
                            onchange="updateSelection(this)"
                            disabled="@Model.fp.AnswerChecked" />
-                    <label>@frage.DB_Antwort4</label>
+                    <label>@frage.Antwort4</label>
                 </div>
 
             </div>

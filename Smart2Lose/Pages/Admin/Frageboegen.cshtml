@@ -133,29 +133,29 @@
             <button type="button" class="close-btn" onclick="closeViewPopup()">×</button>
         </div>
         <div class="popup-body">
-            @if (Model.FragenChecken != null && Model.FragenChecken.Any())
+            @if (Model.FragenDB != null && Model.FragenDB.Any())
             {
-                @for (int i = 0; i < Model.FragenChecken.Count; i++)
+                @for (int i = 0; i < Model.FragenDB.Count; i++)
                 {
-                    var frage = Model.FragenChecken[i];
+                    var frage = Model.FragenDB[i];
                     <div class="frage-container">
-                        <div class="frage-text">Frage @(i + 1): @frage.DB_Fragestellung</div>
+                        <div class="frage-text">Frage @(i + 1): @frage.Fragestellung</div>
                         <div class="antwort-grid">
-                            <div class="antwort-card bg-1 @(frage.DB_IstAntwort1Richtig ? "richtige-antwort" : "")">
-                                <input type="checkbox" @(frage.DB_IstAntwort1Richtig ? "checked" : "") disabled class="checkmark" />
-                                <div class="antwort-text">@frage.DB_Antwort1</div>
+                            <div class="antwort-card bg-1 @(frage.IstAntwort1Richtig ? "richtige-antwort" : "")">
+                                <input type="checkbox" @(frage.IstAntwort1Richtig ? "checked" : "") disabled class="checkmark" />
+                                <div class="antwort-text">@frage.Antwort1</div>
                             </div>
-                            <div class="antwort-card bg-2 @(frage.DB_IstAntwort2Richtig ? "richtige-antwort" : "")">
-                                <input type="checkbox" @(frage.DB_IstAntwort2Richtig ? "checked" : "") disabled class="checkmark" />
-                                <div class="antwort-text">@frage.DB_Antwort2</div>
+                            <div class="antwort-card bg-2 @(frage.IstAntwort2Richtig ? "richtige-antwort" : "")">
+                                <input type="checkbox" @(frage.IstAntwort2Richtig ? "checked" : "") disabled class="checkmark" />
+                                <div class="antwort-text">@frage.Antwort2</div>
                             </div>
-                            <div class="antwort-card bg-3 @(frage.DB_IstAntwort3Richtig ? "richtige-antwort" : "")">
-                                <input type="checkbox" @(frage.DB_IstAntwort3Richtig ? "checked" : "") disabled class="checkmark" />
-                                <div class="antwort-text">@frage.DB_Antwort3</div>
+                            <div class="antwort-card bg-3 @(frage.IstAntwort3Richtig ? "richtige-antwort" : "")">
+                                <input type="checkbox" @(frage.IstAntwort3Richtig ? "checked" : "") disabled class="checkmark" />
+                                <div class="antwort-text">@frage.Antwort3</div>
                             </div>
-                            <div class="antwort-card bg-4 @(frage.DB_IstAntwort4Richtig ? "richtige-antwort" : "")">
-                                <input type="checkbox" @(frage.DB_IstAntwort4Richtig ? "checked" : "") disabled class="checkmark" />
-                                <div class="antwort-text">@frage.DB_Antwort4</div>
+                            <div class="antwort-card bg-4 @(frage.IstAntwort4Richtig ? "richtige-antwort" : "")">
+                                <input type="checkbox" @(frage.IstAntwort4Richtig ? "checked" : "") disabled class="checkmark" />
+                                <div class="antwort-text">@frage.Antwort4</div>
                             </div>
                         </div>
                     </div>
@@ -180,17 +180,17 @@
             <form method="post" asp-page-handler="SaveEdit">
                 <input type="hidden" name="fragebogenId" value="@Model.GamePin" />
 
-                @if (Model.FragenChecken != null && Model.FragenChecken.Any())
+                @if (Model.FragenDB != null && Model.FragenDB.Any())
                 {
-                    @for (int i = 0; i < Model.FragenChecken.Count; i++)
+                    @for (int i = 0; i < Model.FragenDB.Count; i++)
                     {
-                        var frage = Model.FragenChecken[i];
+                        var frage = Model.FragenDB[i];
                         <div class="frage-container">
                             <div class="frage-input-group">
                                 <label>Frage @(i + 1):</label>
                                 <input type="text"
                                        name="Fragen[@i].Fragestellung"
-                                       value="@frage.DB_Fragestellung"
+                                       value="@frage.Fragestellung"
                                        class="frage-input"
                                        required />
                             </div>
@@ -200,12 +200,12 @@
                                     <input type="checkbox"
                                            name="Fragen[@i].IstAntwort1Richtig"
                                            value="true"
-                                           @(frage.DB_IstAntwort1Richtig ? "checked" : "")
+                                           @(frage.IstAntwort1Richtig ? "checked" : "")
                                            class="checkmark-edit" />
                                     <input type="hidden" name="Fragen[@i].IstAntwort1Richtig" value="false" />
                                     <input type="text"
                                            name="Fragen[@i].Antwort1"
-                                           value="@frage.DB_Antwort1"
+                                           value="@frage.Antwort1"
                                            class="antwort-input"
                                            placeholder="Antwort 1"
                                            required />
@@ -214,12 +214,12 @@
                                     <input type="checkbox"
                                            name="Fragen[@i].IstAntwort2Richtig"
                                            value="true"
-                                           @(frage.DB_IstAntwort2Richtig ? "checked" : "")
+                                           @(frage.IstAntwort2Richtig ? "checked" : "")
                                            class="checkmark-edit" />
                                     <input type="hidden" name="Fragen[@i].IstAntwort2Richtig" value="false" />
                                     <input type="text"
                                            name="Fragen[@i].Antwort2"
-                                           value="@frage.DB_Antwort2"
+                                           value="@frage.Antwort2"
                                            class="antwort-input"
                                            placeholder="Antwort 2"
                                            required />
@@ -228,12 +228,12 @@
                                     <input type="checkbox"
                                            name="Fragen[@i].IstAntwort3Richtig"
                                            value="true"
-                                           @(frage.DB_IstAntwort3Richtig ? "checked" : "")
+                                           @(frage.IstAntwort3Richtig ? "checked" : "")
                                            class="checkmark-edit" />
                                     <input type="hidden" name="Fragen[@i].IstAntwort3Richtig" value="false" />
                                     <input type="text"
                                            name="Fragen[@i].Antwort3"
-                                           value="@frage.DB_Antwort3"
+                                           value="@frage.Antwort3"
                                            class="antwort-input"
                                            placeholder="Antwort 3"
                                            required />
@@ -242,12 +242,12 @@
                                     <input type="checkbox"
                                            name="Fragen[@i].IstAntwort4Richtig"
                                            value="true"
-                                           @(frage.DB_IstAntwort4Richtig ? "checked" : "")
+                                           @(frage.IstAntwort4Richtig ? "checked" : "")
                                            class="checkmark-edit" />
                                     <input type="hidden" name="Fragen[@i].IstAntwort4Richtig" value="false" />
                                     <input type="text"
                                            name="Fragen[@i].Antwort4"
-                                           value="@frage.DB_Antwort4"
+                                           value="@frage.Antwort4"
                                            class="antwort-input"
                                            placeholder="Antwort 4"
                                            required />

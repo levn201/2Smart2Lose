@@ -12,17 +12,25 @@ namespace Smart2Lose.Pages._1Viewer
 {
     public class PlaygroundModel : PageModel
     {
+
+        public projektName pn = new projektName();
+
         // LISTEN VON DEN PROPERTY GROUPS 
         [BindProperty]
-        public FragenInput UserAnswer { get; set; } = new();
-        public List<FragenDB> FragenChecken { get; set; } = new();
-
+        public SelectionCheck UserAnswer { get; set; } = new();
+        public List<Fragen> FragenDB { get; set; } = new();
 
         public FragenPruefung fp = new FragenPruefung();
 
         public SpielDurchlauf sd = new SpielDurchlauf();
+       
+        public Spiel spiel = new Spiel();
 
 
+        
+
+
+        // OFFSET UND FRAGEN ANZAHL
         [BindProperty]
         public int CurrentOffset { get; set; }
         public int QuestionCount { get; set; }
@@ -38,7 +46,7 @@ namespace Smart2Lose.Pages._1Viewer
         {
             loadHTTP();
             CurrentOffset = currentOffset;
-            QuestionCount = sd.HowManyQuestions();
+            QuestionCount = spiel.HowManyQuestions(sd.GameID);
             LadeFrage(currentOffset);
         }
 
@@ -54,9 +62,9 @@ namespace Smart2Lose.Pages._1Viewer
         // Lädt Fragen
         private void LadeFrage(int offset)
         {
-            FragenChecken.Clear();
+            FragenDB.Clear();
 
-            if (offset >= sd.HowManyQuestions())
+            if (offset >= spiel.HowManyQuestions(sd.GameID))
             {
                 return;
             }
@@ -84,21 +92,21 @@ namespace Smart2Lose.Pages._1Viewer
             using var reader = cmd.ExecuteReader();
             if (reader.Read())
             {
-                FragenChecken.Add(new FragenDB
+                FragenDB.Add(new Fragen
                 {
-                    DB_Fragestellung = reader.GetString("Fragestellung"),
-                    DB_Antwort1 = reader.GetString("Antwort1"),
-                    DB_IstAntwort1Richtig = reader.GetBoolean("IstAntwort1Richtig"),
-                    DB_Antwort2 = reader.GetString("Antwort2"),
-                    DB_IstAntwort2Richtig = reader.GetBoolean("IstAntwort2Richtig"),
-                    DB_Antwort3 = reader.GetString("Antwort3"),
-                    DB_IstAntwort3Richtig = reader.GetBoolean("IstAntwort3Richtig"),
-                    DB_Antwort4 = reader.GetString("Antwort4"),
-                    DB_IstAntwort4Richtig = reader.GetBoolean("IstAntwort4Richtig")
+                    Fragestellung = reader.GetString("Fragestellung"),
+                    Antwort1 = reader.GetString("Antwort1"),
+                    IstAntwort1Richtig = reader.GetBoolean("IstAntwort1Richtig"),
+                    Antwort2 = reader.GetString("Antwort2"),
+                    IstAntwort2Richtig = reader.GetBoolean("IstAntwort2Richtig"),
+                    Antwort3 = reader.GetString("Antwort3"),
+                    IstAntwort3Richtig = reader.GetBoolean("IstAntwort3Richtig"),
+                    Antwort4 = reader.GetString("Antwort4"),
+                    IstAntwort4Richtig = reader.GetBoolean("IstAntwort4Richtig")
                 });
             }
 
-            QuestionCount = sd.HowManyQuestions();
+            QuestionCount = spiel.HowManyQuestions(sd.GameID);
         }
 
         // Button: NÄCHSTE
@@ -118,14 +126,14 @@ namespace Smart2Lose.Pages._1Viewer
             loadHTTP();
             LadeFrage(CurrentOffset);
 
-            var currentQuestion = FragenChecken[0];
+            var currentQuestion = FragenDB[0];
 
             bool isCorrect = false;
 
-            if (            UserAnswer.C_IstAntwort1Richtig == currentQuestion.DB_IstAntwort1Richtig &&
-                            UserAnswer.C_IstAntwort2Richtig == currentQuestion.DB_IstAntwort2Richtig &&
-                            UserAnswer.C_IstAntwort3Richtig == currentQuestion.DB_IstAntwort3Richtig &&
-                            UserAnswer.C_IstAntwort4Richtig == currentQuestion.DB_IstAntwort4Richtig)
+            if (            UserAnswer.C_IstAntwort1Richtig == currentQuestion.IstAntwort1Richtig &&
+                            UserAnswer.C_IstAntwort2Richtig == currentQuestion.IstAntwort2Richtig &&
+                            UserAnswer.C_IstAntwort3Richtig == currentQuestion.IstAntwort3Richtig &&
+                            UserAnswer.C_IstAntwort4Richtig == currentQuestion.IstAntwort4Richtig)
             {
                 isCorrect = true;
             }
@@ -170,7 +178,7 @@ namespace Smart2Lose.Pages._1Viewer
             cmd.Parameters.AddWithValue("@points", fp.PlayerPoints);
             cmd.Parameters.AddWithValue("@name", sd.UserName);
             cmd.Parameters.AddWithValue("@Correct", fp.RightAnswer);
-            cmd.Parameters.AddWithValue("@Possible", sd.HowManyQuestions());
+            cmd.Parameters.AddWithValue("@Possible", spiel.HowManyQuestions(sd.GameID));
 
             cmd.ExecuteNonQuery();
 

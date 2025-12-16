@@ -26,8 +26,7 @@ namespace Smart2Lose.Pages.Admin
         [BindProperty]
         public List<Fragen> Fragen { get; set; } = new(); // Fragen zum bearbeiten (Fragestellung, Antworten, Richtig/Falsch)
         public List<Fragebogen> Frageboegen { get; set; } = new(); // DB Fragebogen (Titel, Autor, Kategorie, ErstelltAm)
-        public List<FragenDB> FragenChecken { get; set; } = new(); // DB Fragen Tabelle (Fragestellung, Antworten, Richtig/Falsch)
-
+        public List<Fragen> FragenDB { get; set; } = new(); // DB Fragen Tabelle (Fragestellung, Antworten, Richtig/Falsch)
 
 
 
@@ -75,7 +74,7 @@ namespace Smart2Lose.Pages.Admin
             try
             {
                 GamePin = id;
-                FragenChecken.Clear();
+                FragenDB.Clear();
 
                 var db = new SQLconnection.DatenbankZugriff();
                 using var connection = db.GetConnection();
@@ -99,22 +98,22 @@ namespace Smart2Lose.Pages.Admin
 
                 while (reader.Read())
                 {
-                    FragenChecken.Add(new FragenDB
+                    FragenDB.Add(new Fragen
                     {
-                        DB_Fragestellung = reader.GetString("Fragestellung"),
-                        DB_Antwort1 = reader.GetString("Antwort1"),
-                        DB_IstAntwort1Richtig = reader.GetBoolean("IstAntwort1Richtig"),
-                        DB_Antwort2 = reader.GetString("Antwort2"),
-                        DB_IstAntwort2Richtig = reader.GetBoolean("IstAntwort2Richtig"),
-                        DB_Antwort3 = reader.GetString("Antwort3"),
-                        DB_IstAntwort3Richtig = reader.GetBoolean("IstAntwort3Richtig"),
-                        DB_Antwort4 = reader.GetString("Antwort4"),
-                        DB_IstAntwort4Richtig = reader.GetBoolean("IstAntwort4Richtig")
+                        Fragestellung = reader.GetString("Fragestellung"),
+                        Antwort1 = reader.GetString("Antwort1"),
+                        IstAntwort1Richtig = reader.GetBoolean("IstAntwort1Richtig"),
+                        Antwort2 = reader.GetString("Antwort2"),
+                        IstAntwort2Richtig = reader.GetBoolean("IstAntwort2Richtig"),
+                        Antwort3 = reader.GetString("Antwort3"),
+                        IstAntwort3Richtig = reader.GetBoolean("IstAntwort3Richtig"),
+                        Antwort4 = reader.GetString("Antwort4"),
+                        IstAntwort4Richtig = reader.GetBoolean("IstAntwort4Richtig")
                     });
                 }
 
                 ViewData["ShowViewPopup"] = true;
-                System.Diagnostics.Debug.WriteLine($"Loaded {FragenChecken.Count} questions for GamePin {GamePin}");
+                System.Diagnostics.Debug.WriteLine($"Loaded {FragenDB.Count} questions for GamePin {GamePin}");
             }
             catch (Exception ex)
             {
@@ -123,7 +122,7 @@ namespace Smart2Lose.Pages.Admin
                 ViewData["ErrorMessage"] = "Fehler beim Laden der Fragen.";
             }
 
-            // WICHTIG: Fragebögen neu laden, damit sie im Hintergrund angezeigt werden!
+            
             LadeAlleFrageboegen();
 
             return Page();
@@ -163,7 +162,7 @@ namespace Smart2Lose.Pages.Admin
             try
             {
                 GamePin = id;
-                FragenChecken.Clear();
+                FragenDB.Clear();
 
                 var db = new SQLconnection.DatenbankZugriff();
                 using var connection = db.GetConnection();
@@ -187,22 +186,22 @@ namespace Smart2Lose.Pages.Admin
 
                 while (reader.Read())
                 {
-                    FragenChecken.Add(new FragenDB
+                    FragenDB.Add(new Fragen
                     {
-                        DB_Fragestellung = reader.GetString("Fragestellung"),
-                        DB_Antwort1 = reader.GetString("Antwort1"),
-                        DB_IstAntwort1Richtig = reader.GetBoolean("IstAntwort1Richtig"),
-                        DB_Antwort2 = reader.GetString("Antwort2"),
-                        DB_IstAntwort2Richtig = reader.GetBoolean("IstAntwort2Richtig"),
-                        DB_Antwort3 = reader.GetString("Antwort3"),
-                        DB_IstAntwort3Richtig = reader.GetBoolean("IstAntwort3Richtig"),
-                        DB_Antwort4 = reader.GetString("Antwort4"),
-                        DB_IstAntwort4Richtig = reader.GetBoolean("IstAntwort4Richtig")
+                        Fragestellung = reader.GetString("Fragestellung"),
+                        Antwort1 = reader.GetString("Antwort1"),
+                        IstAntwort1Richtig = reader.GetBoolean("IstAntwort1Richtig"),
+                        Antwort2 = reader.GetString("Antwort2"),
+                        IstAntwort2Richtig = reader.GetBoolean("IstAntwort2Richtig"),
+                        Antwort3 = reader.GetString("Antwort3"),
+                        IstAntwort3Richtig = reader.GetBoolean("IstAntwort3Richtig"),
+                        Antwort4 = reader.GetString("Antwort4"),
+                        IstAntwort4Richtig = reader.GetBoolean("IstAntwort4Richtig")
                     });
                 }
 
                 ViewData["ShowEditPopup"] = true;
-                System.Diagnostics.Debug.WriteLine($"Loaded {FragenChecken.Count} questions for GamePin {GamePin}");
+                System.Diagnostics.Debug.WriteLine($"Loaded {FragenDB.Count} questions for GamePin {GamePin}");
             }
             catch (Exception ex)
             {
@@ -215,6 +214,8 @@ namespace Smart2Lose.Pages.Admin
 
             return Page();
         }
+
+
 
         // Card - Bearebiten Button => Speichern der editierten Fragen
         public IActionResult OnPostSaveEdit(int fragebogenId, List<Fragen> Fragen)

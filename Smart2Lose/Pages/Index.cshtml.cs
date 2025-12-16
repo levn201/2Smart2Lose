@@ -15,15 +15,15 @@ namespace Smart2Lose.Pages
         {
         }
 
-
         public projektName pn = new projektName();
 
         public string ErrorMessage { get; set; } = string.Empty;
 
-
-
         [BindProperty]
         public SpielDurchlauf session { get; set; } = new SpielDurchlauf();
+
+
+
 
 
         // Eingabe Feld => VErweis auf Seiten oder Login ins Spiel
