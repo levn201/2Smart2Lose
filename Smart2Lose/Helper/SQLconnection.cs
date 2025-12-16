@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using MySql.Data.MySqlClient;
-using System.Data.SqlClient;
+﻿using MySql.Data.MySqlClient;
 
 namespace Smart2Lose.Helper
 {

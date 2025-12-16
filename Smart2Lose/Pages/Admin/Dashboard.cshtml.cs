@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
-using MySql.Data.MySqlClient;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using static Smart2Lose.Helper.SQLconnection;
+using MySql.Data.MySqlClient;
 using Smart2Lose.Model;
+using Smart2Lose.Helper;
+using static Smart2Lose.Helper.SQLconnection;
 
 namespace Smart2Lose.Pages.Admin
 {
@@ -13,11 +13,11 @@ namespace Smart2Lose.Pages.Admin
         public void OnGet()
         {
             StatusMessage = "Bereit zum Testen.";
+            user = EditerEvaluation.GetEditor(HttpContext);
         }
 
         public projektName pn = new projektName();
-
-
+        public User user = null;
 
 
         // Auslesen 

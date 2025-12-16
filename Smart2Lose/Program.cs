@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MySql.Data.MySqlClient;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,8 @@ builder.Services.AddRazorPages();
 
 // ✅ Session konfigurieren
 builder.Services.AddDistributedMemoryCache(); // Für Session-Speicherung im Arbeitsspeicher
+
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(20);  // Timeout für Session nach 20 Minuten
@@ -20,6 +23,7 @@ builder.Services.AddSession(options =>
 
 // ✅ ConnectionString auslesen
 string connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
+
 
 var app = builder.Build();
 

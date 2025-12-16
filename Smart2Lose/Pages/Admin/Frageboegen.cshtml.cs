@@ -2,7 +2,6 @@ using Smart2Lose.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
-using static Smart2Lose.Pages._1Viewer.PlaygroundModel;
 using Smart2Lose.Helper;
 
 namespace Smart2Lose.Pages.Admin
