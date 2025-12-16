@@ -1,0 +1,74 @@
+﻿.accessibility-wrapper {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* Runder Button */
+.accessibility-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: none;
+    background: #d6d600;
+    color: #000;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Panel */
+.accessibility-panel {
+    position: absolute;
+    left: 70px;
+    bottom: 0;
+    width: 280px;
+    background: #d6d600;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    opacity: 0;
+    transform: translateX(-10px);
+    pointer-events: none;
+    transition: all 0.2s ease;
+}
+
+    /* Pfeil */
+    .accessibility-panel::before {
+        content: "";
+        position: absolute;
+        left: -10px;
+        bottom: 20px;
+        border-width: 10px;
+        border-style: solid;
+        border-color: transparent #d6d600 transparent transparent;
+    }
+
+/* Sichtbar bei Hover oder Fokus */
+.accessibility-wrapper:hover .accessibility-panel,
+.accessibility-btn:focus + .accessibility-panel {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+/* Inhalt */
+.accessibility-panel h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+}
+
+.accessibility-panel p {
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.open-btn {
+    background: #222;
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+}
