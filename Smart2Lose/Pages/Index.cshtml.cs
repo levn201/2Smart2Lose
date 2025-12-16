@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
 using Smart2Lose.Model;
-using Microsoft.AspNetCore.Http;
 using Smart2Lose.Helper;
 
 
@@ -79,6 +78,10 @@ namespace Smart2Lose.Pages
             }
         }
 
+
+
+
+
         [BindProperty]
         public User loginU { get; set; } = new User();
 
@@ -106,17 +109,8 @@ namespace Smart2Lose.Pages
                 if (reader.Read())
                 {
                     string role = reader.GetString("Role");
-
-                    if (role == "Creater")
-                    {
-                        HttpContext.Session.SetString("createrName", loginU.Username);
-                        return RedirectToPage("/Creater/DashboardCreater"); //Ansicht für Creater Ohne User USW 
-                    }
-                    else
-                    {
-                        HttpContext.Session.SetString("createrName", loginU.Username);
-                        return RedirectToPage("/Admin/Dashboard"); // Admin Bereich mit vollen berechtig
-                    }
+                    EditerEvaluation.SetEditor(HttpContext, loginU.Username, role);
+                    return RedirectToPage("/Admin/Dashboard");
                 }
                 else
                 {
