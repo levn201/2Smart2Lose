@@ -11,7 +11,7 @@ namespace Smart2Lose.Data
             var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
             // Definiere deine Rollen
-            string[] roleNames = { "Admin", "User", "Moderator" };
+            string[] roleNames = { "Admin", "User", "ReadOnly" };
 
             // Erstelle Rollen, falls sie noch nicht existieren
             foreach (var roleName in roleNames)

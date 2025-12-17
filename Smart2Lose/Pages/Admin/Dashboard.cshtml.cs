@@ -7,7 +7,7 @@ using static Smart2Lose.Helper.SQLconnection;
 
 namespace Smart2Lose.Pages.Admin
 {
-    [Authorize(Roles = "Admin,Moderator")]
+    [Authorize(Roles = "Admin,User,ReadOnly")]
     public class DashboardModel : PageModel
     {
 

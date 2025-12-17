@@ -19,11 +19,11 @@ public class LoginModel : PageModel
 
     public class InputModel
     {
-        [Required(ErrorMessage = "E-Mail ist erforderlich")]
-        [EmailAddress(ErrorMessage = "Ungültige E-Mail-Adresse")]
+        [Required]
+        [EmailAddress]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Passwort ist erforderlich")]
+        [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
@@ -32,17 +32,15 @@ public class LoginModel : PageModel
 
     public void OnGet(string returnUrl = null)
     {
-        ReturnUrl = returnUrl ?? "/";
+        ReturnUrl = returnUrl ?? "/Admin/Dashboard";
     }
 
     public async Task<IActionResult> OnPostAsync(string returnUrl = null)
     {
-        returnUrl ??= "/";
+        returnUrl ??= "/Admin/Dashboard";
 
         if (!ModelState.IsValid)
-        {
             return Page();
-        }
 
         var result = await _signInManager.PasswordSignInAsync(
             Input.Email,
@@ -55,7 +53,7 @@ public class LoginModel : PageModel
             return LocalRedirect(returnUrl);
         }
 
-        ModelState.AddModelError(string.Empty, "Login fehlgeschlagen. E-Mail oder Passwort falsch.");
+        ModelState.AddModelError(string.Empty, "Login fehlgeschlagen");
         return Page();
     }
 }

@@ -1,11 +1,13 @@
-using Smart2Lose.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
 using Smart2Lose.Helper;
+using Smart2Lose.Model;
 
 namespace Smart2Lose.Pages.Admin
 {
+    [Authorize(Roles = "Admin,User,ReadOnly")]
     public class FragebögenModel : PageModel
     {
         public void OnGet()

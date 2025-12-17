@@ -47,7 +47,7 @@ public class RegisterModel : PageModel
 
     public async Task<IActionResult> OnPostAsync(string returnUrl = null)
     {
-        returnUrl ??= Url.Content("~/");
+        returnUrl ??= Url.Content("~/Account/Login");
 
         if (!ModelState.IsValid)
         {
@@ -64,15 +64,15 @@ public class RegisterModel : PageModel
 
         if (result.Succeeded)
         {
-            // NEU: Weise neue User automatisch die "User" Rolle zu
-            await _userManager.AddToRoleAsync(user, "User");
+            // Read-Only Rolle zuweisen
+            await _userManager.AddToRoleAsync(user, "ReadOnly");
 
-            // Automatisch einloggen nach Registrierung
+            // Automatisch einloggen
             await _signInManager.SignInAsync(user, isPersistent: false);
+
             return LocalRedirect(returnUrl);
         }
 
-        // Fehler zum ModelState hinzufügen
         foreach (var error in result.Errors)
         {
             ModelState.AddModelError(string.Empty, error.Description);
@@ -80,4 +80,5 @@ public class RegisterModel : PageModel
 
         return Page();
     }
+
 }

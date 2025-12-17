@@ -12,9 +12,20 @@
     <div class="logo">@Model.pn.Name</div>
     <nav class="nav-links">
         <a href="/Admin/Dashboard">Dashboard</a>
-        <a href="/Admin/User">User</a>
-        <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
-        <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <a href="/Admin/User">User</a>
+        }
+        @if (User.IsInRole("Admin") || User.IsInRole("User") || User.IsInRole("ReadOnly"))
+        {
+            <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
+        }
+        @if (User.IsInRole("Admin") || User.IsInRole("User"))
+        {
+            <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
+        }
+
         <a href="/Index">Quit</a>
     </nav>
 </header>
@@ -58,15 +69,18 @@
                         <button type="submit" class="knopf haupt">Anzeigen</button>
                     </form>
 
-                    <form method="post" asp-page-handler="Edit" style="display:inline;">
-                        <input type="hidden" name="id" value="@fragebogen.JoinId" />
-                        <button type="submit" class="knopf">Bearbeiten</button>
-                    </form>
+                    @if (User.IsInRole("Admin") || User.IsInRole("User"))
+                    {
+                        <form method="post" asp-page-handler="Edit" style="display:inline;">
+                            <input type="hidden" name="id" value="@fragebogen.JoinId" />
+                            <button type="submit" class="knopf">Bearbeiten</button>
+                        </form>
 
-                    <form method="post" asp-page-handler="Loeschen" style="display:inline;">
-                        <input type="hidden" name="id" value="@fragebogen.JoinId" />
-                        <button type="submit" class="knopf gefahr">Löschen</button>
-                    </form>
+                        <form method="post" asp-page-handler="Loeschen" style="display:inline;">
+                            <input type="hidden" name="id" value="@fragebogen.JoinId" />
+                            <button type="submit" class="knopf gefahr">Löschen</button>
+                        </form>
+                    }
                 </div>
             </div>
         }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
@@ -7,6 +8,7 @@ using System.Data;
 
 namespace Smart2Lose.Pages.Admin
 {
+    [Authorize(Roles = "Admin")]
     public class UserModel : PageModel
     {
         public void OnGet()

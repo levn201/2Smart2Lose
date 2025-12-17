@@ -79,60 +79,11 @@ namespace Smart2Lose.Pages
             }
         }
 
-
-
-
-
-        [BindProperty]
-        public User loginU { get; set; } = new User();
-
         //Login zu den Dashboards 
         public IActionResult OnPostLoginRequired()
         {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(loginU.Username) || string.IsNullOrWhiteSpace(loginU.Password))
-                {
-                    ErrorMessage = "Benutzername und Passwort dürfen nicht leer sein.";
-                    return Page();
-                }
-
-                var db = new SQLconnection.DatenbankZugriff();
-                using var connection = db.GetConnection();
-                connection.Open();
-
-                string query = "SELECT * FROM DasboardUser WHERE Username = @username AND Password = @password";
-                using var cmd = new MySqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@username", loginU.Username);
-                cmd.Parameters.AddWithValue("@password", loginU.Password);
-
-                using var reader = cmd.ExecuteReader();
-                if (reader.Read())
-                {
-                    string role = reader.GetString("Role");
-                    EditerEvaluation.SetEditor(HttpContext, loginU.Username, role);
-                    return RedirectToPage("/Admin/Dashboard");
-                }
-                else
-                {
-                    ErrorMessage = "Falscher Benutzername oder Passwort.";
-                    return Page();
-                }
-            }
-            catch (MySqlException ex)
-            {
-                ErrorMessage = $"MySQL-Fehler: {ex.Message}";
-                return Page();
-            }
-            catch (Exception ex)
-            {
-                ErrorMessage = $"Allgemeiner Fehler: {ex.Message}";
-                return Page();
-            }
+            return RedirectToPage("/Account/Login");
         }
 
-
-
     }
-
 }

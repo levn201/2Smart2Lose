@@ -10,27 +10,15 @@
 <!-- Login-Button für Admin-Dashboard-->
 <header class="header">
 
-    <button id="loginBtn" class="login-button">Login</button>
-
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-
-            <h2>Login</h2>
-            <form method="post" asp-page-handler="LoginRequired">
-                <input type="text" asp-for="loginU.Username" required placeholder="Username" />
-                <input type="password" asp-for="loginU.Password" required placeholder="Passwort" />
-                <button type="submit">Einloggen</button>
-                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-                {
-                    <p style="color: red;">@Model.ErrorMessage</p>
-                }
-            </form>
-
-        </div>
-    </div>
+    <button id="loginBtn" class="login-button"
+            onclick="window.location.href='/Account/Login'">
+        Login
+    </button>
 
 </header>
+
+
+
 
 
 
@@ -74,22 +62,5 @@
 </div>
 
 
-<script>
-    const loginBtn = document.getElementById("loginBtn");
-    const modal = document.getElementById("loginModal");
-    const closeBtn = document.querySelector(".close");
 
-    loginBtn.onclick = () => {
-        modal.style.display = "flex";
-    };
 
-    closeBtn.onclick = () => {
-        modal.style.display = "none";
-    };
-
-    window.onclick = (event) => {
-        if (event.target === modal) {
-            modal.style.display = "none";
-        }
-    };
-</script>

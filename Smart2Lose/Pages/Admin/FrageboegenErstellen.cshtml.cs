@@ -1,14 +1,16 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Http;
 using MySql.Data.MySqlClient;
-using Smart2Lose.Model;
 using Mysqlx.Crud;
 using Smart2Lose.Helper;
+using Smart2Lose.Model;
 
 
 namespace Smart2Lose.Pages.Admin
 {
+    [Authorize(Roles = "Admin,User")]
     public class FrageboegenErstellenModel : PageModel
     {
         public projektName pn = new projektName(); // Projektname holen
