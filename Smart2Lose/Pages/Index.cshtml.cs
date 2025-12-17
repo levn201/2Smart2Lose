@@ -38,6 +38,10 @@ namespace Smart2Lose.Pages
                         return RedirectToPage("/Account/Login");
                     case 123:
                         return RedirectToPage("/Account/Register");
+                    case 6:
+                        return RedirectToPage("/Account/CreateUser");
+                    case 7:
+                        return RedirectToPage("/Account/ManageUsers");
                 }
 
                 // Allgemeine PIN-Prüfung gegen Datenbank
