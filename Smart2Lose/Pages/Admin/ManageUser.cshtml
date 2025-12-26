@@ -1,0 +1,194 @@
+﻿@page
+@model Smart2Lose.Pages.Admin.ManageUsersModel
+
+@{
+    ViewData["Title"] = "2Smart2Lose | User Manager";
+}
+
+<link rel="stylesheet" href="~/css/Admin/GrundDashboard.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Admin/ManageUser.css" asp-append-version="true" />
+
+<header class="header">
+    <div class="logo">name</div>
+    <nav class="nav-links">
+        <a href="/Admin/Dashboard">Dashboard</a>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <a href="/Admin/ManageUser" class="active">User</a>
+        }
+
+        @if (User.IsInRole("Admin") || User.IsInRole("User") || User.IsInRole("ReadOnly"))
+        {
+            <a href="/Admin/Frageboegen">Fragebögen</a>
+        }
+
+        @if (User.IsInRole("Admin") || User.IsInRole("User"))
+        {
+            <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
+        }
+
+        <a href="/Index">Quit</a>
+    </nav>
+</header>
+
+<div class="admin-container">
+
+    <div class="admin-header">
+        <h2 class="admin-titel">Benutzerverwaltung</h2>
+    </div>
+
+    @* Erfolg *@
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="admin-alert erfolg">
+            <p>@TempData["SuccessMessage"]</p>
+
+            @if (TempData["TempPassword"] != null && TempData["UserEmail"] != null)
+            {
+                <hr />
+                <p><strong>Neues Passwort für @TempData["UserEmail"]:</strong></p>
+                <code class="passwort-anzeige">@TempData["TempPassword"]</code>
+            }
+        </div>
+    }
+
+    @* Fehler *@
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="admin-alert fehler">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+@if (Model.Users.Any())
+{
+        <div class="user-tabelle-wrapper">
+            <table class="user-tabelle">
+                <thead>
+                    <tr>
+                        <th>E-Mail</th>
+                        <th>Rollen</th>
+                        <th>Aktionen</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var user in Model.Users)
+                    {
+                        <tr>
+                            <td class="spalte-email">@user.Email</td>
+
+                            <td class="spalte-rollen">
+                                @if (user.Roles.Any())
+                                {
+                                    foreach (var role in user.Roles)
+                                    {
+                                        <span class="rolle-badge">@role</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Keine Rollen</span>
+                                }
+                            </td>
+
+                            <td class="spalte-aktionen">
+                                <div class="aktionen-inline">
+                                    <button class="admin-knopf warnung"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#roleModal-@user.Id">
+                                        Rollen
+                                    </button>
+
+                                    <form method="post" asp-page-handler="ResetPassword">
+                                        <input type="hidden" name="userId" value="@user.Id" />
+                                        <button class="admin-knopf info">Passwort</button>
+                                    </form>
+
+                                    <form method="post" asp-page-handler="DeleteUser">
+                                        <input type="hidden" name="userId" value="@user.Id" />
+                                        <button class="admin-knopf gefahr">Löschen</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Rollen Modal -->
+                        <div class="modal fade admin-modal"
+                             id="roleModal-@user.Id"
+                             tabindex="-1"
+                             aria-hidden="true">
+
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">
+                                            Rollen für @user.Email
+                                        </h5>
+                                        <button type="button"
+                                                class="btn-close"
+                                                data-bs-dismiss="modal"></button>
+                                    </div>
+
+                                    <div class="modal-body rollen-modal-body">
+
+                                        <section class="rollen-section">
+                                            <div class="rollen-title">Aktuelle Rollen</div>
+
+                                            <div class="rollen-liste">
+                                                @if (user.Roles.Any())
+                                                {
+                                                    foreach (var role in user.Roles)
+                                                    {
+                                                        <form method="post"
+                                                              asp-page-handler="RemoveRole"
+                                                              class="rollen-item rollen-remove">
+                                                            <input type="hidden" name="userId" value="@user.Id" />
+                                                            <input type="hidden" name="role" value="@role" />
+                                                            <button type="submit">@role</button>
+                                                        </form>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="rollen-empty">Keine Rollen</span>
+                                                }
+                                            </div>
+                                        </section>
+
+                                        <section class="rollen-section">
+                                            <div class="rollen-title">Rolle hinzufügen</div>
+
+                                            <div class="rollen-liste">
+                                                @foreach (var role in Model.AllRoles.Where(r => !user.Roles.Contains(r)))
+                                                {
+                                                    <form method="post"
+                                                          asp-page-handler="AddRole"
+                                                          class="rollen-item rollen-add">
+                                                        <input type="hidden" name="userId" value="@user.Id" />
+                                                        <input type="hidden" name="role" value="@role" />
+                                                        <button type="submit">@role</button>
+                                                    </form>
+                                                }
+                                            </div>
+                                        </section>
+
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button class="admin-knopf sekundaer"
+                                                data-bs-dismiss="modal">
+                                            Schließen
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </tbody>
+            </table>
+        </div>
+}

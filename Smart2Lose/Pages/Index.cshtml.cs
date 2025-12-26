@@ -35,7 +35,7 @@ namespace Smart2Lose.Pages
                     case 2:
                         return RedirectToPage("/Admin/FrageboegenErstellen");
                     case 3:
-                        return RedirectToPage("/Account/Login");
+                        return RedirectToPage("/Admin/ManageUser");
                     case 123:
                         return RedirectToPage("/Account/Register");
                     case 6:

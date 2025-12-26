@@ -1,0 +1,164 @@
+﻿/* ===============================
+   Tabelle
+   =============================== */
+
+.user-tabelle {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    color: #00434e;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+    .user-tabelle thead {
+        background: #00434e;
+        color: #fff;
+    }
+
+    .user-tabelle th,
+    .user-tabelle td {
+        padding: 0.9rem;
+        font-size: 0.85rem;
+    }
+
+    .user-tabelle tbody tr {
+        height: 72px;
+        border-bottom: 1px solid #eee;
+    }
+
+        .user-tabelle tbody tr:hover {
+            background: rgba(0, 67, 78, 0.04);
+        }
+
+/* ===============================
+   Rollen & Aktionen
+   =============================== */
+
+.spalte-rollen {
+    text-align: center;
+}
+
+.rolle-badge {
+    background: #00434e;
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+}
+
+.spalte-aktionen {
+    text-align: right;
+}
+
+.aktionen-inline {
+    display: inline-flex;
+    gap: 0.5rem;
+}
+
+    .aktionen-inline form {
+        margin: 0;
+    }
+
+/* ===============================
+   Buttons
+   =============================== */
+
+.admin-knopf {
+    border: none;
+    border-radius: 8px;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+    .admin-knopf.warnung {
+        background: #f1c40f;
+    }
+
+    .admin-knopf.info {
+        background: #3498db;
+        color: #fff;
+    }
+
+    .admin-knopf.gefahr {
+        background: #e74c3c;
+        color: #fff;
+    }
+
+    .admin-knopf.erfolg {
+        background: #2ecc71;
+        color: #fff;
+    }
+
+    .admin-knopf.sekundaer {
+        background: #e0e0e0;
+        color: #00434e;
+    }
+
+/* ===============================
+   Modal
+   =============================== */
+
+.admin-modal * {
+    user-select: none;
+}
+
+.admin-modal .modal-content {
+    border-radius: 12px;
+    border: none;
+}
+
+.admin-modal .modal-header {
+    background: #00434e;
+    color: #fff;
+    border-bottom: none;
+}
+
+.admin-modal .btn-close {
+    filter: invert(1);
+}
+
+.rollen-modal-body {
+    padding: 1.25rem;
+}
+
+.rollen-section {
+    margin-bottom: 1rem;
+}
+
+.rollen-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #777;
+    margin-bottom: 0.5rem;
+}
+
+.rollen-liste {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.rollen-item button {
+    border: none;
+    border-radius: 999px;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.75rem;
+}
+
+.rollen-remove button {
+    background: #e74c3c;
+    color: #fff;
+}
+
+.rollen-add button {
+    background: #2ecc71;
+    color: #fff;
+}
+
+.rollen-empty {
+    font-size: 0.8rem;
+    color: #999;
+}

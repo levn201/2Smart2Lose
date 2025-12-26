@@ -15,7 +15,7 @@
 
         @if (User.IsInRole("Admin"))
         {
-            <a href="/Admin/User">User</a>
+            <a href="/Admin/ManageUser">User</a>
         }
         @if (User.IsInRole("Admin") || User.IsInRole("User") || User.IsInRole("ReadOnly"))
         {
