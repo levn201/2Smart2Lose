@@ -1,17 +1,27 @@
-name: Deploy to IIS
+name: Deploy ASP.NET Project
 on:
   push:
-    branches: [ main ]  # Sobald du etwas in 'main' hochlädst, startet die Action
+    branches: [ main ]
 
 jobs:
-  deploy:
-    runs-on: self-hosted  # Dein Server führt das aus
+  build-and-deploy:
+    runs-on: self-hosted
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x' # Deine Version hier eintragen (z.B. 6.0.x)
+
+      - name: Publish Projekt
+        # Dieser Befehl erstellt einen sauberen "publish" Ordner
+        run: dotnet publish -c Release -o ./publish_output
+
       - name: Copy to Webroot
-        # Hier nutzen wir deinen Pfad. /MIR sorgt dafür, dass der Zielordner exakt wie dein GitHub-Stand aussieht.
-        run: |
-          robocopy . "C:\Users\Administrator\Desktop\prod_Files" /MIR /XD .git .github
-          exit 0
+        # Wir kopieren NUR den Inhalt des publish_output Ordners auf deinen Desktop
+        run: robocopy ./publish_output "C:\Users\Administrator\Desktop\prod_Files" /MIR
+        # robocopy gibt oft Exit-Codes zurück, die GitHub als Fehler wertet. 
+        # "exit 0" erzwingt ein "Erfolgreich", wenn robocopy fertig ist.
+        continue-on-error: true
