@@ -1,0 +1,17 @@
+name: Deploy to IIS
+on:
+  push:
+    branches: [ main ]  # Sobald du etwas in 'main' hochlädst, startet die Action
+
+jobs:
+  deploy:
+    runs-on: self-hosted  # Dein Server führt das aus
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Copy to Webroot
+        # Hier nutzen wir deinen Pfad. /MIR sorgt dafür, dass der Zielordner exakt wie dein GitHub-Stand aussieht.
+        run: |
+          robocopy . "C:\Users\Administrator\Desktop\prod_Files" /MIR /XD .git .github
+          exit 0
