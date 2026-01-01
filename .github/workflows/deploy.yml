@@ -1,7 +1,7 @@
 name: Deploy ASP.NET Project
 on:
   push:
-    branches: [ prod_iis ]
+    branches: [ main ]
 
 jobs:
   build-and-deploy:
