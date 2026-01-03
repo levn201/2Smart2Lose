@@ -8,7 +8,7 @@ jobs:
     # Hier definierst du die Liste deiner Server
     strategy:
       matrix:
-        target_server: [iis1-server, iis1-server] 
+        target_server: [iis1-server, iis2-server] 
     
     # GitHub startet jetzt für jeden Eintrag in der Liste einen eigenen Job
     runs-on: ${{ matrix.target_server }}
