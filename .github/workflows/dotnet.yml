@@ -9,7 +9,7 @@ jobs:
     name: Build on Linux
     runs-on:
       - self-hosted
-      - carry_server
+      - carryhost
 
     steps:
       - name: Checkout Code
