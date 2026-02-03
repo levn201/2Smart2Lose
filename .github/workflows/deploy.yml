@@ -6,10 +6,10 @@ on:
 
 jobs:
   build:
-    name: Build on Ubuntu
+    name: Build on Linux
     runs-on:
       - self-hosted
-      - carry1_host
+      - carry_server
 
     steps:
       - name: Checkout Code
