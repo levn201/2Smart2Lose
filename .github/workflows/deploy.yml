@@ -28,5 +28,5 @@ jobs:
       - name: Copy to Webroot
         shell: powershell
         run: |
-          robocopy ./publish_output "C:\Users\Administrator\Desktop\prod_Files" /MIR
+          robocopy ./publish_output "C:\inetpub\wwwroot\prod_Files" /MIR
           if ($lastexitcode -le 3) { exit 0 } else { exit $lastexitcode }
