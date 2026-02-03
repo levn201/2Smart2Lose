@@ -1,0 +1,36 @@
+name: Build ASP.NET Project (Linux)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build on Linux
+    runs-on:
+      - self-hosted
+      - carry_server
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore Smart2Lose/Smart2Lose.csproj
+
+      - name: Build
+        run: dotnet build Smart2Lose/Smart2Lose.csproj -c Release --no-restore
+
+      - name: Publish
+        run: dotnet publish Smart2Lose/Smart2Lose.csproj -c Release -o publish_output --no-build
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: aspnet-publish
+          path: publish_output
