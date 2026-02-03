@@ -6,175 +6,216 @@
 
 <link rel="stylesheet" href="~/css/Admin/GrundDashboard.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/Admin/FrageboegenErstellen.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/Admin/FrageboegenPopUp.css" asp-append-version="true" />
 
-
-
-<!-- Header -->
 <header class="header">
     <div class="logo">@Model.pn.Name</div>
     <nav class="nav-links">
         <a href="/Admin/Dashboard">Dashboard</a>
-
-        @if (User.IsInRole("Admin"))
-        {
-            <a href="/Admin/User">User</a>
-        }
-        @if (User.IsInRole("Admin") || User.IsInRole("User") || User.IsInRole("ReadOnly"))
-        {
-            <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
-        }
-        @if (User.IsInRole("Admin") || User.IsInRole("User"))
-        {
-            <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
-        }
-
+        <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
+        <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
         <a href="/Index">Quit</a>
     </nav>
 </header>
 
-<div class="main-content" id="neu">
-    <h2>Neuen Fragebogen anlegen</h2>
-    <p>Erstelle einen neuen Fragebogen mit individuellen Fragen und Einstellungen.</p>
-</div>
-
-
-<!-- Hier wird der Titel eingeladen mit der URzeit Joincode und  -->
 <div class="main-content">
+
     <h2>Neues Quiz erstellen</h2>
 
+    <!-- Quiz Meta -->
+    <div class="quiz-meta">
 
-    <form method="post" asp-page-handler="Kategorie">
-        <div class="filter-item">
-            <label asp-for="Kategorie">Kategorie</label>
-            <select asp-for="Kategorie" id="category" class="form-select" onchange="this.form.submit()">
-
-                <option value="Unternehmen">Unternehmenswissen</option>
-                <option value="Sicherheit">Gesundheit & Sicherheit</option>
-                <option value="Technik">Technik & Tools</option>
-                <option value="Skills">Soft Skills</option>
-
-            </select>
-        </div>
-    </form>
-    
-
-    <form method="post">
-        <label for="quizTitle">Quiz-Titel:</label>
-        <input type="text" id="quizTitle" name="Titel" placeholder="Titel des Quizzes eingeben" value="@Model.Titel" />
-
-        @if (!string.IsNullOrEmpty(Model.TitelError))
-        {
-            <p class="message">@Model.TitelError</p>
-        }
-        <button type="submit">Quiz erstellen</button>
-    </form>
-</div>
-
-<!-- Das Popup -->
-<div id="quizPopup" class="popup-overlay" style="display: none;">
-    <form method="post" asp-page-handler="AddFrage" class="popup-content">
-        <!-- Popup Header -->
-        <div class="popup-header">
-            <h2>Frage erstellen</h2>
-            <button type="button" onclick="closeQuizPopup()" class="close-btn">&times;</button>
-        </div>
-
-        <!-- Popup Body -->
-        <div class="popup-body">
-            <!-- Übergibt JoinNumber und Titel korrekt an den Server -->
-            <input type="hidden" asp-for="JoinNumber" />
-            <input type="hidden" asp-for="Titel" />
-
-            <!-- Quiz-Info Anzeige -->
-            <div class="frage-container">
-                <div class="fragebogen-feld">
-                    <span class="feld-label">Join-Code:</span>
-                    <span class="feld-wert">@Model.JoinNumber</span>
-                </div>
-                <div class="fragebogen-feld">
-                    <span class="feld-label">Quiz-Titel:</span>
-                    <span class="feld-wert">@Model.Titel</span>
-                </div>
+        <form method="post" asp-page-handler="Kategorie">
+            <div class="filter-item">
+                <label asp-for="Kategorie">Kategorie</label>
+                <select asp-for="Kategorie" class="form-select" onchange="this.form.submit()">
+                    <option value="Unternehmen">Unternehmenswissen</option>
+                    <option value="Sicherheit">Gesundheit & Sicherheit</option>
+                    <option value="Technik">Technik & Tools</option>
+                    <option value="Skills">Soft Skills</option>
+                </select>
             </div>
+        </form>
 
-            <!-- Antwortoptionen -->
-            <div class="frage-container">
+        <div class="titel-box">
+            <label for="quizTitle">Quiz-Titel</label>
+            <input type="text"
+                   id="quizTitle"
+                   name="Titel"
+                   placeholder="Titel des Quizzes eingeben"
+                   value="@Model.Titel" />
+            @if (!string.IsNullOrEmpty(Model.TitelError))
+            {
+                <p class="message">@Model.TitelError</p>
+            }
+
+            <div class="joincode-box">
+                <span>Join-Code</span>
+                <strong>@Model.JoinNumber</strong>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- Hauptformular -->
+    <form method="post" asp-page-handler="AddFrage" id="fragenForm">
+
+        <input type="hidden" name="Titel" id="hiddenTitel" value="@Model.Titel" />
+        <input type="hidden" name="JoinNumber" value="@Model.JoinNumber" />
+        <div id="fragenContainer">
+
+            <div class="frage-container quiz-frage" data-index="0">
+
+                <button type="button"
+                        class="frage-loeschen"
+                        onclick="removeFrage(this)">
+                    ✖
+                </button>
 
                 <h3>Fragestellung</h3>
-                <textarea name="Fragestellung" class="frage-text" placeholder="Geben Sie hier die Frage ein" rows="3" style="width: 100%; padding: 0.75rem; border: 2px solid #e9ecef; border-radius: 6px; resize: vertical; font-family: inherit; font-size: 1rem;"></textarea>
+                <textarea class="frage-text"
+                          name="Fragen[0].Fragestellung"
+                          placeholder="Geben Sie hier die Frage ein"
+                          rows="3"></textarea>
 
                 <h3>Antwortoptionen</h3>
+
                 <div class="antwort-grid">
-                    <div class="antwort-card bg-1">
-                        <input type="checkbox" name="IstAntwort1Richtig" value="true" class="checkmark" />
-                        <textarea name="Antwort1" class="antwort-text" placeholder="Antwortoption 1" rows="2" style="border: none; background: transparent; resize: none; font-family: inherit;"></textarea>
+
+                    <div class="antwort-option">
+                        <textarea name="Fragen[0].Antwort1" placeholder="Antwort 1"></textarea>
+                        <label>
+                            <input type="checkbox" name="Fragen[0].IstAntwort1Richtig" />
+                            Richtig
+                        </label>
                     </div>
-                    <div class="antwort-card bg-2">
-                        <input type="checkbox" name="IstAntwort2Richtig" value="true" class="checkmark" />
-                        <textarea name="Antwort2" class="antwort-text" placeholder="Antwortoption 2" rows="2" style="border: none; background: transparent; resize: none; font-family: inherit;"></textarea>
+
+                    <div class="antwort-option">
+                        <textarea name="Fragen[0].Antwort2" placeholder="Antwort 2"></textarea>
+                        <label>
+                            <input type="checkbox" name="Fragen[0].IstAntwort2Richtig" />
+                            Richtig
+                        </label>
                     </div>
-                    <div class="antwort-card bg-3">
-                        <input type="checkbox" name="IstAntwort3Richtig" value="true" class="checkmark" />
-                        <textarea name="Antwort3" class="antwort-text" placeholder="Antwortoption 3" rows="2" style="border: none; background: transparent; resize: none; font-family: inherit;"></textarea>
+
+                    <div class="antwort-option">
+                        <textarea name="Fragen[0].Antwort3" placeholder="Antwort 3"></textarea>
+                        <label>
+                            <input type="checkbox" name="Fragen[0].IstAntwort3Richtig" />
+                            Richtig
+                        </label>
                     </div>
-                    <div class="antwort-card bg-4">
-                        <input type="checkbox" name="IstAntwort4Richtig" value="true" class="checkmark" />
-                        <textarea name="Antwort4" class="antwort-text" placeholder="Antwortoption 4" rows="2" style="border: none; background: transparent; resize: none; font-family: inherit;"></textarea>
+
+                    <div class="antwort-option">
+                        <textarea name="Fragen[0].Antwort4" placeholder="Antwort 4"></textarea>
+                        <label>
+                            <input type="checkbox" name="Fragen[0].IstAntwort4Richtig" />
+                            Richtig
+                        </label>
                     </div>
+
                 </div>
+
             </div>
-
-            <!-- Error Message -->
-            @if (!string.IsNullOrEmpty(Model.FragenError))
-            {
-                <div class="frage-container" style="background-color: #f8d7da; border-left-color: #dc3545;">
-                    <p style="color: #721c24; margin: 0; font-weight: 500;">@Model.FragenError</p>
-                </div>
-            }
         </div>
 
-        <!-- Button Row -->
+        @if (!string.IsNullOrEmpty(Model.FragenError))
+        {
+            <div class="frage-container error">
+                @Model.FragenError
+            </div>
+        }
+
         <div class="button-row">
-            <button type="submit" class="knopf haupt">Add speichern</button>
-            <button type="button" onclick="closeQuizPopup()" class="knopf">Abbrechen</button>
+            <button type="button" class="knopf" onclick="addFrage()">
+                Frage hinzufügen
+            </button>
+            <button type="button" class="knopf" onclick="speichernMitTitel()">
+                Fragebogen speichern
+            </button>
         </div>
+
     </form>
+
 </div>
 
-
-
-
-
-<!-- Script für das öffnen des Popup -->
+<!-- Scripts -->
 <script>
-    function openQuizPopup(skipValidation = false) {
-        const titleField = document.getElementById("quizTitle");
-        const title = titleField ? titleField.value : "";
+    let frageIndex = 1;
 
-        if (!skipValidation && title.trim() === "") {
-            alert("Bitte geben Sie einen Quiz-Titel ein.");
+    // Funktion zum Hinzufügen einer neuen Frage
+    function addFrage() {
+        const fragenContainer = document.getElementById('fragenContainer');
+        const letzteFrage = fragenContainer.querySelector('.quiz-frage:last-child');
+
+        const neueFrage = letzteFrage.cloneNode(true);
+        neueFrage.setAttribute('data-index', frageIndex);
+
+        // Alle Textareas und Inputs aktualisieren
+        neueFrage.querySelector('textarea[name*="Fragestellung"]').name = `Fragen[${frageIndex}].Fragestellung`;
+        neueFrage.querySelector('textarea[name*="Fragestellung"]').value = '';
+
+        // Antworten aktualisieren
+        for (let i = 1; i <= 4; i++) {
+            const textarea = neueFrage.querySelector(`textarea[name*="Antwort${i}"]`);
+            const checkbox = neueFrage.querySelector(`input[name*="IstAntwort${i}Richtig"]`);
+
+            textarea.name = `Fragen[${frageIndex}].Antwort${i}`;
+            textarea.value = '';
+
+            checkbox.name = `Fragen[${frageIndex}].IstAntwort${i}Richtig`;
+            checkbox.checked = false;
+        }
+
+        fragenContainer.appendChild(neueFrage);
+        frageIndex++;
+    }
+
+    // Funktion zum Entfernen einer Frage
+    function removeFrage(button) {
+        const fragen = document.querySelectorAll('.quiz-frage');
+
+        if (fragen.length <= 1) {
+            alert('Mindestens eine Frage muss vorhanden sein.');
             return;
         }
 
-        document.getElementById("quizPopup").style.display = "flex";
-        document.body.style.overflow = "hidden";
+        button.closest('.quiz-frage').remove();
+        reindexFragen();
     }
 
-    function closeQuizPopup() {
-        document.getElementById("quizPopup").style.display = "none";
-        document.body.style.overflow = "";
+    // Fragen neu nummerieren nach dem Löschen
+    function reindexFragen() {
+        const fragen = document.querySelectorAll('.quiz-frage');
+        fragen.forEach((frage, index) => {
+            frage.setAttribute('data-index', index);
+
+            frage.querySelector('textarea[name*="Fragestellung"]').name = `Fragen[${index}].Fragestellung`;
+
+            for (let i = 1; i <= 4; i++) {
+                frage.querySelector(`textarea[name*="Antwort${i}"]`).name = `Fragen[${index}].Antwort${i}`;
+                frage.querySelector(`input[name*="IstAntwort${i}Richtig"]`).name = `Fragen[${index}].IstAntwort${i}Richtig`;
+            }
+        });
+        frageIndex = fragen.length;
+    }
+
+    // Titel übertragen und Formular absenden
+    function speichernMitTitel() {
+        const titel = document.getElementById('quizTitle').value;
+
+        if (!titel || titel.trim() === '') {
+            alert('Bitte geben Sie einen Quiz-Titel ein.');
+            return;
+        }
+
+        // Titel in Hidden Field übertragen
+        document.getElementById('hiddenTitel').value = titel;
+
+        // Formular absenden
+        document.getElementById('fragenForm').submit();
     }
 </script>
-
-@if (ViewData["ShowPopup"] != null && (bool)ViewData["ShowPopup"])
-{
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            openQuizPopup(true);
-        });
-    </script>
-}
 
 
 

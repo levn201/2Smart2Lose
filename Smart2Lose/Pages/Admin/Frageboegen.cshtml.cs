@@ -82,15 +82,15 @@ namespace Smart2Lose.Pages.Admin
                 connection.Open();
 
                 const string query = @"
-            SELECT 
-                Fragestellung,
-                Antwort1, IstAntwort1Richtig,
-                Antwort2, IstAntwort2Richtig,
-                Antwort3, IstAntwort3Richtig,
-                Antwort4, IstAntwort4Richtig
-            FROM Fragen
-            WHERE FragebogenID = @ID
-            ORDER BY ID;";
+                        SELECT 
+                            Fragestellung,
+                            Antwort1, IstAntwort1Richtig,
+                            Antwort2, IstAntwort2Richtig,
+                            Antwort3, IstAntwort3Richtig,
+                            Antwort4, IstAntwort4Richtig
+                        FROM Fragen
+                        WHERE FragebogenID = @ID
+                        ORDER BY ID;";
 
                 using var cmd = new MySqlCommand(query, connection);
                 cmd.Parameters.AddWithValue("@ID", GamePin);
