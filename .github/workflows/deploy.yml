@@ -7,7 +7,9 @@ on:
 jobs:
   build:
     name: Build on Ubuntu
-    runs-on: [self-hosted, carry1_host]
+    runs-on:
+      - self-hosted
+      - carry1_host
 
     steps:
       - name: Checkout Code
@@ -33,9 +35,13 @@ jobs:
 
     strategy:
       matrix:
-        target_server: [iis1-server, iis2-server]
+        target_server:
+          - iis1-server
+          - iis2-server
 
-    runs-on: [self-hosted, ${{ matrix.target_server }}]
+    runs-on:
+      - self-hosted
+      - ${{ matrix.target_server }}
 
     steps:
       - name: Download Artifact
