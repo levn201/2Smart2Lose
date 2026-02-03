@@ -1,17 +1,13 @@
 name: Deploy ASP.NET Project
+
 on:
   push:
     branches: [ main ]
 
 jobs:
-  build-and-deploy:
-    # Hier definierst du die Liste deiner Server
-    strategy:
-      matrix:
-        target_server: [iis1-server, iis2-server] 
-    
-    # GitHub startet jetzt für jeden Eintrag in der Liste einen eigenen Job
-    runs-on: ${{ matrix.target_server }}
+  build:
+    name: Build on Ubuntu
+    runs-on: [self-hosted, carry1_host]
 
     steps:
       - name: Checkout Code
@@ -22,11 +18,34 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Publish Projekt
-        run: dotnet publish -c Release -o ./publish_output
+      - name: Publish Project
+        run: dotnet publish -c Release -o publish_output
 
-      - name: Copy to Webroot
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: aspnet-publish
+          path: publish_output
+
+  deploy:
+    name: Deploy to IIS
+    needs: build
+
+    strategy:
+      matrix:
+        target_server: [iis1-server, iis2-server]
+
+    runs-on: [self-hosted, ${{ matrix.target_server }}]
+
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: aspnet-publish
+          path: publish_output
+
+      - name: Deploy to IIS Webroot
         shell: powershell
         run: |
-          robocopy ./publish_output "C:\inetpub\wwwroot\prod_Files" /MIR
+          robocopy publish_output "C:\inetpub\wwwroot\prod_Files" /MIR
           if ($lastexitcode -le 3) { exit 0 } else { exit $lastexitcode }
