@@ -12,5 +12,4 @@
         public string Antwort4 { get; set; } = string.Empty;
         public bool IstAntwort4Richtig { get; set; }
     }
-
 }

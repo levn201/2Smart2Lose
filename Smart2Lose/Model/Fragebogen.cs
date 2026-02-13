@@ -4,8 +4,8 @@
     {
         public int JoinId { get; set; }
         public string Titel { get; set; } = "";
-        public string Autor { get; set; } = string.Empty;
-        public string Kategorie { get; set; } = string.Empty;
+        public string Autor { get; set; } = "Keins";
+        public string Kategorie { get; set; } = "Unbekannt";
         public DateTime ErstelltAm { get; set; }
     }
 }

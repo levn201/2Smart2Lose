@@ -6,6 +6,7 @@ using MySql.Data.MySqlClient;
 using Mysqlx.Crud;
 using Smart2Lose.Helper;
 using Smart2Lose.Model;
+using System.Security.Claims;
 
 
 namespace Smart2Lose.Pages.Admin
@@ -14,24 +15,17 @@ namespace Smart2Lose.Pages.Admin
     public class FrageboegenErstellenModel : PageModel
     {
         public projektName pn = new projektName(); // Projektname holen
-
-
-        [BindProperty]
-        public string Titel { get; set; }
+        public AdminHelper AdminHelper = new AdminHelper();
 
         [BindProperty]
-        public int JoinNumber { get; set; }
+       public Fragebogen fragebogen { get; set; } = new();
 
 
-        [BindProperty]
-        public string CreaterName { get; set; } = string.Empty;
-
-        [BindProperty]
-        public string Kategorie { get; set; } = string.Empty;
-
-        [BindProperty]
-        public List<Fragen> Fragen { get; set; } = new();
-
+        [BindProperty] public string Titel { get; set; }
+        [BindProperty] public List<Fragen> Fragen { get; set; } = new();
+        [BindProperty] public string CreaterName { get; set; } = string.Empty;
+        [BindProperty] public string Kategorie { get; set; } = string.Empty;
+        [BindProperty] public int JoinNumber { get; set; }
         public string TitelError { get; set; }
         public string FragenError { get; set; }
 
@@ -39,36 +33,8 @@ namespace Smart2Lose.Pages.Admin
         // Macht JoinNumber gleich wie FragebogenID 
         public void OnGet()
         {
-            Kategorie = HttpContext.Session.GetString("kategorie") ?? "Unternehmen";
-            JoinNumber = RandomNum();
-        }
-
-        // Random Join Number wird einmal beim Titel einschrirben durchgeführt und übertragen 
-        public int RandomNum()
-        {
-            int number;
-            var random = new Random();
-            var db = new SQLconnection.DatenbankZugriff();
-
-            using var connection = db.GetConnection();
-            connection.Open();
-
-            bool exists;
-
-            do
-            {
-                number = random.Next(1000, 10000);
-
-                string query = "SELECT COUNT(*) FROM Fragebogen WHERE Join_ID = @Join_ID";
-                using var cmd = new MySqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@Join_ID", number);
-
-                var count = Convert.ToInt32(cmd.ExecuteScalar());
-                exists = count > 0;
-
-            } while (exists);
-
-            return number;
+            Kategorie = HttpContext.Session.GetString("kategorie") ?? "Sonstige";
+            JoinNumber = AdminHelper.RandomNum();
         }
 
         private void SetKategorie()
@@ -141,6 +107,7 @@ namespace Smart2Lose.Pages.Admin
                 }
             }
 
+            // Schreiben in die Datenbank 
             try
             {
                 CreaterName = HttpContext.Session.GetString("createrName") ?? "Unbekannt";
@@ -157,9 +124,11 @@ namespace Smart2Lose.Pages.Admin
                     string queryFragebogen = "INSERT INTO Fragebogen (Titel, Join_ID, Autor, Kategorie) VALUES (@titel, @Join_ID, @Autor, @kategorie)";
                     using (var cmd = new MySqlCommand(queryFragebogen, connection, transaction))
                     {
+                        string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
                         cmd.Parameters.AddWithValue("@titel", Titel);
                         cmd.Parameters.AddWithValue("@Join_ID", JoinNumber);
-                        cmd.Parameters.AddWithValue("@Autor", CreaterName);
+                        cmd.Parameters.AddWithValue("@Autor", userId);
                         cmd.Parameters.AddWithValue("@kategorie", Kategorie);
                         cmd.ExecuteNonQuery();
                     }
@@ -227,15 +196,15 @@ namespace Smart2Lose.Pages.Admin
 
 
         // Kategorie-Auswahl Handler
-        public IActionResult OnPostKategorie()
-        {
-            SetKategorie();
-            if (!string.IsNullOrEmpty(Kategorie))
-            {
-                HttpContext.Session.SetString("kategorie", Kategorie);
-            }
+        //public IActionResult OnPostKategorie()
+        //{
+        //    SetKategorie();
+        //    if (!string.IsNullOrEmpty(Kategorie))
+        //    {
+        //        HttpContext.Session.SetString("kategorie", Kategorie);
+        //    }
 
-            return Page();
-        }
+        //    return Page();
+        //}
     }
 }

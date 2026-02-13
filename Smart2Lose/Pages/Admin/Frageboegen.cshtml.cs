@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
 using Smart2Lose.Helper;
 using Smart2Lose.Model;
+using System.Security.Claims;
 
 namespace Smart2Lose.Pages.Admin
 {
@@ -14,6 +15,7 @@ namespace Smart2Lose.Pages.Admin
         {   
             LadeAlleFrageboegen();
         }
+
 
 
         public projektName pn = new projektName(); // Projektname holen
