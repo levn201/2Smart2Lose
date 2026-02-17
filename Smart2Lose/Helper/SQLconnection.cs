@@ -10,8 +10,8 @@ namespace Smart2Lose.Helper
         {
             public string connectionString =
 
-            /*"Server=localhost;Database=KahootDatabase;Uid=root;Pwd=21481TNGhello!";*/  //Connection zur Framework Local Database von Levin 
-            "Server=192.168.200.30;Port=3306;Database=kahootdatabase;Uid=Smart2Lose;Pwd=TNBWazubi1!;SslMode=None;";
+            "Server=localhost;Database=KahootDatabase;Uid=root;Pwd=21481TNGhello!"; //Connection zur Framework Local Database von Levin 
+            //"Server=192.168.200.30;Port=3306;Database=kahootdatabase;Uid=Smart2Lose;Pwd=TNBWazubi1!;SslMode=None;";
 
             public MySqlConnection GetConnection()
             {

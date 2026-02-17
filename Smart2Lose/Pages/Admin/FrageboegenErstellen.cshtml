@@ -33,47 +33,52 @@
 
     <h2>Neues Quiz erstellen</h2>
 
-    <!-- Quiz Meta -->
-    <div class="quiz-meta">
+    <!-- HAUPTFORMULAR -->
+    <form method="post" asp-page-handler="AddFrage" id="fragenForm">
 
-        <form method="post" asp-page-handler="Kategorie">
+        <!-- Quiz Meta -->
+        <div class="quiz-meta">
+
+            <!-- Kategorie -->
             <div class="filter-item">
                 <label asp-for="Kategorie">Kategorie</label>
-                <select asp-for="Kategorie" class="form-select" onchange="this.form.submit()">
+                <select asp-for="Kategorie" class="form-select">
                     <option value="Unternehmen">Unternehmenswissen</option>
                     <option value="Sicherheit">Gesundheit & Sicherheit</option>
                     <option value="Technik">Technik & Tools</option>
                     <option value="Skills">Soft Skills</option>
                 </select>
             </div>
-        </form>
 
-        <div class="titel-box">
-            <label for="quizTitle">Quiz-Titel</label>
-            <input type="text"
-                   id="quizTitle"
-                   name="Titel"
-                   placeholder="Titel des Quizzes eingeben"
-                   value="@Model.Titel" />
-            @if (!string.IsNullOrEmpty(Model.TitelError))
-            {
-                <p class="message">@Model.TitelError</p>
-            }
+            <!-- Titel -->
+            <div class="titel-box">
 
-            <div class="joincode-box">
-                <span>Join-Code</span>
-                <strong>@Model.JoinNumber</strong>
+                <label for="quizTitle">Quiz-Titel</label>
+
+                <input type="text"
+                       id="quizTitle"
+                       name="Titel"
+                       placeholder="Titel des Quizzes eingeben"
+                       value="@Model.Titel" />
+
+                @if (!string.IsNullOrEmpty(Model.TitelError))
+                {
+                    <p class="message">@Model.TitelError</p>
+                }
+
+                <div class="joincode-box">
+                    <span>Join-Code</span>
+                    <strong>@Model.JoinNumber</strong>
+                </div>
+
             </div>
+
         </div>
 
-
-    </div>
-
-    <!-- Hauptformular -->
-    <form method="post" asp-page-handler="AddFrage" id="fragenForm">
-
-        <input type="hidden" name="Titel" id="hiddenTitel" value="@Model.Titel" />
+        <!-- Hidden Fields -->
         <input type="hidden" name="JoinNumber" value="@Model.JoinNumber" />
+
+        <!-- Fragen -->
         <div id="fragenContainer">
 
             <div class="frage-container quiz-frage" data-index="0">
@@ -85,6 +90,7 @@
                 </button>
 
                 <h3>Fragestellung</h3>
+
                 <textarea class="frage-text"
                           name="Fragen[0].Fragestellung"
                           placeholder="Geben Sie hier die Frage ein"
@@ -94,43 +100,29 @@
 
                 <div class="antwort-grid">
 
-                    <div class="antwort-option">
-                        <textarea name="Fragen[0].Antwort1" placeholder="Antwort 1"></textarea>
-                        <label>
-                            <input type="checkbox" name="Fragen[0].IstAntwort1Richtig" />
-                            Richtig
-                        </label>
-                    </div>
+                    @for (int i = 1; i <= 4; i++)
+                    {
+                        <div class="antwort-option">
 
-                    <div class="antwort-option">
-                        <textarea name="Fragen[0].Antwort2" placeholder="Antwort 2"></textarea>
-                        <label>
-                            <input type="checkbox" name="Fragen[0].IstAntwort2Richtig" />
-                            Richtig
-                        </label>
-                    </div>
+                            <textarea name="Fragen[0].Antwort@i"
+                                  placeholder="Antwort @i"></textarea>
 
-                    <div class="antwort-option">
-                        <textarea name="Fragen[0].Antwort3" placeholder="Antwort 3"></textarea>
-                        <label>
-                            <input type="checkbox" name="Fragen[0].IstAntwort3Richtig" />
-                            Richtig
-                        </label>
-                    </div>
+                            <label>
+                                <input type="checkbox"
+                                       name="Fragen[0].IstAntwort@iRichtig" />
+                                Richtig
+                            </label>
 
-                    <div class="antwort-option">
-                        <textarea name="Fragen[0].Antwort4" placeholder="Antwort 4"></textarea>
-                        <label>
-                            <input type="checkbox" name="Fragen[0].IstAntwort4Richtig" />
-                            Richtig
-                        </label>
-                    </div>
+                        </div>
+                    }
 
                 </div>
 
             </div>
+
         </div>
 
+        <!-- Fehler -->
         @if (!string.IsNullOrEmpty(Model.FragenError))
         {
             <div class="frage-container error">
@@ -138,18 +130,28 @@
             </div>
         }
 
+        <!-- Buttons -->
         <div class="button-row">
-            <button type="button" class="knopf" onclick="addFrage()">
+
+            <button type="button"
+                    class="knopf"
+                    onclick="addFrage()">
+
                 Frage hinzufügen
             </button>
-            <button type="button" class="knopf" onclick="speichernMitTitel()">
+
+            <button type="submit"
+                    class="knopf">
+
                 Fragebogen speichern
             </button>
+
         </div>
 
     </form>
 
 </div>
+
 
 <!-- Scripts -->
 <script>
@@ -210,22 +212,6 @@
             }
         });
         frageIndex = fragen.length;
-    }
-
-    // Titel übertragen und Formular absenden
-    function speichernMitTitel() {
-        const titel = document.getElementById('quizTitle').value;
-
-        if (!titel || titel.trim() === '') {
-            alert('Bitte geben Sie einen Quiz-Titel ein.');
-            return;
-        }
-
-        // Titel in Hidden Field übertragen
-        document.getElementById('hiddenTitel').value = titel;
-
-        // Formular absenden
-        document.getElementById('fragenForm').submit();
     }
 </script>
 

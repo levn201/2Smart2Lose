@@ -1,3 +1,4 @@
+using log4net;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -5,6 +6,10 @@ using System.ComponentModel.DataAnnotations;
 
 public class LoginModel : PageModel
 {
+    private static readonly ILog log =
+       LogManager.GetLogger(typeof(LoginModel));
+
+
     private readonly SignInManager<IdentityUser> _signInManager;
 
     public LoginModel(SignInManager<IdentityUser> signInManager)
@@ -37,10 +42,15 @@ public class LoginModel : PageModel
 
     public async Task<IActionResult> OnPostAsync(string returnUrl = null)
     {
+
+        log.Info($"Login attempt for user: {Input.Email}");
+
+
         returnUrl ??= "/Admin/Dashboard";
 
         if (!ModelState.IsValid)
             return Page();
+        log.Info($"Model state is valid for user: {Input.Email}");
 
         var result = await _signInManager.PasswordSignInAsync(
             Input.Email,
@@ -50,10 +60,13 @@ public class LoginModel : PageModel
 
         if (result.Succeeded)
         {
+            log.Info($"Login successful for user: {Input.Email}");
             return LocalRedirect(returnUrl);
         }
 
         ModelState.AddModelError(string.Empty, "Login fehlgeschlagen");
+        log.Warn($"Login failed for user: {Input.Email}");
         return Page();
+        
     }
 }

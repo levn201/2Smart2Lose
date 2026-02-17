@@ -17,10 +17,7 @@ namespace Smart2Lose.Pages.Admin
         public projektName pn = new projektName(); // Projektname holen
         public AdminHelper AdminHelper = new AdminHelper();
 
-        [BindProperty]
-       public Fragebogen fragebogen { get; set; } = new();
-
-
+        [BindProperty] public Fragebogen fragebogen { get; set; } = new();
         [BindProperty] public string Titel { get; set; }
         [BindProperty] public List<Fragen> Fragen { get; set; } = new();
         [BindProperty] public string CreaterName { get; set; } = string.Empty;
@@ -35,14 +32,6 @@ namespace Smart2Lose.Pages.Admin
         {
             Kategorie = HttpContext.Session.GetString("kategorie") ?? "Sonstige";
             JoinNumber = AdminHelper.RandomNum();
-        }
-
-        private void SetKategorie()
-        {
-            if (!string.IsNullOrEmpty(Kategorie))
-            {
-                HttpContext.Session.SetString("kategorie", Kategorie);
-            }
         }
 
 
@@ -193,18 +182,5 @@ namespace Smart2Lose.Pages.Admin
                 return Page();
             }
         }
-
-
-        // Kategorie-Auswahl Handler
-        //public IActionResult OnPostKategorie()
-        //{
-        //    SetKategorie();
-        //    if (!string.IsNullOrEmpty(Kategorie))
-        //    {
-        //        HttpContext.Session.SetString("kategorie", Kategorie);
-        //    }
-
-        //    return Page();
-        //}
     }
 }
