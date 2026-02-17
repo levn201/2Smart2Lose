@@ -1,4 +1,4 @@
-name: Deploy ASP.NET Project
+name: Windows (IIS) - ASP.NET 
 on:
   push:
     branches: [ main ]
