@@ -34,5 +34,18 @@ jobs:
       - name: Deploy to IIS
         shell: powershell
         run: |
+          Import-Module WebAdministration
+
+          # AppPool stoppen
+          Stop-WebAppPool -Name "DefaultAppPool"
+
+          # Kurz warten
+          Start-Sleep -Seconds 5
+
+          # Dateien kopieren
           robocopy publish_output "C:\inetpub\wwwroot\prod_Files" /MIR
-          if ($lastexitcode -le 3) { exit 0 } else { exit $lastexitcode }
+          if ($lastexitcode -gt 3) { exit $lastexitcode }
+
+          # AppPool wieder starten
+          Start-WebAppPool -Name "DefaultAppPool"
+
