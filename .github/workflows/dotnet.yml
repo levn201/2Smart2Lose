@@ -1,4 +1,4 @@
-name: Build ASP.NET Project (Linux)
+name: Ubuntu (Caddy) - ASP.NET
 
 on:
   push:
