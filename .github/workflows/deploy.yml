@@ -30,22 +30,21 @@ jobs:
 
       - name: Publish Project
         run: dotnet publish -c Release -o publish_output
-
       - name: Deploy to IIS
         shell: powershell
         run: |
           Import-Module WebAdministration
 
           # AppPool stoppen
-          Stop-WebAppPool -Name "DefaultAppPool"
+          Stop-WebAppPool -Name "smart2lose"
 
-          # Kurz warten
+          # Warten bis Dateien frei sind
           Start-Sleep -Seconds 5
 
-          # Dateien kopieren
+          # Deploy
           robocopy publish_output "C:\inetpub\wwwroot\prod_Files" /MIR
           if ($lastexitcode -gt 3) { exit $lastexitcode }
 
-          # AppPool wieder starten
-          Start-WebAppPool -Name "DefaultAppPool"
+          # AppPool starten
+          Start-WebAppPool -Name "smart2lose"
 
