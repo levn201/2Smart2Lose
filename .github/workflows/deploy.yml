@@ -1,27 +1,32 @@
-name: Deploy ASP.NET Project
+name: Windows (IIS) - ASP.NET 
 on:
   push:
     branches: [ main ]
 
 jobs:
   build-and-deploy:
-    runs-on: self-hosted
+    # Hier definierst du die Liste deiner Server
+    strategy:
+      matrix:
+        target_server: [iis1-server, iis2-server] 
+    
+    # GitHub startet jetzt für jeden Eintrag in der Liste einen eigenen Job
+    runs-on: ${{ matrix.target_server }}
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x' # Deine Version hier eintragen (z.B. 6.0.x)
+          dotnet-version: '8.0.x'
 
       - name: Publish Projekt
-        # Dieser Befehl erstellt einen sauberen "publish" Ordner
         run: dotnet publish -c Release -o ./publish_output
 
       - name: Copy to Webroot
-        # Wir kopieren NUR den Inhalt des publish_output Ordners auf deinen Desktop
-        run: robocopy ./publish_output "C:\Users\Administrator\Desktop\prod_Files" /MIR
-        # robocopy gibt oft Exit-Codes zurück, die GitHub als Fehler wertet. 
-        # "exit 0" erzwingt ein "Erfolgreich", wenn robocopy fertig ist.
-        continue-on-error: true
+        shell: powershell
+        run: |
+          robocopy ./publish_output "C:\inetpub\wwwroot\prod_Files" /MIR
+          if ($lastexitcode -le 3) { exit 0 } else { exit $lastexitcode }

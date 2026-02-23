@@ -6,6 +6,7 @@ using MySql.Data.MySqlClient;
 using Mysqlx.Crud;
 using Smart2Lose.Helper;
 using Smart2Lose.Model;
+using System.Security.Claims;
 
 
 namespace Smart2Lose.Pages.Admin
@@ -14,232 +15,172 @@ namespace Smart2Lose.Pages.Admin
     public class FrageboegenErstellenModel : PageModel
     {
         public projektName pn = new projektName(); // Projektname holen
+        public AdminHelper AdminHelper = new AdminHelper();
 
+        [BindProperty] public Fragebogen fragebogen { get; set; } = new();
+        [BindProperty] public string Titel { get; set; }
+        [BindProperty] public List<Fragen> Fragen { get; set; } = new();
+        [BindProperty] public string CreaterName { get; set; } = string.Empty;
+        [BindProperty] public string Kategorie { get; set; } = string.Empty;
+        [BindProperty] public int JoinNumber { get; set; }
+        public string TitelError { get; set; }
+        public string FragenError { get; set; }
 
-
-        [BindProperty(SupportsGet = true)]
-        public string Titel { get; set; }
-
-        [BindProperty(SupportsGet = true)]
-        public int JoinNumber { get; set; }
-
-        [BindProperty]
-        public int FragebogenJoinId { get; set; }
-
-
-        [BindProperty]
-        public string CreaterName { get; set; }
-
-        [BindProperty]
-        public string Kategorie { get; set; } 
 
         // Macht JoinNumber gleich wie FragebogenID 
         public void OnGet()
         {
-            Kategorie = HttpContext.Session.GetString("countFragen") ?? "";
-            FragebogenJoinId = JoinNumber;
-        }
-
-        // Random Join Number wird einmal beim Titel einschrirben durchgeführt und übertragen 
-        public int RandomNum()
-        {
-            int number;
-            var random = new Random();
-            var db = new SQLconnection.DatenbankZugriff();
-
-            using var connection = db.GetConnection();
-            connection.Open();
-
-            bool exists;
-
-            do
-            {
-                number = random.Next(1000, 10000);
-
-                string query = "SELECT COUNT(*) FROM Fragebogen WHERE Join_ID = @Join_ID";
-                using var cmd = new MySqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@Join_ID", number);
-
-                var count = Convert.ToInt32(cmd.ExecuteScalar());
-                exists = count > 0;
-
-            } while (exists);
-
-            return number;
+            Kategorie = HttpContext.Session.GetString("kategorie") ?? "Sonstige";
+            JoinNumber = AdminHelper.RandomNum();
         }
 
 
-
-        // Titel Speichert und übertragen an das PopUp
-        public string TitelError { get; set; }
-
-
-        public IActionResult OnPost()
-        {
-            if (string.IsNullOrWhiteSpace(Titel))
-            {
-                TitelError = "Gebe einen Titel ein.";
-                return Page();
-            }
-
-            try
-            {
-                JoinNumber = RandomNum(); // speichere die ID im Property
-                CreaterName = HttpContext.Session.GetString("createrName") ?? "";
-                var db = new SQLconnection.DatenbankZugriff();
-                using var connection = db.GetConnection();
-                connection.Open();
-
-                string query = "INSERT INTO Fragebogen (Titel, Join_ID, Autor, Kategorie) VALUES (@titel, @Join_ID, @Autor, @kategorie)";
-                using var cmd = new MySqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@titel", Titel);
-                cmd.Parameters.AddWithValue("@Join_ID", JoinNumber);
-                cmd.Parameters.AddWithValue("@Autor", CreaterName);
-                cmd.Parameters.AddWithValue("@kategorie", Kategorie);
-
-                cmd.ExecuteNonQuery();
-
-                // Ein Flag setzen, um im Frontend zu wissen, dass gespeichert wurde
-                ViewData["ShowPopup"] = true;
-
-                return Page();
-            }
-            catch (MySqlException ex)
-            {
-                TitelError = $"MySQL-Fehler: {ex.Message}";
-                return Page();
-            }
-            catch (Exception ex)
-            {
-                TitelError = $"Allgemeiner Fehler: {ex.Message}";
-                return Page();
-            }
-        }
-
-
-
-        // INSERT die ganzen Fekder in die Datenbank und aufrufen des PopUps nach jeder speicherung 
-        [BindProperty]
-        public string Fragestellung { get; set; }
-
-        [BindProperty]
-        public string Antwort1 { get; set; }
-
-        [BindProperty]
-        public bool IstAntwort1Richtig { get; set; }
-
-        [BindProperty]
-        public string Antwort2 { get; set; }
-
-        [BindProperty]
-        public bool IstAntwort2Richtig { get; set; }
-
-        [BindProperty]
-        public string Antwort3 { get; set; }
-
-        [BindProperty]
-        public bool IstAntwort3Richtig { get; set; }
-
-        [BindProperty]
-        public string Antwort4 { get; set; }
-
-        [BindProperty]
-        public bool IstAntwort4Richtig { get; set; }
-
-        public string FragenError { get; set; }
+        // Hauptspeicher-Methode: Speichert Fragebogen UND Fragen in einer Transaktion
         public IActionResult OnPostAddFrage()
         {
+            // Validierung: Titel prüfen
+            if (string.IsNullOrWhiteSpace(Titel))
+            {
+                TitelError = "Bitte geben Sie einen Titel ein.";
+                return Page();
+            }
+
+            // Validierung: Fragen prüfen
+            if (Fragen == null || Fragen.Count == 0)
+            {
+                FragenError = "Bitte fügen Sie mindestens eine Frage hinzu.";
+                ViewData["ShowPopup"] = false;
+                return Page();
+            }
+
+            // Prüfer für die Frage eingabe 
+            for (int i = 0; i < Fragen.Count; i++)
+            {
+                var frage = Fragen[i];
+
+                if (string.IsNullOrWhiteSpace(frage.Fragestellung))
+                {
+                    FragenError = $"Frage {i + 1}: Bitte geben Sie eine Fragestellung ein.";
+                    return Page();
+                }
+
+                if (string.IsNullOrWhiteSpace(frage.Antwort1) &&
+                    string.IsNullOrWhiteSpace(frage.Antwort2) &&
+                    string.IsNullOrWhiteSpace(frage.Antwort3) &&
+                    string.IsNullOrWhiteSpace(frage.Antwort4))
+                {
+                    FragenError = $"Frage {i + 1}: Bitte geben Sie mindestens eine Antwort ein.";
+                    return Page();
+                }
+                int richtigeAntworten =
+                    (frage.IstAntwort1Richtig ? 1 : 0) +
+                    (frage.IstAntwort2Richtig ? 1 : 0) +
+                    (frage.IstAntwort3Richtig ? 1 : 0) +
+                    (frage.IstAntwort4Richtig ? 1 : 0);
+
+                if (richtigeAntworten != 1)
+                {
+                    FragenError = $"Frage {i + 1}: Es muss genau eine richtige Antwort ausgewählt werden.";
+                    return Page();
+                }
+
+
+                // Prüfen ob mindestens eine richtige Antwort ausgewählt wurde
+                if (!frage.IstAntwort1Richtig &&
+                    !frage.IstAntwort2Richtig &&
+                    !frage.IstAntwort3Richtig &&
+                    !frage.IstAntwort4Richtig)
+                {
+                    FragenError = $"Frage {i + 1}: Bitte markieren Sie mindestens eine richtige Antwort.";
+                    return Page();
+                }
+            }
+
+            // Schreiben in die Datenbank 
             try
             {
+                CreaterName = HttpContext.Session.GetString("createrName") ?? "Unbekannt";
                 var db = new SQLconnection.DatenbankZugriff();
                 using var connection = db.GetConnection();
                 connection.Open();
 
-                string query = @"
-                    INSERT INTO Fragen (
-                        FragebogenID,
-                        Fragestellung,
-                        Antwort1,
-                        IstAntwort1Richtig,
-                        Antwort2,
-                        IstAntwort2Richtig,
-                        Antwort3,
-                        IstAntwort3Richtig,
-                        Antwort4,
-                        IstAntwort4Richtig
-                    ) VALUES (
-                        @FragebogenID,
-                        @Fragestellung,
-                        @Antwort1,
-                        @IstAntwort1Richtig,
-                        @Antwort2,
-                        @IstAntwort2Richtig,
-                        @Antwort3,
-                        @IstAntwort3Richtig,
-                        @Antwort4,
-                        @IstAntwort4Richtig
-                    );";
+                // Transaktion starten für atomare Operation
+                using var transaction = connection.BeginTransaction();
 
-                using var cmd = new MySqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@FragebogenID", JoinNumber);
-                cmd.Parameters.AddWithValue("@Fragestellung", Fragestellung);
-                cmd.Parameters.AddWithValue("@Antwort1", Antwort1);
-                cmd.Parameters.AddWithValue("@IstAntwort1Richtig", IstAntwort1Richtig);
-                cmd.Parameters.AddWithValue("@Antwort2", Antwort2);
-                cmd.Parameters.AddWithValue("@IstAntwort2Richtig", IstAntwort2Richtig);
-                cmd.Parameters.AddWithValue("@Antwort3", Antwort3);
-                cmd.Parameters.AddWithValue("@IstAntwort3Richtig", IstAntwort3Richtig);
-                cmd.Parameters.AddWithValue("@Antwort4", Antwort4);
-                cmd.Parameters.AddWithValue("@IstAntwort4Richtig", IstAntwort4Richtig);
+                try
+                {
+                    // 1. Fragebogen speichern
+                    string queryFragebogen = "INSERT INTO Fragebogen (Titel, Join_ID, Autor, Kategorie) VALUES (@titel, @Join_ID, @Autor, @kategorie)";
+                    using (var cmd = new MySqlCommand(queryFragebogen, connection, transaction))
+                    {
+                        string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                cmd.ExecuteNonQuery();
+                        cmd.Parameters.AddWithValue("@titel", Titel);
+                        cmd.Parameters.AddWithValue("@Join_ID", JoinNumber);
+                        cmd.Parameters.AddWithValue("@Autor", userId);
+                        cmd.Parameters.AddWithValue("@kategorie", Kategorie);
+                        cmd.ExecuteNonQuery();
+                    }
 
-                // Popup erneut anzeigen
-                ViewData["ShowPopup"] = true;
+                    // 2. Alle Fragen speichern
+                    foreach (var frage in Fragen)
+                    {
+                        string queryFragen = @"
+                            INSERT INTO Fragen (
+                                FragebogenID,
+                                Fragestellung,
+                                Antwort1, IstAntwort1Richtig,
+                                Antwort2, IstAntwort2Richtig,
+                                Antwort3, IstAntwort3Richtig,
+                                Antwort4, IstAntwort4Richtig
+                            ) VALUES (
+                                @FragebogenID,
+                                @Fragestellung,
+                                @Antwort1, @IstAntwort1Richtig,
+                                @Antwort2, @IstAntwort2Richtig,
+                                @Antwort3, @IstAntwort3Richtig,
+                                @Antwort4, @IstAntwort4Richtig
+                            );";
 
-                return Page();
+                        using var cmd = new MySqlCommand(queryFragen, connection, transaction);
+                        cmd.Parameters.AddWithValue("@FragebogenID", JoinNumber);
+                        cmd.Parameters.AddWithValue("@Fragestellung", frage.Fragestellung ?? "");
+                        cmd.Parameters.AddWithValue("@Antwort1", frage.Antwort1 ?? "");
+                        cmd.Parameters.AddWithValue("@IstAntwort1Richtig", frage.IstAntwort1Richtig);
+                        cmd.Parameters.AddWithValue("@Antwort2", frage.Antwort2 ?? "");
+                        cmd.Parameters.AddWithValue("@IstAntwort2Richtig", frage.IstAntwort2Richtig);
+                        cmd.Parameters.AddWithValue("@Antwort3", frage.Antwort3 ?? "");
+                        cmd.Parameters.AddWithValue("@IstAntwort3Richtig", frage.IstAntwort3Richtig);
+                        cmd.Parameters.AddWithValue("@Antwort4", frage.Antwort4 ?? "");
+                        cmd.Parameters.AddWithValue("@IstAntwort4Richtig", frage.IstAntwort4Richtig);
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    // Transaktion bestätigen
+                    transaction.Commit();
+
+
+                    // Optional: Weiterleitung zur Übersicht
+                    return RedirectToPage("/Admin/Frageboegen");
+                }
+                catch (Exception)
+                {
+                    // Bei Fehler: Rollback
+                    transaction.Rollback();
+                    throw;
+                }
             }
             catch (MySqlException ex)
             {
-                FragenError = $"MySQL-Fehler: {ex.Message}";
-                ViewData["ShowPopup"] = true;
+                FragenError = $"Datenbankfehler: {ex.Message}";
                 return Page();
             }
             catch (Exception ex)
             {
-                FragenError = $"Allgemeiner Fehler: {ex.Message}";
-                ViewData["ShowPopup"] = true;
+                FragenError = $"Fehler beim Speichern: {ex.Message}";
                 return Page();
             }
-        }
-
-
-
-
-        public IActionResult OnPostKategorie()
-        {
-            if (Kategorie == "Unternehmen")
-            {
-                Kategorie = "Unternehmen";
-                HttpContext.Session.SetString("kategorie", Kategorie);
-            }
-            else if (Kategorie == "Sicherheit")
-            {
-                Kategorie = "Sicherheit";
-                HttpContext.Session.SetString("kategorie", Kategorie);
-            }
-            else if (Kategorie == "Technik")
-            {
-                Kategorie = "Technik";
-                HttpContext.Session.SetString("kategorie", Kategorie);
-            }
-            else if (Kategorie == "Skills")
-            {
-                Kategorie = "Skills";
-                HttpContext.Session.SetString("kategorie", Kategorie);
-            }
-            
-            return Page();
         }
     }
 }

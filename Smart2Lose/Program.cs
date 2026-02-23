@@ -1,15 +1,31 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using log4net;
+using log4net.Config;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Smart2Lose.Data;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// log4net konfigurieren
+var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+
+XmlConfigurator.Configure(
+    logRepository,
+    new FileInfo("log4net.config")
+);
+
+
+
+var log = LogManager.GetLogger(typeof(Program));
+log.Info("Application starting...");
 // =======================
 // SERVICES
 // =======================
 
 // Razor Pages
 builder.Services.AddRazorPages();
+
 
 // Session
 builder.Services.AddDistributedMemoryCache();
