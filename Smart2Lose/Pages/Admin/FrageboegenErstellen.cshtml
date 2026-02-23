@@ -1,163 +1,134 @@
 @page
 @model Smart2Lose.Pages.Admin.FrageboegenErstellenModel
-@{
-    ViewData["Title"] = "Kahoot | Fragebögen Erstellen";
-}
 
-<link rel="stylesheet" href="~/css/Admin/GrundDashboard.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/Admin/FrageboegenErstellen.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Admin/GrundDashboard.css" asp-append-version="true" />
 
+
+<!-- Header -->
 <header class="header">
     <div class="logo">@Model.pn.Name</div>
-
     <nav class="nav-links">
-
         <a href="/Admin/Dashboard">Dashboard</a>
 
         @if (User.IsInRole("Admin"))
         {
             <a href="/Admin/ManageUser">User</a>
         }
-
-        <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
-
-        <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
+        @if (User.IsInRole("Admin") || User.IsInRole("User") || User.IsInRole("ReadOnly"))
+        {
+            <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
+        }
+        @if (User.IsInRole("Admin") || User.IsInRole("User"))
+        {
+            <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
+        }
 
         <a href="/Index">Quit</a>
-
     </nav>
 </header>
 
-<div class="main-content" id="neu">
-    <h2>Neuen Fragebogen anlegen</h2>
-    <p>Erstelle einen neuen Fragebogen mit individuellen Fragen und Einstellungen.</p>
-</div>
 
 
-<!-- Hier wird der Titel eingeladen mit der URzeit Joincode und  -->
+
 <div class="main-content">
 
-    <h2>Neues Quiz erstellen</h2>
+    <h2>Neues Quiz</h2>
 
-    <!-- HAUPTFORMULAR -->
-    <form method="post" asp-page-handler="AddFrage" id="fragenForm">
+    <form method="post" asp-page-handler="Speichern" id="fragenForm">
 
-        <!-- Quiz Meta -->
+        <!-- META -->
         <div class="quiz-meta">
 
-            <!-- Kategorie -->
             <div class="filter-item">
-                <label asp-for="Kategorie">Kategorie</label>
-                <select asp-for="Kategorie" class="form-select">
-                    <option value="Unternehmen">Unternehmenswissen</option>
-                    <option value="Sicherheit">Gesundheit & Sicherheit</option>
-                    <option value="Technik">Technik & Tools</option>
-                    <option value="Skills">Soft Skills</option>
+                <label>Kategorie</label>
+                <select name="fb.Kategorie">
+                    <option value="Unternehmen">Unternehmen</option>
+                    <option value="Sicherheit">Sicherheit</option>
+                    <option value="Technik">Technik</option>
+                    <option value="Skills">Skills</option>
                 </select>
             </div>
 
-            <!-- Titel -->
-            <div class="titel-box">
-
-                <label for="quizTitle">Quiz-Titel</label>
-
+            <div class="filter-item">
+                <label>Titel</label>
                 <input type="text"
-                       id="quizTitle"
-                       name="Titel"
-                       placeholder="Titel des Quizzes eingeben"
-                       value="@Model.Titel" />
+                       name="fb.Titel"
+                       value="@Model.fb.Titel"
+                       placeholder="Quiz-Titel eingeben" />
+            </div>
 
-                @if (!string.IsNullOrEmpty(Model.TitelError))
-                {
-                    <p class="message">@Model.TitelError</p>
-                }
+            <!-- Join-Code Badge: CSS erwartet .fragebogen-feld -->
+            <div class="fragebogen-feld">
+                <span class="feld-label">Join-Code:</span>
+                <span class="feld-wert">@Model.fb.JoinId</span>
+            </div>
 
-        @if (!string.IsNullOrEmpty(Model.TitelError))
-        {
-            <p class="message">@Model.TitelError</p>
-        }
-        <button type="submit">Quiz erstellen</button>
-    </form>
-</div>
+            <!-- Muss beim Post wieder mit -->
+            <input type="hidden" name="fb.JoinId" value="@Model.fb.JoinId" />
 
-<!-- Das Popup -->
-<div id="quizPopup" class="popup-overlay" style="display: none;">
-    <form method="post" asp-page-handler="AddFrage" class="popup-content">
-        <!-- Popup Header -->
-        <div class="popup-header">
-            <h2>Frage erstellen</h2>
-            <button type="button" onclick="closeQuizPopup()" class="close-btn">&times;</button>
         </div>
 
-        <!-- Hidden Fields -->
-        <input type="hidden" name="JoinNumber" value="@Model.JoinNumber" />
 
-        <!-- Fragen -->
+        <!-- FRAGEN -->
         <div id="fragenContainer">
 
-            <div class="frage-container quiz-frage" data-index="0">
+            <div class="quiz-frage">
 
-                <button type="button"
-                        class="frage-loeschen"
-                        onclick="removeFrage(this)">
-                    ✖
-                </button>
+                <h3>Frage 1</h3>
 
-                <h3>Fragestellung</h3>
-
+                <label>Fragestellung</label>
                 <textarea class="frage-text"
-                          name="Fragen[0].Fragestellung"
-                          placeholder="Geben Sie hier die Frage ein"
-                          rows="3"></textarea>
+                          name="fb.Fragen[0].Fragestellung"
+                          placeholder="Frage eingeben..."></textarea>
 
                 <h3>Antwortoptionen</h3>
 
                 <div class="antwort-grid">
-
                     @for (int i = 1; i <= 4; i++)
                     {
                         <div class="antwort-option">
 
-                            <textarea name="Fragen[0].Antwort@i"
-                                  placeholder="Antwort @i"></textarea>
+                            <textarea name="fb.Fragen[0].Antwort@(i)"
+                                      placeholder="Antwort @i"></textarea>
 
                             <label>
                                 <input type="checkbox"
-                                       name="Fragen[0].IstAntwort@iRichtig" />
+                                       name="fb.Fragen[0].IstAntwort@(i)Richtig"
+                                       value="true" />
                                 Richtig
                             </label>
 
+                            <!-- Wichtig: hidden NACH Checkbox, sonst wird bool immer false -->
+                            <input type="hidden"
+                                   name="fb.Fragen[0].IstAntwort@(i)Richtig"
+                                   value="false" />
+
                         </div>
                     }
-
                 </div>
 
             </div>
 
         </div>
 
-        <!-- Fehler -->
+
         @if (!string.IsNullOrEmpty(Model.FragenError))
         {
-            <div class="frage-container error">
-                @Model.FragenError
+            <div class="quiz-frage error-box">
+                ⚠️ @Model.FragenError
             </div>
         }
 
-        <!-- Buttons -->
+
         <div class="button-row">
 
-            <button type="button"
-                    class="knopf"
-                    onclick="addFrage()">
-
-                Frage hinzufügen
+            <button type="button" class="knopf" onclick="addFrage()">
+                + Frage hinzufügen
             </button>
 
-            <button type="submit"
-                    class="knopf">
-
-                Fragebogen speichern
+            <button type="submit" class="knopf">
+                💾 Speichern
             </button>
 
         </div>
@@ -167,76 +138,64 @@
 </div>
 
 
-<!-- Scripts -->
 <script>
     let frageIndex = 1;
 
-    // Funktion zum Hinzufügen einer neuen Frage
     function addFrage() {
-        const fragenContainer = document.getElementById('fragenContainer');
-        const letzteFrage = fragenContainer.querySelector('.quiz-frage:last-child');
+        const container = document.getElementById("fragenContainer");
+        const last = container.querySelector(".quiz-frage:last-child");
+        const neu = last.cloneNode(true);
 
-        const neueFrage = letzteFrage.cloneNode(true);
-        neueFrage.setAttribute('data-index', frageIndex);
+        // Überschrift aktualisieren (nimmt das erste h3 im Block)
+        neu.querySelector("h3").textContent = `Frage ${frageIndex + 1}`;
 
-        // Alle Textareas und Inputs aktualisieren
-        neueFrage.querySelector('textarea[name*="Fragestellung"]').name = `Fragen[${frageIndex}].Fragestellung`;
-        neueFrage.querySelector('textarea[name*="Fragestellung"]').value = '';
+        // Fragestellung
+        const frage = neu.querySelector('textarea[name*="Fragestellung"]');
+        frage.name = `fb.Fragen[${frageIndex}].Fragestellung`;
+        frage.value = "";
 
-        // Antworten aktualisieren
+        // Antworten + bools
         for (let i = 1; i <= 4; i++) {
-            const textarea = neueFrage.querySelector(`textarea[name*="Antwort${i}"]`);
-            const checkbox = neueFrage.querySelector(`input[name*="IstAntwort${i}Richtig"]`);
+            const ta = neu.querySelector(`textarea[name*="Antwort${i}"]`);
+            ta.name = `fb.Fragen[${frageIndex}].Antwort${i}`;
+            ta.value = "";
 
-            textarea.name = `Fragen[${frageIndex}].Antwort${i}`;
-            textarea.value = '';
-
-            checkbox.name = `Fragen[${frageIndex}].IstAntwort${i}Richtig`;
-            checkbox.checked = false;
+            // Beide Inputs (checkbox + hidden) umbenennen
+            const inputs = neu.querySelectorAll(`input[name*="IstAntwort${i}Richtig"]`);
+            inputs.forEach(x => {
+                x.name = `fb.Fragen[${frageIndex}].IstAntwort${i}Richtig`;
+                if (x.type === "checkbox") x.checked = false;
+                if (x.type === "hidden") x.value = "false";
+            });
         }
 
-        fragenContainer.appendChild(neueFrage);
+        container.appendChild(neu);
         frageIndex++;
     }
 
-    function closeQuizPopup() {
-        document.getElementById("quizPopup").style.display = "none";
-        document.body.style.overflow = "";
-    }
-
-</script>
-
-    // Funktion zum Entfernen einer Frage
-    function removeFrage(button) {
-        const fragen = document.querySelectorAll('.quiz-frage');
-
-        if (fragen.length <= 1) {
-            alert('Mindestens eine Frage muss vorhanden sein.');
-            return;
+    // Nur eine Checkbox pro Frage auswählbar (Radio-Verhalten)
+    document.addEventListener("change", function (e) {
+        if (e.target.type === "checkbox" && e.target.name.includes("IstAntwort")) {
+            const container = e.target.closest(".quiz-frage");
+            const boxes = container.querySelectorAll('input[type="checkbox"][name*="IstAntwort"]');
+            boxes.forEach(b => { if (b !== e.target) b.checked = false; });
         }
+    });
 
-        button.closest('.quiz-frage').remove();
-        reindexFragen();
-    }
+    // Client-seitige Validierung vor Submit
+    document.getElementById("fragenForm").addEventListener("submit", function (e) {
+        const fragen = document.querySelectorAll(".quiz-frage");
 
-    // Fragen neu nummerieren nach dem Löschen
-    function reindexFragen() {
-        const fragen = document.querySelectorAll('.quiz-frage');
-        fragen.forEach((frage, index) => {
-            frage.setAttribute('data-index', index);
+        for (let i = 0; i < fragen.length; i++) {
+            const boxes = fragen[i].querySelectorAll('input[type="checkbox"][name*="IstAntwort"]');
+            let checked = false;
+            boxes.forEach(b => { if (b.checked) checked = true; });
 
-            frage.querySelector('textarea[name*="Fragestellung"]').name = `Fragen[${index}].Fragestellung`;
-
-            for (let i = 1; i <= 4; i++) {
-                frage.querySelector(`textarea[name*="Antwort${i}"]`).name = `Fragen[${index}].Antwort${i}`;
-                frage.querySelector(`input[name*="IstAntwort${i}Richtig"]`).name = `Fragen[${index}].IstAntwort${i}Richtig`;
+            if (!checked) {
+                alert(`Frage ${i + 1}: Bitte eine richtige Antwort wählen.`);
+                e.preventDefault();
+                return;
             }
-        });
-        frageIndex = fragen.length;
-    }
+        }
+    });
 </script>
-
-
-
-
-
