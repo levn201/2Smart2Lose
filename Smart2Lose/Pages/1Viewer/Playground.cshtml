@@ -39,12 +39,12 @@
                 <!-- Antwort 1 -->
                 <div class="antwort-card bg-1 @(Model.fp.AnswerChecked
                                          ? (frage.IstAntwort1Richtig ? "correct-answer"
-                                         : (Model.UserAnswer.C_IstAntwort1Richtig ? "wrong-answer" : ""))
+                                         : (Model.UserAnswer.IstAntwort1Richtig ? "wrong-answer" : ""))
                                          : "")"
                  onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
 
                     <input type="checkbox" class="checkmark"
-                           asp-for="UserAnswer.C_IstAntwort1Richtig"
+                           asp-for="UserAnswer.IstAntwort1Richtig"
                            onchange="updateSelection(this)"
                            disabled="@Model.fp.AnswerChecked" />
                     <label>@frage.Antwort1</label>
@@ -53,12 +53,12 @@
                 <!-- Antwort 2 -->
                 <div class="antwort-card bg-2 @(Model.fp.AnswerChecked
                                      ? (frage.IstAntwort2Richtig ? "correct-answer"
-                                     : (Model.UserAnswer.C_IstAntwort2Richtig ? "wrong-answer" : ""))
+                                     : (Model.UserAnswer.IstAntwort2Richtig ? "wrong-answer" : ""))
                                      : "")"
                  onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
 
                     <input type="checkbox" class="checkmark"
-                           asp-for="UserAnswer.C_IstAntwort2Richtig"
+                           asp-for="UserAnswer.IstAntwort2Richtig"
                            onchange="updateSelection(this)"
                            disabled="@Model.fp.AnswerChecked" />
                     <label>@frage.Antwort2</label>
@@ -67,12 +67,12 @@
                 <!-- Antwort 3 -->
                 <div class="antwort-card bg-3 @(Model.fp.AnswerChecked
                                      ? (frage.IstAntwort3Richtig ? "correct-answer"
-                                     : (Model.UserAnswer.C_IstAntwort3Richtig ? "wrong-answer" : ""))
+                                     : (Model.UserAnswer.IstAntwort3Richtig ? "wrong-answer" : ""))
                                      : "")"
                  onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
 
                     <input type="checkbox" class="checkmark"
-                           asp-for="UserAnswer.C_IstAntwort3Richtig"
+                           asp-for="UserAnswer.IstAntwort3Richtig"
                            onchange="updateSelection(this)"
                            disabled="@Model.fp.AnswerChecked" />
                     <label>@frage.Antwort3</label>
@@ -81,12 +81,12 @@
                 <!-- Antwort 4 -->
                 <div class="antwort-card bg-4 @(Model.fp.AnswerChecked
                                      ? (frage.IstAntwort4Richtig ? "correct-answer"
-                                     : (Model.UserAnswer.C_IstAntwort4Richtig ? "wrong-answer" : ""))
+                                     : (Model.UserAnswer.IstAntwort4Richtig ? "wrong-answer" : ""))
                                      : "")"
                  onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
 
                     <input type="checkbox" class="checkmark"
-                           asp-for="UserAnswer.C_IstAntwort4Richtig"
+                           asp-for="UserAnswer.IstAntwort4Richtig"
                            onchange="updateSelection(this)"
                            disabled="@Model.fp.AnswerChecked" />
                     <label>@frage.Antwort4</label>

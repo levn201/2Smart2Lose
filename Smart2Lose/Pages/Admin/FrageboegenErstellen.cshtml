@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model Smart2Lose.Pages.Admin.FrageboegenErstellenModel
 @{
     ViewData["Title"] = "Kahoot | Fragebögen Erstellen";
@@ -9,26 +9,32 @@
 
 <header class="header">
     <div class="logo">@Model.pn.Name</div>
+
     <nav class="nav-links">
+
         <a href="/Admin/Dashboard">Dashboard</a>
 
         @if (User.IsInRole("Admin"))
         {
             <a href="/Admin/ManageUser">User</a>
         }
-        @if (User.IsInRole("Admin") || User.IsInRole("User") || User.IsInRole("ReadOnly"))
-        {
-            <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
-        }
-        @if (User.IsInRole("Admin") || User.IsInRole("User"))
-        {
-            <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
-        }
+
+        <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
+
+        <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
 
         <a href="/Index">Quit</a>
+
     </nav>
 </header>
 
+<div class="main-content" id="neu">
+    <h2>Neuen Fragebogen anlegen</h2>
+    <p>Erstelle einen neuen Fragebogen mit individuellen Fragen und Einstellungen.</p>
+</div>
+
+
+<!-- Hier wird der Titel eingeladen mit der URzeit Joincode und  -->
 <div class="main-content">
 
     <h2>Neues Quiz erstellen</h2>
@@ -66,13 +72,21 @@
                     <p class="message">@Model.TitelError</p>
                 }
 
-                <div class="joincode-box">
-                    <span>Join-Code</span>
-                    <strong>@Model.JoinNumber</strong>
-                </div>
+        @if (!string.IsNullOrEmpty(Model.TitelError))
+        {
+            <p class="message">@Model.TitelError</p>
+        }
+        <button type="submit">Quiz erstellen</button>
+    </form>
+</div>
 
-            </div>
-
+<!-- Das Popup -->
+<div id="quizPopup" class="popup-overlay" style="display: none;">
+    <form method="post" asp-page-handler="AddFrage" class="popup-content">
+        <!-- Popup Header -->
+        <div class="popup-header">
+            <h2>Frage erstellen</h2>
+            <button type="button" onclick="closeQuizPopup()" class="close-btn">&times;</button>
         </div>
 
         <!-- Hidden Fields -->
@@ -185,6 +199,13 @@
         frageIndex++;
     }
 
+    function closeQuizPopup() {
+        document.getElementById("quizPopup").style.display = "none";
+        document.body.style.overflow = "";
+    }
+
+</script>
+
     // Funktion zum Entfernen einer Frage
     function removeFrage(button) {
         const fragen = document.querySelectorAll('.quiz-frage');
@@ -214,6 +235,8 @@
         frageIndex = fragen.length;
     }
 </script>
+
+
 
 
 

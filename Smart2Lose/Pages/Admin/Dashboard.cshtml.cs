@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
-using Smart2Lose.Helper;
 using Smart2Lose.Model;
 using static Smart2Lose.Helper.SQLconnection;
 
@@ -16,7 +15,6 @@ namespace Smart2Lose.Pages.Admin
         public void OnGet()
         {
             StatusMessage = "Bereit zum Testen.";
-            user = EditerEvaluation.GetEditor(HttpContext);
         }
 
         public projektName pn = new projektName();

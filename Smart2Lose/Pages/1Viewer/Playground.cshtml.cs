@@ -17,8 +17,9 @@ namespace Smart2Lose.Pages._1Viewer
 
         // LISTEN VON DEN PROPERTY GROUPS 
         [BindProperty]
-        public SelectionCheck UserAnswer { get; set; } = new();
+        public Fragen UserAnswer { get; set; } = new();
         public List<Fragen> FragenDB { get; set; } = new();
+
 
         public FragenPruefung fp = new FragenPruefung();
 
@@ -130,10 +131,10 @@ namespace Smart2Lose.Pages._1Viewer
 
             bool isCorrect = false;
 
-            if (            UserAnswer.C_IstAntwort1Richtig == currentQuestion.IstAntwort1Richtig &&
-                            UserAnswer.C_IstAntwort2Richtig == currentQuestion.IstAntwort2Richtig &&
-                            UserAnswer.C_IstAntwort3Richtig == currentQuestion.IstAntwort3Richtig &&
-                            UserAnswer.C_IstAntwort4Richtig == currentQuestion.IstAntwort4Richtig)
+            if (            UserAnswer.IstAntwort1Richtig == currentQuestion.IstAntwort1Richtig &&
+                            UserAnswer.IstAntwort2Richtig == currentQuestion.IstAntwort2Richtig &&
+                            UserAnswer.IstAntwort3Richtig == currentQuestion.IstAntwort3Richtig &&
+                            UserAnswer.IstAntwort4Richtig == currentQuestion.IstAntwort4Richtig)
             {
                 isCorrect = true;
             }

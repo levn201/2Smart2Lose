@@ -38,6 +38,15 @@
         @foreach (var fragebogen in Model.Frageboegen)
         {
             <div class="fragebogen-karte">
+
+                @if (!Model.fHelper.CheckIfPlayerIsAutor(fragebogen.JoinId))
+                {
+                    <div class="lock-icon">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                }
+
+
                 <div class="fragebogen-kopf">
                     <h3 class="fragebogen-titel">@fragebogen.Titel</h3>
                 </div>
