@@ -8,12 +8,9 @@ using Smart2Lose.Model;
 namespace Smart2Lose.Pages.Admin
 {
     [Authorize(Roles = "Admin,User,ReadOnly")]
-    public class FragebögenModel : PageModel
+    public class FragebögenModel : PageModel 
     {
-        public void OnGet()
-        {   
-            LadeAlleFrageboegen();
-        }
+
 
 
         public projektName pn = new projektName(); // Projektname holen
@@ -28,8 +25,13 @@ namespace Smart2Lose.Pages.Admin
         public List<Fragen> Fragen { get; set; } = new(); // Fragen zum bearbeiten (Fragestellung, Antworten, Richtig/Falsch)
         public List<Fragebogen> Frageboegen { get; set; } = new(); // DB Fragebogen (Titel, Autor, Kategorie, ErstelltAm)
         public List<Fragen> FragenDB { get; set; } = new(); // DB Fragen Tabelle (Fragestellung, Antworten, Richtig/Falsch)
+        public FragenHelper fHelper { get; set; } = new FragenHelper();
 
-
+        public void OnGet()
+        {
+            LadeAlleFrageboegen();
+            fHelper.activeUser = User.FindFirstValue(ClaimTypes.Email);
+        }
 
         // Alle Fragen Cards laden
         public void LadeAlleFrageboegen()
@@ -62,16 +64,12 @@ namespace Smart2Lose.Pages.Admin
             }
         }
 
-        // Noch machen!!!           KAtegorien Festlegen 
-        [BindProperty]
-        public string Kategorien { get; set; }
-
 
 
         // Card - Anschauen Button 
         public IActionResult OnPostView(int id)
         {
-            countResults(id);
+            fHelper.countResults(GamePin, countPlayer);
             try
             {
                 GamePin = id;
@@ -216,8 +214,6 @@ namespace Smart2Lose.Pages.Admin
             return Page();
         }
 
-
-
         // Card - Bearebiten Button => Speichern der editierten Fragen
         public IActionResult OnPostSaveEdit(int fragebogenId, List<Fragen> Fragen)
         {
@@ -313,33 +309,6 @@ namespace Smart2Lose.Pages.Admin
 
             LadeAlleFrageboegen();
             return RedirectToPage(); // Redirect um POST-Redirect-GET Pattern zu folgen
-        }
-
-
-
-        // Noch machen!!!           Hier wird geckeckt ob du dieses Quizz erstellt hast
-        public void checkCreater()
-        {
-
-        }
-
-        // Noch machen!!!           Wie viele Fragebögen wurden bereits Ausgefüllt
-        public int countResults(int id)
-        {
-            GamePin = id;
-            countPlayer = 0; // WICHTIG: Zurücksetzen vor dem Zählen
-
-            var db = new SQLconnection.DatenbankZugriff();
-            using var connection = db.GetConnection();
-            connection.Open();
-
-            string query = @"SELECT COUNT(*) FROM PlayerPoints WHERE GamePin = @ID;";
-            using var cmd = new MySqlCommand(query, connection);
-            cmd.Parameters.AddWithValue("@ID", GamePin);
-
-            countPlayer = Convert.ToInt32(cmd.ExecuteScalar());
-
-            return countPlayer;
         }
     }
 }

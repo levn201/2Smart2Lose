@@ -1,4 +1,6 @@
-﻿namespace Smart2Lose.Model
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace Smart2Lose.Model
 {
     public class Fragebogen //FragebogenViewModel
     {
@@ -7,5 +9,7 @@
         public string Autor { get; set; } = string.Empty;
         public string Kategorie { get; set; } = string.Empty;
         public DateTime ErstelltAm { get; set; }
+
+        public List<Fragen> Fragen { get; set; } = new();
     }
 }

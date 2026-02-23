@@ -13,26 +13,26 @@
 <!-- Header -->
 <header class="header">
     <div class="logo">@Model.pn.Name</div>
+
     <nav class="nav-links">
+
         <a href="/Admin/Dashboard">Dashboard</a>
 
         @if (User.IsInRole("Admin"))
         {
             <a href="/Admin/User">User</a>
         }
-        @if (User.IsInRole("Admin") || User.IsInRole("User") || User.IsInRole("ReadOnly"))
-        {
-            <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
-        }
-        @if (User.IsInRole("Admin") || User.IsInRole("User"))
-        {
-            <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
-        }
+
+        <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
+
+        <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
 
         <a href="/Index">Quit</a>
+
     </nav>
 </header>
 
+<<<<<<< Updated upstream
 <div class="main-content" id="neu">
     <h2>Neuen Fragebogen anlegen</h2>
     <p>Erstelle einen neuen Fragebogen mit individuellen Fragen und Einstellungen.</p>
@@ -66,11 +66,180 @@
         @if (!string.IsNullOrEmpty(Model.TitelError))
         {
             <p class="message">@Model.TitelError</p>
+=======
+<div class="main-content">
+
+    <h2>Neues Quiz erstellen</h2>
+
+    <form method="post" asp-page-handler="AddFrage" id="fragenForm">
+
+        <!-- META -->
+        <div class="quiz-meta">
+
+            <!-- Kategorie -->
+            <div class="filter-item">
+
+                <label>Kategorie</label>
+
+                <select asp-for="fb.Kategorie" class="form-select">
+
+                    <option value="Unternehmen">Unternehmenswissen</option>
+                    <option value="Sicherheit">Gesundheit & Sicherheit</option>
+                    <option value="Technik">Technik & Tools</option>
+                    <option value="Skills">Soft Skills</option>
+
+                </select>
+
+            </div>
+
+            <!-- Titel -->
+            <div class="titel-box">
+
+                <label>Quiz-Titel</label>
+
+                <input asp-for="fb.Titel"
+                       placeholder="Titel des Quizzes eingeben" />
+
+                @if (!string.IsNullOrEmpty(Model.FragenError))
+                {
+                    <p class="message">@Model.FragenError</p>
+                }
+
+                <div class="joincode-box">
+
+                    <span>Join-Code</span>
+                    <strong>@Model.fb.JoinId</strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <input type="hidden" asp-for="fb.JoinId" />
+
+
+        <!-- FRAGEN -->
+        <div id="fragenContainer">
+
+            <div class="frage-container quiz-frage" data-index="0">
+
+                <button type="button"
+                        class="frage-loeschen"
+                        onclick="removeFrage(this)">
+                    ✖
+                </button>
+
+                <h3>Fragestellung</h3>
+
+                <textarea class="frage-text"
+                          name="fb.Fragen[0].Fragestellung"
+                          rows="3"
+                          placeholder="Geben Sie hier die Frage ein"></textarea>
+
+                <h3>Antwortoptionen</h3>
+
+                <div class="antwort-grid">
+
+                    @for (int i = 1; i <= 4; i++)
+                    {
+                        <div class="antwort-option">
+
+                            <textarea name="fb.Fragen[0].Antwort@(i)"
+                                  placeholder="Antwort @i"></textarea>
+
+                            <label>
+
+                                <input type="checkbox"
+                                       name="fb.Fragen[0].IstAntwort@(i)Richtig"
+                                       value="true" />
+
+                                Richtig
+
+                            </label>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FEHLER -->
+        @if (!string.IsNullOrEmpty(Model.FragenError))
+        {
+            <div class="frage-container error">
+                @Model.FragenError
+            </div>
+        }
+
+
+        <!-- BUTTONS -->
+        <div class="button-row">
+
+            <button type="button"
+                    class="knopf"
+                    onclick="addFrage()">
+
+                Frage hinzufügen
+
+            </button>
+
+            <button type="submit"
+                    class="knopf">
+
+                Fragebogen speichern
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+
+<script>
+
+    let frageIndex = 1;
+
+    function addFrage() {
+
+        const container = document.getElementById("fragenContainer");
+        const letzte = container.querySelector(".quiz-frage:last-child");
+
+        const neu = letzte.cloneNode(true);
+
+        neu.setAttribute("data-index", frageIndex);
+
+        // Frage
+        const frage = neu.querySelector('textarea[name*="Fragestellung"]');
+        frage.name = `fb.Fragen[${frageIndex}].Fragestellung`;
+        frage.value = "";
+
+        // Antworten
+        for (let i = 1; i <= 4; i++) {
+
+            const text = neu.querySelector(`textarea[name*="Antwort${i}"]`);
+            text.name = `fb.Fragen[${frageIndex}].Antwort${i}`;
+            text.value = "";
+
+            const check = neu.querySelector(`input[name*="IstAntwort${i}Richtig"]`);
+            check.name = `fb.Fragen[${frageIndex}].IstAntwort${i}Richtig`;
+            check.checked = false;
+            check.value = "true";
+>>>>>>> Stashed changes
         }
         <button type="submit">Quiz erstellen</button>
     </form>
 </div>
 
+<<<<<<< Updated upstream
 <!-- Das Popup -->
 <div id="quizPopup" class="popup-overlay" style="display: none;">
     <form method="post" asp-page-handler="AddFrage" class="popup-content">
@@ -164,7 +333,50 @@
     function closeQuizPopup() {
         document.getElementById("quizPopup").style.display = "none";
         document.body.style.overflow = "";
+=======
+        container.appendChild(neu);
+        frageIndex++;
     }
+
+    function removeFrage(btn) {
+
+        const fragen = document.querySelectorAll(".quiz-frage");
+
+        if (fragen.length <= 1) {
+            alert("Mindestens eine Frage nötig");
+            return;
+        }
+
+        btn.closest(".quiz-frage").remove();
+        reindex();
+    }
+
+    function reindex() {
+
+        const fragen = document.querySelectorAll(".quiz-frage");
+
+        fragen.forEach((f, index) => {
+
+            f.setAttribute("data-index", index);
+
+            const frage = f.querySelector('textarea[name*="Fragestellung"]');
+            frage.name = `fb.Fragen[${index}].Fragestellung`;
+
+            for (let i = 1; i <= 4; i++) {
+
+                const text = f.querySelector(`textarea[name*="Antwort${i}"]`);
+                text.name = `fb.Fragen[${index}].Antwort${i}`;
+
+                const check = f.querySelector(`input[name*="IstAntwort${i}Richtig"]`);
+                check.name = `fb.Fragen[${index}].IstAntwort${i}Richtig`;
+                check.value = "true";
+            }
+        });
+
+        frageIndex = fragen.length;
+>>>>>>> Stashed changes
+    }
+
 </script>
 
 @if (ViewData["ShowPopup"] != null && (bool)ViewData["ShowPopup"])
@@ -175,6 +387,8 @@
         });
     </script>
 }
+
+
 
 
 
