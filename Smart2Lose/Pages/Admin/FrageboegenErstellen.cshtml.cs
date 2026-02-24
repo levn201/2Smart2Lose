@@ -34,7 +34,7 @@ namespace Smart2Lose.Pages.Admin
             {
                 FragenError = "Bitte einen Titel eingeben.";
                 return Page();
-            }
+            } 
 
             // Fragen prüfen
             if (fb.Fragen == null || fb.Fragen.Count == 0)
@@ -70,7 +70,7 @@ namespace Smart2Lose.Pages.Admin
             try
             {
                 // Autor: du kannst auch ClaimTypes.Email nutzen, wenn du das in DB willst
-                fb.Autor = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
+                fb.Autor = User.FindFirstValue(ClaimTypes.Email) ?? "";
 
                 var db = new SQLconnection.DatenbankZugriff();
                 using var con = db.GetConnection();
@@ -113,7 +113,7 @@ namespace Smart2Lose.Pages.Admin
                              @a4, @r4);",
                         con, tx);
 
-                    cmd.Parameters.AddWithValue("@id", fid);
+                    cmd.Parameters.AddWithValue("@id", fb.JoinId);
                     cmd.Parameters.AddWithValue("@q", f.Fragestellung ?? "");
 
                     cmd.Parameters.AddWithValue("@a1", f.Antwort1 ?? "");
