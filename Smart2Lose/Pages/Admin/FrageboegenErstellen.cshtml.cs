@@ -1,184 +1,142 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
-using Mysqlx.Crud;
 using Smart2Lose.Helper;
 using Smart2Lose.Model;
 using System.Security.Claims;
-
 
 namespace Smart2Lose.Pages.Admin
 {
     [Authorize(Roles = "Admin,User")]
     public class FrageboegenErstellenModel : PageModel
     {
-        public projektName pn = new projektName(); // Projektname holen
         public AdminHelper AdminHelper = new AdminHelper();
+        public projektName pn = new projektName();
+        [BindProperty] public Fragebogen fb { get; set; } = new();
 
-        [BindProperty] public Fragebogen fragebogen { get; set; } = new();
-        [BindProperty] public string Titel { get; set; }
-        [BindProperty] public List<Fragen> Fragen { get; set; } = new();
-        [BindProperty] public string CreaterName { get; set; } = string.Empty;
-        [BindProperty] public string Kategorie { get; set; } = string.Empty;
-        [BindProperty] public int JoinNumber { get; set; }
-        public string TitelError { get; set; }
-        public string FragenError { get; set; }
+        public string FragenError { get; set; } = string.Empty;
 
-
-        // Macht JoinNumber gleich wie FragebogenID 
         public void OnGet()
         {
-            Kategorie = HttpContext.Session.GetString("kategorie") ?? "Sonstige";
-            JoinNumber = AdminHelper.RandomNum();
+            fb.JoinId = AdminHelper.RandomNum();
+            fb.Kategorie = "Unternehmen";
         }
 
-
-        // Hauptspeicher-Methode: Speichert Fragebogen UND Fragen in einer Transaktion
-        public IActionResult OnPostAddFrage()
+        public IActionResult OnPostSpeichern()
         {
-            // Validierung: Titel prüfen
-            if (string.IsNullOrWhiteSpace(Titel))
+            // Falls JoinId beim Post fehlt (z.B. Page neu geladen, JS Mist, etc.)
+            if (fb.JoinId <= 0)
+                fb.JoinId = AdminHelper.RandomNum();
+
+            // Titel prüfen
+            if (string.IsNullOrWhiteSpace(fb.Titel))
             {
-                TitelError = "Bitte geben Sie einen Titel ein.";
+                FragenError = "Bitte einen Titel eingeben.";
+                return Page();
+            } 
+
+            // Fragen prüfen
+            if (fb.Fragen == null || fb.Fragen.Count == 0)
+            {
+                FragenError = "Mindestens eine Frage ist erforderlich.";
                 return Page();
             }
 
-            // Validierung: Fragen prüfen
-            if (Fragen == null || Fragen.Count == 0)
+            // Validierung: genau eine richtige Antwort pro Frage + Fragestellung nicht leer
+            for (int i = 0; i < fb.Fragen.Count; i++)
             {
-                FragenError = "Bitte fügen Sie mindestens eine Frage hinzu.";
-                ViewData["ShowPopup"] = false;
-                return Page();
-            }
+                var f = fb.Fragen[i];
 
-            // Prüfer für die Frage eingabe 
-            for (int i = 0; i < Fragen.Count; i++)
-            {
-                var frage = Fragen[i];
-
-                if (string.IsNullOrWhiteSpace(frage.Fragestellung))
+                if (string.IsNullOrWhiteSpace(f.Fragestellung))
                 {
-                    FragenError = $"Frage {i + 1}: Bitte geben Sie eine Fragestellung ein.";
+                    FragenError = $"Frage {i + 1}: Fragestellung darf nicht leer sein.";
                     return Page();
                 }
 
-                if (string.IsNullOrWhiteSpace(frage.Antwort1) &&
-                    string.IsNullOrWhiteSpace(frage.Antwort2) &&
-                    string.IsNullOrWhiteSpace(frage.Antwort3) &&
-                    string.IsNullOrWhiteSpace(frage.Antwort4))
-                {
-                    FragenError = $"Frage {i + 1}: Bitte geben Sie mindestens eine Antwort ein.";
-                    return Page();
-                }
-                int richtigeAntworten =
-                    (frage.IstAntwort1Richtig ? 1 : 0) +
-                    (frage.IstAntwort2Richtig ? 1 : 0) +
-                    (frage.IstAntwort3Richtig ? 1 : 0) +
-                    (frage.IstAntwort4Richtig ? 1 : 0);
+                int richtig =
+                    (f.IstAntwort1Richtig ? 1 : 0) +
+                    (f.IstAntwort2Richtig ? 1 : 0) +
+                    (f.IstAntwort3Richtig ? 1 : 0) +
+                    (f.IstAntwort4Richtig ? 1 : 0);
 
-                if (richtigeAntworten != 1)
+                if (richtig != 1)
                 {
-                    FragenError = $"Frage {i + 1}: Es muss genau eine richtige Antwort ausgewählt werden.";
-                    return Page();
-                }
-
-
-                // Prüfen ob mindestens eine richtige Antwort ausgewählt wurde
-                if (!frage.IstAntwort1Richtig &&
-                    !frage.IstAntwort2Richtig &&
-                    !frage.IstAntwort3Richtig &&
-                    !frage.IstAntwort4Richtig)
-                {
-                    FragenError = $"Frage {i + 1}: Bitte markieren Sie mindestens eine richtige Antwort.";
+                    FragenError = $"Frage {i + 1}: Bitte genau eine richtige Antwort markieren.";
                     return Page();
                 }
             }
 
-            // Schreiben in die Datenbank 
             try
             {
-                CreaterName = HttpContext.Session.GetString("createrName") ?? "Unbekannt";
+                // Autor: du kannst auch ClaimTypes.Email nutzen, wenn du das in DB willst
+                fb.Autor = User.FindFirstValue(ClaimTypes.Email) ?? "";
+
                 var db = new SQLconnection.DatenbankZugriff();
-                using var connection = db.GetConnection();
-                connection.Open();
+                using var con = db.GetConnection();
+                con.Open();
 
-                // Transaktion starten für atomare Operation
-                using var transaction = connection.BeginTransaction();
+                using var tx = con.BeginTransaction();
 
-                try
+                long fid;
+
+                // Fragebogen einfügen
+                using (var cmd = new MySqlCommand(
+                    @"INSERT INTO Fragebogen (Titel, Join_ID, Autor, Kategorie)
+                      VALUES (@t, @j, @a, @k);",
+                    con, tx))
                 {
-                    // 1. Fragebogen speichern
-                    string queryFragebogen = "INSERT INTO Fragebogen (Titel, Join_ID, Autor, Kategorie) VALUES (@titel, @Join_ID, @Autor, @kategorie)";
-                    using (var cmd = new MySqlCommand(queryFragebogen, connection, transaction))
-                    {
-                        string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    cmd.Parameters.AddWithValue("@t", fb.Titel);
+                    cmd.Parameters.AddWithValue("@j", fb.JoinId);
+                    cmd.Parameters.AddWithValue("@a", fb.Autor);
+                    cmd.Parameters.AddWithValue("@k", fb.Kategorie);
 
-                        cmd.Parameters.AddWithValue("@titel", Titel);
-                        cmd.Parameters.AddWithValue("@Join_ID", JoinNumber);
-                        cmd.Parameters.AddWithValue("@Autor", userId);
-                        cmd.Parameters.AddWithValue("@kategorie", Kategorie);
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    // 2. Alle Fragen speichern
-                    foreach (var frage in Fragen)
-                    {
-                        string queryFragen = @"
-                            INSERT INTO Fragen (
-                                FragebogenID,
-                                Fragestellung,
-                                Antwort1, IstAntwort1Richtig,
-                                Antwort2, IstAntwort2Richtig,
-                                Antwort3, IstAntwort3Richtig,
-                                Antwort4, IstAntwort4Richtig
-                            ) VALUES (
-                                @FragebogenID,
-                                @Fragestellung,
-                                @Antwort1, @IstAntwort1Richtig,
-                                @Antwort2, @IstAntwort2Richtig,
-                                @Antwort3, @IstAntwort3Richtig,
-                                @Antwort4, @IstAntwort4Richtig
-                            );";
-
-                        using var cmd = new MySqlCommand(queryFragen, connection, transaction);
-                        cmd.Parameters.AddWithValue("@FragebogenID", JoinNumber);
-                        cmd.Parameters.AddWithValue("@Fragestellung", frage.Fragestellung ?? "");
-                        cmd.Parameters.AddWithValue("@Antwort1", frage.Antwort1 ?? "");
-                        cmd.Parameters.AddWithValue("@IstAntwort1Richtig", frage.IstAntwort1Richtig);
-                        cmd.Parameters.AddWithValue("@Antwort2", frage.Antwort2 ?? "");
-                        cmd.Parameters.AddWithValue("@IstAntwort2Richtig", frage.IstAntwort2Richtig);
-                        cmd.Parameters.AddWithValue("@Antwort3", frage.Antwort3 ?? "");
-                        cmd.Parameters.AddWithValue("@IstAntwort3Richtig", frage.IstAntwort3Richtig);
-                        cmd.Parameters.AddWithValue("@Antwort4", frage.Antwort4 ?? "");
-                        cmd.Parameters.AddWithValue("@IstAntwort4Richtig", frage.IstAntwort4Richtig);
-
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    // Transaktion bestätigen
-                    transaction.Commit();
-
-
-                    // Optional: Weiterleitung zur Übersicht
-                    return RedirectToPage("/Admin/Frageboegen");
+                    cmd.ExecuteNonQuery();
+                    fid = cmd.LastInsertedId;
                 }
-                catch (Exception)
+
+                // Fragen einfügen
+                foreach (var f in fb.Fragen)
                 {
-                    // Bei Fehler: Rollback
-                    transaction.Rollback();
-                    throw;
+                    using var cmd = new MySqlCommand(@"
+                        INSERT INTO Fragen
+                            (FragebogenID, Fragestellung,
+                             Antwort1, IstAntwort1Richtig,
+                             Antwort2, IstAntwort2Richtig,
+                             Antwort3, IstAntwort3Richtig,
+                             Antwort4, IstAntwort4Richtig)
+                        VALUES
+                            (@id, @q,
+                             @a1, @r1,
+                             @a2, @r2,
+                             @a3, @r3,
+                             @a4, @r4);",
+                        con, tx);
+
+                    cmd.Parameters.AddWithValue("@id", fb.JoinId);
+                    cmd.Parameters.AddWithValue("@q", f.Fragestellung ?? "");
+
+                    cmd.Parameters.AddWithValue("@a1", f.Antwort1 ?? "");
+                    cmd.Parameters.AddWithValue("@r1", f.IstAntwort1Richtig);
+
+                    cmd.Parameters.AddWithValue("@a2", f.Antwort2 ?? "");
+                    cmd.Parameters.AddWithValue("@r2", f.IstAntwort2Richtig);
+
+                    cmd.Parameters.AddWithValue("@a3", f.Antwort3 ?? "");
+                    cmd.Parameters.AddWithValue("@r3", f.IstAntwort3Richtig);
+
+                    cmd.Parameters.AddWithValue("@a4", f.Antwort4 ?? "");
+                    cmd.Parameters.AddWithValue("@r4", f.IstAntwort4Richtig);
+
+                    cmd.ExecuteNonQuery();
                 }
-            }
-            catch (MySqlException ex)
-            {
-                FragenError = $"Datenbankfehler: {ex.Message}";
-                return Page();
+
+                tx.Commit();
+                return RedirectToPage("/Admin/Frageboegen");
             }
             catch (Exception ex)
             {
-                FragenError = $"Fehler beim Speichern: {ex.Message}";
+                FragenError = $"Datenbankfehler: {ex.Message}";
                 return Page();
             }
         }

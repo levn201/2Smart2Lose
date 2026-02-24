@@ -1,0 +1,147 @@
+﻿<!-- Contact / Chat Widget -->
+<div class="chat-wrapper is-closed" id="chatWrapper">
+
+    <!-- Chat Panel -->
+    <div class="chat-widget" id="chatWidget" style="display:none;">
+
+        <!-- Header -->
+        <div class="chat-header">
+
+            <div class="chat-header-top">
+                <div class="chat-header-title">Kontakt</div>
+
+                <div class="chat-header-icons">
+                    <!-- Mail -->
+                    <a href="mailto:l.barth@transnetbw.de" title="E-Mail" aria-label="E-Mail">
+                        <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
+                            <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5L4 8V6l8 5 8-5v2z" />
+                        </svg>
+                    </a>
+
+                    <!-- LinkedIn -->
+                    <a href="https://www.linkedin.com/in/levin-barth-0a0579327/" target="_blank" title="LinkedIn" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
+                            <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM0 24h5V7H0v17zM7.5 7H12v2.3h.06c.63-1.2 2.17-2.47 4.47-2.47C21.1 6.83 24 9.1 24 14v10h-5v-8.8c0-2.1-.04-4.8-2.93-4.8-2.93 0-3.38 2.28-3.38 4.65V24h-5V7z" />
+                        </svg>
+                    </a>
+
+                    <!-- GitHub -->
+                    <a href="https://github.com/levn201" target="_blank" title="GitHub" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
+                            <path d="M12 .5C5.73.5.75 5.48.75 11.74c0 4.9 3.18 9.06 7.58 10.53.55.1.75-.24.75-.53v-1.9c-3.08.67-3.73-1.32-3.73-1.32-.5-1.27-1.23-1.6-1.23-1.6-1-.68.08-.67.08-.67 1.1.08 1.68 1.12 1.68 1.12.98 1.68 2.56 1.2 3.18.92.1-.71.38-1.2.69-1.47-2.46-.28-5.05-1.23-5.05-5.48 0-1.21.43-2.2 1.12-2.97-.11-.28-.49-1.41.11-2.94 0 0 .92-.3 3.01 1.13a10.4 10.4 0 0 1 2.74-.37c.93 0 1.86.13 2.74.37 2.09-1.43 3-1.13 3-1.13.6 1.53.22 2.66.11 2.94.7.77 1.12 1.76 1.12 2.97 0 4.26-2.6 5.2-5.08 5.47.39.34.74 1.02.74 2.06v3.05c0 .29.2.63.76.52 4.4-1.47 7.57-5.63 7.57-10.52C23.25 5.48 18.27.5 12 .5z" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="chat-header-subtitle">
+                Schreib mir eine Nachricht oder nutz die Links oben.
+            </div>
+
+        </div>
+
+        <!-- Messages -->
+        <div class="chat-body" id="chatMessages">
+            <div class="msg msg-bot">Hi! 👋 Gerne kannst du mir hier anonym dein Feedback abgeben. Vielleicht hast du ja eine Idee, wie ich meine Software optimieren kann..</div>
+        </div>
+
+        <!-- Footer -->
+        <div class="chat-footer">
+            <form class="chat-input-form" id="chatForm">
+                <div class="chat-input-wrapper">
+
+                    <textarea class="chat-input"
+                              id="chatInput"
+                              rows="3"
+                              placeholder="Nachricht eingeben…"></textarea>
+
+                    <button type="submit" class="chat-send" title="Senden">
+                        ›
+                    </button>
+
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- Floating Button -->
+    <button class="chat-fab" id="chatToggle" aria-label="Kontakt öffnen">
+        <span class="hamburger" aria-hidden="true">
+            <span></span><span></span><span></span>
+        </span>
+    </button>
+
+</div>
+
+<script>
+    (function () {
+      const wrapper  = document.getElementById("chatWrapper");
+      const widget   = document.getElementById("chatWidget");
+      const toggle   = document.getElementById("chatToggle");
+      const form     = document.getElementById("chatForm");
+      const input    = document.getElementById("chatInput");
+      const messages = document.getElementById("chatMessages");
+
+      // Startzustand: geschlossen
+      wrapper.classList.add("is-closed");
+      widget.style.display = "none";
+
+      function openWidget() {
+        wrapper.classList.remove("is-closed");
+        widget.style.display = "flex";
+        setTimeout(() => {
+          messages.scrollTop = messages.scrollHeight;
+          input.focus();
+        }, 0);
+      }
+
+      function closeWidget() {
+        wrapper.classList.add("is-closed");
+        widget.style.display = "none";
+      }
+
+      function toggleWidget() {
+        const isClosed = wrapper.classList.contains("is-closed");
+        if (isClosed) openWidget();
+        else closeWidget();
+      }
+
+      toggle.addEventListener("click", toggleWidget);
+
+      // Send message (dummy)
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+
+        const userMsg = document.createElement("div");
+        userMsg.className = "msg msg-user";
+        userMsg.textContent = text;
+        messages.appendChild(userMsg);
+
+        const botMsg = document.createElement("div");
+        botMsg.className = "msg msg-bot";
+        botMsg.textContent = "Danke! Ich habe deine Nachricht gesehen 🙂";
+        messages.appendChild(botMsg);
+
+        messages.scrollTop = messages.scrollHeight;
+        input.value = "";
+        input.focus();
+      });
+
+      // Enter sends, Shift+Enter newline
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          form.requestSubmit();
+        }
+      });
+
+      // Optional: Klick außerhalb schließt
+      document.addEventListener("click", (e) => {
+        const clickedInside = wrapper.contains(e.target);
+        if (!clickedInside) closeWidget();
+      });
+    })();
+</script>

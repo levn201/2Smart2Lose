@@ -66,8 +66,6 @@ namespace Smart2Lose.Pages.Admin
             }
         }
 
-
-
         // Card - Anschauen Button 
         public IActionResult OnPostView(int id)
         {

@@ -78,7 +78,7 @@
                         <button type="submit" class="knopf haupt">Anzeigen</button>
                     </form>
 
-                    @if (User.IsInRole("Admin") || User.IsInRole("User"))
+                    @if (User.IsInRole("Admin") || User.IsInRole("User") && !Model.fHelper.CheckIfPlayerIsAutor(fragebogen.JoinId))
                     {
                         <form method="post" asp-page-handler="Edit" style="display:inline;">
                             <input type="hidden" name="id" value="@fragebogen.JoinId" />
@@ -101,8 +101,6 @@
 
 
 <!-- View-Popup (AUSSERHALB der foreach-Schleife!) -->
-
-
 <script>
     // View Popup
     function openViewPopup() {

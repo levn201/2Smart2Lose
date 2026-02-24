@@ -18,7 +18,6 @@ namespace Smart2Lose.Pages.Admin
         }
 
         public projektName pn = new projektName();
-        public User user = null;
 
 
         // Auslesen 
