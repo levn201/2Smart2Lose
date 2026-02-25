@@ -78,7 +78,7 @@
                         <button type="submit" class="knopf haupt">Anzeigen</button>
                     </form>
 
-                    @if (User.IsInRole("Admin") || User.IsInRole("User") && !Model.fHelper.CheckIfPlayerIsAutor(fragebogen.JoinId))
+                    @if (User.IsInRole("Admin") || User.IsInRole("User") @* && !Model.fHelper.CheckIfPlayerIsAutor(fragebogen.JoinId) *@)
                     {
                         <form method="post" asp-page-handler="Edit" style="display:inline;">
                             <input type="hidden" name="id" value="@fragebogen.JoinId" />
