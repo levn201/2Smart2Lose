@@ -1,9 +1,15 @@
-﻿namespace Smart2Lose.Model
+﻿namespace Smart2Lose.Helper
 {
     public class Filter
     {
 
         public string FilterAuswahl {get; set; }
+        
+
+
+
+
+
 
         public string DefaultQuery { get; } = @"
             SELECT SessionPints, User_Nickname, GamePin, CorrectAnswered, PossibleAnswers, saveTime
