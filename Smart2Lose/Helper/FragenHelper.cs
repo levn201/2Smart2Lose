@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.Metrics;
 using System.Media;
+using System.Security.Cryptography;
 using MySql.Data.MySqlClient;
 
 namespace Smart2Lose.Helper

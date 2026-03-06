@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
+using Mysqlx.Crud;
 using Smart2Lose.Helper;
 using Smart2Lose.Model;
 using System.Security.Claims;
@@ -24,9 +25,9 @@ namespace Smart2Lose.Pages.Admin
 
 
         [BindProperty]
-        public List<Fragen> Fragen { get; set; } = new(); // Fragen zum bearbeiten (Fragestellung, Antworten, Richtig/Falsch)
+        public List<Fragen> _Fragen { get; set; } = new(); // Fragen zum bearbeiten (Fragestellung, Antworten, Richtig/Falsch)
         public List<Fragebogen> Frageboegen { get; set; } = new(); // DB Fragebogen (Titel, Autor, Kategorie, ErstelltAm)
-        public List<Fragen> FragenDB { get; set; } = new(); // DB Fragen Tabelle (Fragestellung, Antworten, Richtig/Falsch)
+        public List<Fragen> _FragenDB { get; set; } = new(); // DB Fragen Tabelle (Fragestellung, Antworten, Richtig/Falsch)
         public FragenHelper fHelper { get; set; } = new FragenHelper();
 
         public void OnGet()
@@ -41,27 +42,18 @@ namespace Smart2Lose.Pages.Admin
             try
             {
                 var db = new SQLconnection.DatenbankZugriff();
-                using var connection = db.GetConnection();
-                connection.Open();
 
-                string query = "SELECT Join_ID, Titel, Autor, Kategorie, ErstelltAm FROM Fragebogen ORDER BY Join_ID ASC;";
-                using var cmd = new MySqlCommand(query, connection);
+                using var cmd = db.CreateCommand("SELECT Join_ID3, Titel, Autor, Kategorie, ErstelltAm FROM Fragebogen ORDER BY Join_ID ASC;");
                 using var reader = cmd.ExecuteReader();
 
                 while (reader.Read())
                 {
-                    Frageboegen.Add(new Fragebogen
-                    {
-                        JoinId = reader.GetInt32("Join_ID"),
-                        Titel = reader.GetString("Titel"),
-                        Autor = reader.GetString("Autor"),
-                        Kategorie = reader.GetString("Kategorie"),
-                        ErstelltAm = reader.GetDateTime("ErstelltAm")
-                    });
+                    Frageboegen.Add(Fragebogen.FromReader(reader));
                 }
             }
             catch (Exception ex)
             {
+                
                 Console.WriteLine($"Fehler beim Laden der Fragebögen: {ex.Message}");
             }
         }
@@ -73,46 +65,25 @@ namespace Smart2Lose.Pages.Admin
             try
             {
                 GamePin = id;
-                FragenDB.Clear();
+                _FragenDB.Clear();
+
 
                 var db = new SQLconnection.DatenbankZugriff();
-                using var connection = db.GetConnection();
-                connection.Open();
-
-                const string query = @"
-                        SELECT 
-                            Fragestellung,
-                            Antwort1, IstAntwort1Richtig,
-                            Antwort2, IstAntwort2Richtig,
-                            Antwort3, IstAntwort3Richtig,
-                            Antwort4, IstAntwort4Richtig
+                using var cmd = db.CreateCommand(@"
+                        SELECT Fragestellung,Antwort1, IstAntwort1Richtig,Antwort2, IstAntwort2Richtig, Antwort3, IstAntwort3Richtig, Antwort4, IstAntwort4Richtig
                         FROM Fragen
                         WHERE FragebogenID = @ID
-                        ORDER BY ID;";
-
-                using var cmd = new MySqlCommand(query, connection);
-                cmd.Parameters.AddWithValue("@ID", GamePin);
-
+                        ORDER BY ID;");
                 using var reader = cmd.ExecuteReader();
+                cmd.Parameters.AddWithValue("@ID", GamePin);
 
                 while (reader.Read())
                 {
-                    FragenDB.Add(new Fragen
-                    {
-                        Fragestellung = reader.GetString("Fragestellung"),
-                        Antwort1 = reader.GetString("Antwort1"),
-                        IstAntwort1Richtig = reader.GetBoolean("IstAntwort1Richtig"),
-                        Antwort2 = reader.GetString("Antwort2"),
-                        IstAntwort2Richtig = reader.GetBoolean("IstAntwort2Richtig"),
-                        Antwort3 = reader.GetString("Antwort3"),
-                        IstAntwort3Richtig = reader.GetBoolean("IstAntwort3Richtig"),
-                        Antwort4 = reader.GetString("Antwort4"),
-                        IstAntwort4Richtig = reader.GetBoolean("IstAntwort4Richtig")
-                    });
+                    _FragenDB.Add(Fragen.FromReader(reader));
                 }
 
                 ViewData["ShowViewPopup"] = true;
-                System.Diagnostics.Debug.WriteLine($"Loaded {FragenDB.Count} questions for GamePin {GamePin}");
+                System.Diagnostics.Debug.WriteLine($"Loaded {_FragenDB.Count} questions for GamePin {GamePin}");
             }
             catch (Exception ex)
             {
@@ -133,18 +104,13 @@ namespace Smart2Lose.Pages.Admin
             try
             {
                 var db = new SQLconnection.DatenbankZugriff();
-                using var connection = db.GetConnection();
-                connection.Open();
+                using var cmd = db.CreateCommand("DELETE FROM Fragebogen WHERE Join_ID = @id;" + //Löschen aus der Titel und Fragebogen Datenbank 
+                                "DELETE FROM Fragen WHERE FragebogenID = @id;" +
+                                "DELETE FROM playerpoints WHERE GAMEPIN = @id");
 
-                string query = "DELETE FROM Fragebogen WHERE Join_ID = @id;" + //Löschen aus der Titel und Fragebogen Datenbank 
-                                "DELETE FROM Fragen WHERE FragebogenID = @id;" + 
-                                "DELETE FROM playerpoints WHERE GAMEPIN = @id";
-
-                using var cmd = new MySqlCommand(query,connection);
                 cmd.Parameters.AddWithValue("@id", id);
                 int count = cmd.ExecuteNonQuery();
 
-                connection.Close();
                 LadeAlleFrageboegen();
                 return RedirectToPage();
             }
@@ -161,31 +127,22 @@ namespace Smart2Lose.Pages.Admin
             try
             {
                 GamePin = id;
-                FragenDB.Clear();
+                _FragenDB.Clear();
+
 
                 var db = new SQLconnection.DatenbankZugriff();
-                using var connection = db.GetConnection();
-                connection.Open();
+                using var cmd = db.CreateCommand("SELECTFragestellung,Antwort1, IstAntwort1Richtig,Antwort2, IstAntwort2Richtig,Antwort3, IstAntwort3Richtig,Antwort4, IstAntwort4Richtig" +
+                    "FROM Fragen" +
+                    "WHERE FragebogenID = @ID" +
+                    "ORDER BY ID;");
 
-                const string query = @"
-            SELECT 
-                Fragestellung,
-                Antwort1, IstAntwort1Richtig,
-                Antwort2, IstAntwort2Richtig,
-                Antwort3, IstAntwort3Richtig,
-                Antwort4, IstAntwort4Richtig
-            FROM Fragen
-            WHERE FragebogenID = @ID
-            ORDER BY ID;";
-
-                using var cmd = new MySqlCommand(query, connection);
                 cmd.Parameters.AddWithValue("@ID", GamePin);
 
                 using var reader = cmd.ExecuteReader();
 
                 while (reader.Read())
                 {
-                    FragenDB.Add(new Fragen
+                    _FragenDB.Add(new Fragen
                     {
                         Fragestellung = reader.GetString("Fragestellung"),
                         Antwort1 = reader.GetString("Antwort1"),
@@ -200,7 +157,7 @@ namespace Smart2Lose.Pages.Admin
                 }
 
                 ViewData["ShowEditPopup"] = true;
-                System.Diagnostics.Debug.WriteLine($"Loaded {FragenDB.Count} questions for GamePin {GamePin}");
+                System.Diagnostics.Debug.WriteLine($"Loaded {_FragenDB.Count} questions for GamePin {GamePin}");
             }
             catch (Exception ex)
             {

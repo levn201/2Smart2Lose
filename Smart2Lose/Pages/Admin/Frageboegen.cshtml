@@ -154,11 +154,11 @@
             <button type="button" class="close-btn" onclick="closeViewPopup()">×</button>
         </div>
         <div class="popup-body">
-            @if (Model.FragenDB != null && Model.FragenDB.Any())
+            @if (Model._FragenDB != null && Model._FragenDB.Any())
             {
-                @for (int i = 0; i < Model.FragenDB.Count; i++)
+                @for (int i = 0; i < Model._FragenDB.Count; i++)
                 {
-                    var frage = Model.FragenDB[i];
+                    var frage = Model._FragenDB[i];
                     <div class="frage-container">
                         <div class="frage-text">Frage @(i + 1): @frage.Fragestellung</div>
                         <div class="antwort-grid">
@@ -201,11 +201,11 @@
             <form method="post" asp-page-handler="SaveEdit">
                 <input type="hidden" name="fragebogenId" value="@Model.GamePin" />
 
-                @if (Model.FragenDB != null && Model.FragenDB.Any())
+                @if (Model._FragenDB != null && Model._FragenDB.Any())
                 {
-                    @for (int i = 0; i < Model.FragenDB.Count; i++)
+                    @for (int i = 0; i < Model._FragenDB.Count; i++)
                     {
-                        var frage = Model.FragenDB[i];
+                        var frage = Model._FragenDB[i];
                         <div class="frage-container">
                             <div class="frage-input-group">
                                 <label>Frage @(i + 1):</label>
