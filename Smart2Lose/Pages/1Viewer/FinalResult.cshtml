@@ -20,27 +20,27 @@
 
     <div class="podium">
 
-        <div class="place">
+        <div class="place @(Model.PlaceTwo == "-" ? "place-empty" : "")">
             <div class="platform second">2</div>
             <div class="winner-name">
                 <div class="winner-title">Zweiter Platz</div>
-                @Model.PlaceTwo
+                @(Model.PlaceTwo == "-" ? "–" : Model.PlaceTwo)
             </div>
         </div>
 
-        <div class="place">
+        <div class="place @(Model.PlaceOne == "-" ? "place-empty" : "")">
             <div class="platform first">1</div>
             <div class="winner-name">
                 <div class="winner-title">Gewinner</div>
-                @Model.PlaceOne
+                @(Model.PlaceOne == "-" ? "Noch keine Spieler" : Model.PlaceOne)
             </div>
         </div>
 
-        <div class="place">
+        <div class="place @(Model.PlaceThree == "-" ? "place-empty" : "")">
             <div class="platform third">3</div>
             <div class="winner-name">
                 <div class="winner-title">Dritter Platz</div>
-                @Model.PlaceThree
+                @(Model.PlaceThree == "-" ? "–" : Model.PlaceThree)
             </div>
         </div>
     </div>
