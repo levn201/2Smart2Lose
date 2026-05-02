@@ -27,24 +27,7 @@ namespace Smart2Lose.Pages
         {
             try
             {
-                // testSwtche um schenller auf seiten zu kommen
-                switch (session.GameID)
-                {
-                    case 111:
-                        return RedirectToPage("/Admin/DatabaseCheck");
-                    case 2:
-                        return RedirectToPage("/Admin/FrageboegenErstellen");
-                    case 3:
-                        return RedirectToPage("/Admin/ManageUser");
-                    case 123:
-                        return RedirectToPage("/Account/Register");
-                    case 6:
-                        return RedirectToPage("/Account/CreateUser");
-                    case 7:
-                        return RedirectToPage("/Account/ManageUsers");
-                }
-
-                // Allgemeine PIN-Prüfung gegen Datenbank
+                // Allgemeine PIN-PrÃ¼fung gegen Datenbank
                 var db = new SQLconnection.DatenbankZugriff();
                 using var connection = db.GetConnection();
                 connection.Open();
@@ -63,7 +46,7 @@ namespace Smart2Lose.Pages
                 }
                 else
                 {
-                    ErrorMessage = "Ungültiger Game-PIN.";
+                    ErrorMessage = "UngÃ¼ltiger Game-PIN.";
                     return Page();
                 }
             }

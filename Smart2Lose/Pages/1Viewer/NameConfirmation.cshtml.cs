@@ -21,13 +21,25 @@ namespace Smart2Lose.Pages._1Viewer
 
         public IActionResult OnPostLogName()
         {
-            if (string.IsNullOrEmpty(Nickname))
+            if (string.IsNullOrWhiteSpace(Nickname))
             {
-                ErrorMessage = "Bitte gebe einen Namen ein";
-                return Page(); 
+                ErrorMessage = "Bitte gib einen Namen ein.";
+                return Page();
             }
 
-            HttpContext.Session.SetString("Name", Nickname);
+            if (Nickname.Length < 2)
+            {
+                ErrorMessage = "Der Name muss mindestens 2 Zeichen lang sein.";
+                return Page();
+            }
+
+            if (Nickname.Length > 20)
+            {
+                ErrorMessage = "Der Name darf maximal 20 Zeichen lang sein.";
+                return Page();
+            }
+
+            HttpContext.Session.SetString("Name", Nickname.Trim());
             return RedirectToPage("/1Viewer/Playground");
         }
     }
