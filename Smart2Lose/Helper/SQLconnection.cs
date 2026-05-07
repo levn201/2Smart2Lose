@@ -4,15 +4,22 @@ namespace Smart2Lose.Helper
 {
     public class SQLconnection
     {
+
+
         public class DatenbankZugriff
         {
-            public static string ConnectionString { get; set; } = string.Empty;
+            public string connectionString =
+
+            "Server=localhost;Database=KahootDatabase;Uid=root;Pwd=21481TNGhello!"; //Connection zur Framework Local Database von Levin 
+            //"Server=192.168.200.30;Port=3306;Database=kahootdatabase;Uid=Smart2Lose;Pwd=TNBWazubi1!;SslMode=None;";
 
             public MySqlConnection GetConnection()
             {
-                return new MySqlConnection(ConnectionString);
+                return new MySqlConnection(connectionString);
             }
+
         }
+
     }
 }
 

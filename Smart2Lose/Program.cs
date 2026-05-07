@@ -75,9 +75,6 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 var app = builder.Build();
 
-Smart2Lose.Helper.SQLconnection.DatenbankZugriff.ConnectionString =
-    builder.Configuration.GetConnectionString("DefaultConnection") ?? string.Empty;
-
 // =======================
 // ROLLEN-INITIALISIERUNG
 // =======================

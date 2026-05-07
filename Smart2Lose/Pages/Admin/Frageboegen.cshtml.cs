@@ -29,15 +29,10 @@ namespace Smart2Lose.Pages.Admin
         public List<Fragen> FragenDB { get; set; } = new(); // DB Fragen Tabelle (Fragestellung, Antworten, Richtig/Falsch)
         public FragenHelper fHelper { get; set; } = new FragenHelper();
 
-        private void InitHelper()
-        {
-            fHelper.activeUser = User.FindFirstValue(ClaimTypes.Email);
-        }
-
         public void OnGet()
         {
-            InitHelper();
             LadeAlleFrageboegen();
+            fHelper.activeUser = User.FindFirstValue(ClaimTypes.Email);
         }
 
         // Alle Fragen Cards laden
@@ -71,10 +66,9 @@ namespace Smart2Lose.Pages.Admin
             }
         }
 
-        // Card - Anschauen Button
+        // Card - Anschauen Button 
         public IActionResult OnPostView(int id)
         {
-            InitHelper();
             fHelper.countResults(GamePin, countPlayer);
             try
             {
@@ -133,37 +127,24 @@ namespace Smart2Lose.Pages.Admin
             return Page();
         }
 
-        // Card - Löschen Button
+        // Card - Löschen Button  
         public IActionResult OnPostLoeschen(int id)
         {
-            InitHelper();
-            if (!User.IsInRole("Admin") && !fHelper.CheckIfPlayerIsAutor(id))
-                return Forbid();
-
             try
             {
                 var db = new SQLconnection.DatenbankZugriff();
                 using var connection = db.GetConnection();
                 connection.Open();
 
-                using var transaction = connection.BeginTransaction();
+                string query = "DELETE FROM Fragebogen WHERE Join_ID = @id;" + //Löschen aus der Titel und Fragebogen Datenbank 
+                                "DELETE FROM Fragen WHERE FragebogenID = @id;" + 
+                                "DELETE FROM playerpoints WHERE GAMEPIN = @id";
 
-                string[] queries =
-                {
-                    "DELETE FROM playerpoints WHERE GAMEPIN = @id",
-                    "DELETE FROM Fragen WHERE FragebogenID = @id",
-                    "DELETE FROM Fragebogen WHERE Join_ID = @id"
-                };
+                using var cmd = new MySqlCommand(query,connection);
+                cmd.Parameters.AddWithValue("@id", id);
+                int count = cmd.ExecuteNonQuery();
 
-                foreach (var q in queries)
-                {
-                    using var cmd = new MySqlCommand(q, connection, transaction);
-                    cmd.Parameters.AddWithValue("@id", id);
-                    cmd.ExecuteNonQuery();
-                }
-
-                transaction.Commit();
-
+                connection.Close();
                 LadeAlleFrageboegen();
                 return RedirectToPage();
             }
@@ -177,10 +158,6 @@ namespace Smart2Lose.Pages.Admin
         // Card - Bearbeiten Button => Laden aller Fragen in Textfelder
         public IActionResult OnPostEdit(int id)
         {
-            InitHelper();
-            if (!User.IsInRole("Admin") && !fHelper.CheckIfPlayerIsAutor(id))
-                return Forbid();
-
             try
             {
                 GamePin = id;
