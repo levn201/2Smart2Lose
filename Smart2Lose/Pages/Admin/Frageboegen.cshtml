@@ -31,8 +31,12 @@
 </header>
 
 
-<h1>  </h1>
-<!-- Card anzeige  -->
+<!-- Seitentitel -->
+<div class="seiten-titel-bereich">
+    <h1 class="seiten-titel">Fragebögen</h1>
+</div>
+
+<!-- Card anzeige -->
 <div class="fragebogen-container">
     <div class="fragebogen-gitter">
         @foreach (var fragebogen in Model.Frageboegen)
@@ -78,7 +82,7 @@
                         <button type="submit" class="knopf haupt">Anzeigen</button>
                     </form>
 
-                    @if (User.IsInRole("Admin") || User.IsInRole("User") && !Model.fHelper.CheckIfPlayerIsAutor(fragebogen.JoinId))
+                    @if (User.IsInRole("Admin") || (User.IsInRole("User") && Model.fHelper.CheckIfPlayerIsAutor(fragebogen.JoinId)))
                     {
                         <form method="post" asp-page-handler="Edit" style="display:inline;">
                             <input type="hidden" name="id" value="@fragebogen.JoinId" />

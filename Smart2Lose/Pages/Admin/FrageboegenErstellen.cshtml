@@ -1,8 +1,8 @@
 @page
 @model Smart2Lose.Pages.Admin.FrageboegenErstellenModel
 
-<link rel="stylesheet" href="~/css/Admin/FrageboegenErstellen.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/Admin/GrundDashboard.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Admin/FrageboegenErstellen.css" asp-append-version="true" />
 
 
 <!-- Header -->
@@ -17,11 +17,11 @@
         }
         @if (User.IsInRole("Admin") || User.IsInRole("User") || User.IsInRole("ReadOnly"))
         {
-            <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
+            <a href="/Admin/Frageboegen">Fragebögen</a>
         }
         @if (User.IsInRole("Admin") || User.IsInRole("User"))
         {
-            <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
+            <a href="/Admin/FrageboegenErstellen" class="active">Neue anlegen</a>
         }
 
         <a href="/Index">Quit</a>

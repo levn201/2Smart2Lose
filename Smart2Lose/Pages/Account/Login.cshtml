@@ -1,58 +1,49 @@
-﻿@page
+@page
 @model LoginModel
 @{
     ViewData["Title"] = "Login";
 }
 
-<link rel="stylesheet" href="~/css/Admin/GrundDashboard.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/Admin/AUTH.css" asp-append-version="true" />
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h2>Anmelden</h2>
+<header class="auth-header">
+    <a href="/Index" class="auth-logo">2Smart2Lose</a>
+</header>
+
+<main class="auth-main">
+    <div class="auth-inner">
+
+        <h1 class="auth-title">Anmelden</h1>
+        <p class="auth-subtitle">Melde dich mit deinem Admin-Konto an.</p>
+
+        <div class="auth-card">
+            <form method="post">
+
+                <div asp-validation-summary="All" class="auth-error"></div>
+
+                <div class="auth-field">
+                    <label asp-for="Input.Email" class="auth-label"></label>
+                    <input asp-for="Input.Email" class="auth-input" placeholder="name@beispiel.de" />
+                    <span asp-validation-for="Input.Email" class="auth-validation"></span>
                 </div>
-                <div class="card-body">
-                    <form method="post">
-                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-                        <div class="mb-3">
-                            <label asp-for="Input.Email" class="form-label"></label>
-                            <input asp-for="Input.Email" class="form-control" />
-                            <span asp-validation-for="Input.Email" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Input.Password" class="form-label"></label>
-                            <input asp-for="Input.Password" class="form-control" />
-                            <span asp-validation-for="Input.Password" class="text-danger"></span>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-100">
-                            Anmelden
-                        </button>
-                    </form>
-
-                    <hr />
-
-                    <div class="text-center">
-                        <a asp-page="/Account/Register">
-                            Noch kein Konto? Jetzt registrieren
-                        </a>
-                    </div>
-
-                    <div class="text-center mt-2">
-                        <a asp-page="/Index">
-                            Zur Startseite
-                        </a>
-                    </div>
+                <div class="auth-field">
+                    <label asp-for="Input.Password" class="auth-label"></label>
+                    <input asp-for="Input.Password" class="auth-input" placeholder="••••••••" />
+                    <span asp-validation-for="Input.Password" class="auth-validation"></span>
                 </div>
+
+                <button type="submit" class="auth-btn">Anmelden</button>
+
+            </form>
+
+            <div class="auth-links">
+                <a asp-page="/Account/Register">Noch kein Konto? Registrieren</a>
             </div>
         </div>
+
     </div>
-</div>
+</main>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

@@ -1,66 +1,48 @@
-﻿@page
+@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Kahoot | Home";
+    ViewData["Title"] = "2Smart2Lose";
 }
 
 <link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/Accessiblility.css" asp-append-version="true" />
 
-<!-- Login-Button für Admin-Dashboard-->
-<header class="header">
-
-    <button id="loginBtn" class="login-button"
-            onclick="window.location.href='/Account/Login'">
-        Login
-    </button>
-
+<!-- Header -->
+<header class="site-header">
+    <div class="site-logo">2Smart2Lose</div>
+    <button class="btn-login" onclick="window.location.href='/Account/Login'">Admin Login</button>
 </header>
 
+<!-- Hero -->
+<main class="hero">
+    <div class="hero-inner">
+
+        <h1 class="hero-title">2Smart2Lose</h1>
+        <p class="hero-subtitle">Gib deinen Game-PIN ein und tritt dem Quiz bei.</p>
+
+        <div class="pin-card">
+            <form method="post">
+                <label class="pin-label" for="GameID">Game-PIN</label>
+                <div class="pin-input-wrap">
+                    <input type="number"
+                           id="GameID"
+                           asp-for="session.GameID"
+                           value=""
+                           required
+                           placeholder="z. B. 4821"
+                           autocomplete="off"
+                           inputmode="numeric" />
+
+                    <button type="submit" class="btn-join">Beitreten</button>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="pin-error">@Model.ErrorMessage</div>
+                }
+            </form>
+        </div>
 
 
-
-
-
-
-<!-- Kahoot Bereich zum Joinen-->
-<div class="text-center">
-
-
-    <div class="main-content">
-        <h1>Willkommen bei @Model.pn.Name</h1>
-        <p>Gib den Game-PIN ein, um beizutreten:</p>
-
-        <form method="post">
-            <div class="input-group">
-                <input type="number" asp-for="session.GameID" value="" required placeholder="Game-PIN eingeben" />
-                <button type="submit">Beitreten</button>
-            </div>
-        </form>
-
-        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-        {
-            <p style="color: red;">@Model.ErrorMessage</p>
-        }
     </div>
-
-</div>
-
-<div class="accessibility-wrapper">
-    <button class="accessibility-btn" aria-label="Zugänglichkeit">
-        ♿
-    </button>
-
-    <div class="accessibility-panel">
-        <h3>digi-access – Zugänglichkeit verbessern</h3>
-        <p>
-            Optimieren Sie die Webseite für bessere Lesbarkeit
-            und Nutzerfreundlichkeit.
-        </p>
-        <button class="open-btn">F2 zum Öffnen</button>
-    </div>
-</div>
-
-
-
+</main>
 

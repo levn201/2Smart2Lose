@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
-using Mysqlx.Crud;
 using Smart2Lose.Helper;
 using Smart2Lose.Model;
 using System.Security.Claims;
@@ -10,24 +9,18 @@ using System.Security.Claims;
 namespace Smart2Lose.Pages.Admin
 {
     [Authorize(Roles = "Admin,User,ReadOnly")]
-    public class FragebögenModel : PageModel 
+    public class FragebögenModel : PageModel
     {
-
-
-
-
-        public projektName pn = new projektName(); // Projektname holen
+        public projektName pn = new projektName();
         public int GamePin { get; set; }
         public int countPlayer { get; set; }
         [BindProperty]
         public int FragebogenId { get; set; }
 
-
-
         [BindProperty]
-        public List<Fragen> _Fragen { get; set; } = new(); // Fragen zum bearbeiten (Fragestellung, Antworten, Richtig/Falsch)
-        public List<Fragebogen> Frageboegen { get; set; } = new(); // DB Fragebogen (Titel, Autor, Kategorie, ErstelltAm)
-        public List<Fragen> _FragenDB { get; set; } = new(); // DB Fragen Tabelle (Fragestellung, Antworten, Richtig/Falsch)
+        public List<Fragen> _Fragen { get; set; } = new();
+        public List<Fragebogen> Frageboegen { get; set; } = new();
+        public List<Fragen> _FragenDB { get; set; } = new();
         public FragenHelper fHelper { get; set; } = new FragenHelper();
 
         public void OnGet()
@@ -42,8 +35,11 @@ namespace Smart2Lose.Pages.Admin
             try
             {
                 var db = new SQLconnection.DatenbankZugriff();
+                using var connection = db.GetConnection();
+                connection.Open();
 
-                using var cmd = db.CreateCommand("SELECT Join_ID3, Titel, Autor, Kategorie, ErstelltAm FROM Fragebogen ORDER BY Join_ID ASC;");
+                string query = "SELECT Join_ID, Titel, Autor, Kategorie, ErstelltAm FROM Fragebogen ORDER BY Join_ID ASC;";
+                using var cmd = new MySqlCommand(query, connection);
                 using var reader = cmd.ExecuteReader();
 
                 while (reader.Read())
@@ -53,29 +49,37 @@ namespace Smart2Lose.Pages.Admin
             }
             catch (Exception ex)
             {
-                
                 Console.WriteLine($"Fehler beim Laden der Fragebögen: {ex.Message}");
             }
         }
 
-        // Card - Anschauen Button 
+        // Card - Anschauen Button
         public IActionResult OnPostView(int id)
         {
+            fHelper.activeUser = User.FindFirstValue(ClaimTypes.Email);
             fHelper.countResults(GamePin, countPlayer);
             try
             {
                 GamePin = id;
                 _FragenDB.Clear();
 
-
                 var db = new SQLconnection.DatenbankZugriff();
-                using var cmd = db.CreateCommand(@"
-                        SELECT Fragestellung,Antwort1, IstAntwort1Richtig,Antwort2, IstAntwort2Richtig, Antwort3, IstAntwort3Richtig, Antwort4, IstAntwort4Richtig
-                        FROM Fragen
-                        WHERE FragebogenID = @ID
-                        ORDER BY ID;");
-                using var reader = cmd.ExecuteReader();
+                using var connection = db.GetConnection();
+                connection.Open();
+
+                const string query = @"
+                    SELECT Fragestellung,
+                        Antwort1, IstAntwort1Richtig,
+                        Antwort2, IstAntwort2Richtig,
+                        Antwort3, IstAntwort3Richtig,
+                        Antwort4, IstAntwort4Richtig
+                    FROM Fragen
+                    WHERE FragebogenID = @ID
+                    ORDER BY ID;";
+
+                using var cmd = new MySqlCommand(query, connection);
                 cmd.Parameters.AddWithValue("@ID", GamePin);
+                using var reader = cmd.ExecuteReader();
 
                 while (reader.Read())
                 {
@@ -92,26 +96,27 @@ namespace Smart2Lose.Pages.Admin
                 ViewData["ErrorMessage"] = "Fehler beim Laden der Fragen.";
             }
 
-            
             LadeAlleFrageboegen();
-
             return Page();
         }
 
-        // Card - Löschen Button  
+        // Card - Löschen Button
         public IActionResult OnPostLoeschen(int id)
         {
             try
             {
                 var db = new SQLconnection.DatenbankZugriff();
-                using var cmd = db.CreateCommand("DELETE FROM Fragebogen WHERE Join_ID = @id;" + //Löschen aus der Titel und Fragebogen Datenbank 
-                                "DELETE FROM Fragen WHERE FragebogenID = @id;" +
-                                "DELETE FROM playerpoints WHERE GAMEPIN = @id");
+                using var connection = db.GetConnection();
+                connection.Open();
 
+                string query = "DELETE FROM Fragebogen WHERE Join_ID = @id;" +
+                               "DELETE FROM Fragen WHERE FragebogenID = @id;" +
+                               "DELETE FROM playerpoints WHERE GAMEPIN = @id";
+
+                using var cmd = new MySqlCommand(query, connection);
                 cmd.Parameters.AddWithValue("@id", id);
-                int count = cmd.ExecuteNonQuery();
+                cmd.ExecuteNonQuery();
 
-                LadeAlleFrageboegen();
                 return RedirectToPage();
             }
             catch (Exception ex)
@@ -124,36 +129,33 @@ namespace Smart2Lose.Pages.Admin
         // Card - Bearbeiten Button => Laden aller Fragen in Textfelder
         public IActionResult OnPostEdit(int id)
         {
+            fHelper.activeUser = User.FindFirstValue(ClaimTypes.Email);
             try
             {
                 GamePin = id;
                 _FragenDB.Clear();
 
-
                 var db = new SQLconnection.DatenbankZugriff();
-                using var cmd = db.CreateCommand("SELECTFragestellung,Antwort1, IstAntwort1Richtig,Antwort2, IstAntwort2Richtig,Antwort3, IstAntwort3Richtig,Antwort4, IstAntwort4Richtig" +
-                    "FROM Fragen" +
-                    "WHERE FragebogenID = @ID" +
-                    "ORDER BY ID;");
+                using var connection = db.GetConnection();
+                connection.Open();
 
+                const string query = @"
+                    SELECT Fragestellung,
+                        Antwort1, IstAntwort1Richtig,
+                        Antwort2, IstAntwort2Richtig,
+                        Antwort3, IstAntwort3Richtig,
+                        Antwort4, IstAntwort4Richtig
+                    FROM Fragen
+                    WHERE FragebogenID = @ID
+                    ORDER BY ID;";
+
+                using var cmd = new MySqlCommand(query, connection);
                 cmd.Parameters.AddWithValue("@ID", GamePin);
-
                 using var reader = cmd.ExecuteReader();
 
                 while (reader.Read())
                 {
-                    _FragenDB.Add(new Fragen
-                    {
-                        Fragestellung = reader.GetString("Fragestellung"),
-                        Antwort1 = reader.GetString("Antwort1"),
-                        IstAntwort1Richtig = reader.GetBoolean("IstAntwort1Richtig"),
-                        Antwort2 = reader.GetString("Antwort2"),
-                        IstAntwort2Richtig = reader.GetBoolean("IstAntwort2Richtig"),
-                        Antwort3 = reader.GetString("Antwort3"),
-                        IstAntwort3Richtig = reader.GetBoolean("IstAntwort3Richtig"),
-                        Antwort4 = reader.GetString("Antwort4"),
-                        IstAntwort4Richtig = reader.GetBoolean("IstAntwort4Richtig")
-                    });
+                    _FragenDB.Add(Fragen.FromReader(reader));
                 }
 
                 ViewData["ShowEditPopup"] = true;
@@ -167,11 +169,10 @@ namespace Smart2Lose.Pages.Admin
             }
 
             LadeAlleFrageboegen();
-
             return Page();
         }
 
-        // Card - Bearebiten Button => Speichern der editierten Fragen
+        // Card - Bearbeiten Button => Speichern der editierten Fragen
         public IActionResult OnPostSaveEdit(int fragebogenId, List<Fragen> Fragen)
         {
             if (Fragen == null || !Fragen.Any())
@@ -187,7 +188,6 @@ namespace Smart2Lose.Pages.Admin
                 using var connection = db.GetConnection();
                 connection.Open();
 
-                // Hole zuerst alle Fragen-IDs für diesen Fragebogen
                 string getIdsQuery = "SELECT ID FROM Fragen WHERE FragebogenID = @FragebogenID ORDER BY ID;";
                 var frageIds = new List<int>();
 
@@ -201,7 +201,6 @@ namespace Smart2Lose.Pages.Admin
                     }
                 }
 
-                // Validierung: Anzahl der Fragen muss übereinstimmen
                 if (frageIds.Count != Fragen.Count)
                 {
                     ViewData["ErrorMessage"] = "Anzahl der Fragen stimmt nicht überein.";
@@ -209,20 +208,19 @@ namespace Smart2Lose.Pages.Admin
                     return Page();
                 }
 
-                // Update-Query für jede Frage
                 string updateQuery = @"
-            UPDATE Fragen 
-            SET 
-                Fragestellung = @Fragestellung,
-                Antwort1 = @Antwort1,
-                IstAntwort1Richtig = @IstAntwort1Richtig,
-                Antwort2 = @Antwort2,
-                IstAntwort2Richtig = @IstAntwort2Richtig,
-                Antwort3 = @Antwort3,
-                IstAntwort3Richtig = @IstAntwort3Richtig,
-                Antwort4 = @Antwort4,
-                IstAntwort4Richtig = @IstAntwort4Richtig
-            WHERE ID = @ID;";
+                    UPDATE Fragen
+                    SET
+                        Fragestellung = @Fragestellung,
+                        Antwort1 = @Antwort1,
+                        IstAntwort1Richtig = @IstAntwort1Richtig,
+                        Antwort2 = @Antwort2,
+                        IstAntwort2Richtig = @IstAntwort2Richtig,
+                        Antwort3 = @Antwort3,
+                        IstAntwort3Richtig = @IstAntwort3Richtig,
+                        Antwort4 = @Antwort4,
+                        IstAntwort4Richtig = @IstAntwort4Richtig
+                    WHERE ID = @ID;";
 
                 using var transaction = connection.BeginTransaction();
 
@@ -248,7 +246,6 @@ namespace Smart2Lose.Pages.Admin
                     }
 
                     transaction.Commit();
-
                     ViewData["SuccessMessage"] = "Fragebogen erfolgreich gespeichert!";
                     System.Diagnostics.Debug.WriteLine($"Successfully updated {Fragen.Count} questions for FragebogenID {fragebogenId}");
                 }
@@ -265,7 +262,7 @@ namespace Smart2Lose.Pages.Admin
             }
 
             LadeAlleFrageboegen();
-            return RedirectToPage(); // Redirect um POST-Redirect-GET Pattern zu folgen
+            return RedirectToPage();
         }
     }
 }
