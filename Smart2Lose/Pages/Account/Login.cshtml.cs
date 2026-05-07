@@ -56,7 +56,7 @@ public class LoginModel : PageModel
             Input.Email,
             Input.Password,
             Input.RememberMe,
-            lockoutOnFailure: false);
+            lockoutOnFailure: true);
 
         if (result.Succeeded)
         {
@@ -64,11 +64,15 @@ public class LoginModel : PageModel
             return LocalRedirect(returnUrl);
         }
 
+        if (result.IsLockedOut)
+        {
+            log.Warn($"Account locked out for user: {Input.Email}");
+            ModelState.AddModelError(string.Empty, "Account gesperrt. Bitte warte 5 Minuten.");
+            return Page();
+        }
+
         ModelState.AddModelError(string.Empty, "Login fehlgeschlagen");
         log.Warn($"Login failed for user: {Input.Email}");
         return Page();
-        
-
-        // hello leute 
     }
 }

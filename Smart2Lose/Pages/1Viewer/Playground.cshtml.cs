@@ -51,7 +51,7 @@ namespace Smart2Lose.Pages._1Viewer
             LadeFrage(currentOffset);
         }
 
-        // Lädt HTTP SESSIONS
+        // Lï¿½dt HTTP SESSIONS
         private void loadHTTP()
         {
             sd.GameID = HttpContext.Session.GetInt32("GameNumber") ?? 0;          // Spiel ID
@@ -60,7 +60,7 @@ namespace Smart2Lose.Pages._1Viewer
             fp.RightAnswer = HttpContext.Session.GetInt32("RightAnswer") ?? 0;
         }
 
-        // Lädt Fragen
+        // Lï¿½dt Fragen
         private void LadeFrage(int offset)
         {
             FragenDB.Clear();
@@ -110,7 +110,7 @@ namespace Smart2Lose.Pages._1Viewer
             QuestionCount = spiel.HowManyQuestions(sd.GameID);
         }
 
-        // Button: NÄCHSTE
+        // Button: Nï¿½CHSTE
         public IActionResult OnPostNextQuestion()
         {
             loadHTTP();
@@ -121,7 +121,7 @@ namespace Smart2Lose.Pages._1Viewer
             return RedirectToPage(new { CurrentOffset = CurrentOffset });
         }
 
-        // Button: ANTWORTEN PRÜFEN
+        // Button: ANTWORTEN PRï¿½FEN
         public IActionResult OnPostCheckAnswer()
         {
             loadHTTP();
@@ -178,8 +178,8 @@ namespace Smart2Lose.Pages._1Viewer
             cmd.Parameters.AddWithValue("@pin", sd.GameID);
             cmd.Parameters.AddWithValue("@points", fp.PlayerPoints);
             cmd.Parameters.AddWithValue("@name", sd.UserName);
-            cmd.Parameters.AddWithValue("@Correct", fp.RightAnswer);
-            cmd.Parameters.AddWithValue("@Possible", spiel.HowManyQuestions(sd.GameID));
+            cmd.Parameters.AddWithValue("@correct", fp.RightAnswer);
+            cmd.Parameters.AddWithValue("@possible", spiel.HowManyQuestions(sd.GameID));
 
             cmd.ExecuteNonQuery();
 
