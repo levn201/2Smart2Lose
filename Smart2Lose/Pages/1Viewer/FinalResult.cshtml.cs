@@ -34,7 +34,7 @@ namespace Smart2Lose.Pages._1Viewer
         public string Filter { get; set; }
         public string DBquery { get; set; }
 
-        // Verschiedenen Queries fï¿½r den Filter 
+        // Verschiedenen Queries für den Filter 
 
 
         // Rangliste 
@@ -77,7 +77,7 @@ namespace Smart2Lose.Pages._1Viewer
             return Page();
         }
 
-        // Lï¿½dt Werte der Spieler 
+        // Lädt Werte der Spieler 
         private void loadPLayerList()
         {
             Player.Clear();
@@ -105,15 +105,19 @@ namespace Smart2Lose.Pages._1Viewer
                     });
                 }
 
+                // => LINQ Methoden https://csharp-hilfe.de/c-sharp-linq/ 
                 var top3 = Player
                     .OrderByDescending(p => p.Points)
                     .Take(3)
                     .Select(p => p.Nickname)
                     .ToArray();
 
-                PlaceOne   = top3.Length > 0 ? top3[0] : "-";
-                PlaceTwo   = top3.Length > 1 ? top3[1] : "-";
-                PlaceThree = top3.Length > 2 ? top3[2] : "-";
+                foreach (var name in top3) 
+                {
+                    PlaceOne = top3[0];
+                    PlaceTwo = top3[1];
+                    PlaceThree = top3[2];
+                }
 
             }
             catch (Exception ex)
