@@ -66,9 +66,10 @@ namespace Smart2Lose.Pages.Admin
             }
         }
 
-        // Card - Anschauen Button 
+        // Card - Anschauen Button
         public IActionResult OnPostView(int id)
         {
+            fHelper.activeUser = User.FindFirstValue(ClaimTypes.Email);
             fHelper.countResults(GamePin, countPlayer);
             try
             {
@@ -158,6 +159,7 @@ namespace Smart2Lose.Pages.Admin
         // Card - Bearbeiten Button => Laden aller Fragen in Textfelder
         public IActionResult OnPostEdit(int id)
         {
+            fHelper.activeUser = User.FindFirstValue(ClaimTypes.Email);
             try
             {
                 GamePin = id;
