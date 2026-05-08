@@ -314,3 +314,76 @@ body {
     .button-row { flex-direction: column; }
     .knopf { width: 100%; text-align: center; }
 }
+
+/* ─── Optionale URL-Felder ───────────────────────────── */
+.optional-felder {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 16px 0;
+    padding: 16px;
+    background: rgba(2, 70, 81, 0.03);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.optional-felder label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 8px;
+}
+
+.optional-felder label:first-child { margin-top: 0; }
+
+.optional-hint {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.75rem;
+}
+
+.optional-input {
+    width: 100%;
+    padding: 9px 12px;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--text);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.optional-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--ring);
+}
+
+/* Gleicher Style für Edit-Popup optional fields */
+.frage-bild-preview,
+.current-bild-preview {
+    max-width: 100%;
+    max-height: 160px;
+    object-fit: contain;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    margin: 8px 0;
+    display: block;
+}
+
+.frage-link-preview a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--primary);
+    text-decoration: none;
+    margin: 6px 0 10px;
+}
+
+.frage-link-preview a:hover { text-decoration: underline; }

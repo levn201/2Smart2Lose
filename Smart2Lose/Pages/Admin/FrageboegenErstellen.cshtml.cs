@@ -11,6 +11,9 @@ namespace Smart2Lose.Pages.Admin
     [Authorize(Roles = "Admin,User")]
     public class FrageboegenErstellenModel : PageModel
     {
+        private readonly IWebHostEnvironment _env;
+        public FrageboegenErstellenModel(IWebHostEnvironment env) => _env = env;
+
         public AdminHelper AdminHelper = new AdminHelper();
         public projektName pn = new projektName();
         [BindProperty] public Fragebogen fb { get; set; } = new();
@@ -29,14 +32,14 @@ namespace Smart2Lose.Pages.Admin
             if (fb.JoinId <= 0)
                 fb.JoinId = AdminHelper.RandomNum();
 
-            // Titel prüfen
+            // Titel prï¿½fen
             if (string.IsNullOrWhiteSpace(fb.Titel))
             {
                 FragenError = "Bitte einen Titel eingeben.";
                 return Page();
             } 
 
-            // Fragen prüfen
+            // Fragen prï¿½fen
             if (fb.Fragen == null || fb.Fragen.Count == 0)
             {
                 FragenError = "Mindestens eine Frage ist erforderlich.";
@@ -67,9 +70,24 @@ namespace Smart2Lose.Pages.Admin
                 }
             }
 
+            // Bild-Uploads verarbeiten
+            for (int i = 0; i < fb.Fragen.Count; i++)
+            {
+                var file = Request.Form.Files[$"bild_{i}"];
+                if (file != null && file.Length > 0)
+                {
+                    var uploadsPath = Path.Combine(_env.WebRootPath, "uploads", "fragen");
+                    Directory.CreateDirectory(uploadsPath);
+                    var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+                    var fileName = $"{Guid.NewGuid()}{ext}";
+                    using var stream = System.IO.File.Create(Path.Combine(uploadsPath, fileName));
+                    file.CopyTo(stream);
+                    fb.Fragen[i].BildUrl = $"/uploads/fragen/{fileName}";
+                }
+            }
+
             try
             {
-                // Autor: du kannst auch ClaimTypes.Email nutzen, wenn du das in DB willst
                 fb.Autor = User.FindFirstValue(ClaimTypes.Email) ?? "";
 
                 var db = new SQLconnection.DatenbankZugriff();
@@ -80,7 +98,7 @@ namespace Smart2Lose.Pages.Admin
 
                 long fid;
 
-                // Fragebogen einfügen
+                // Fragebogen einfï¿½gen
                 using (var cmd = new MySqlCommand(
                     @"INSERT INTO Fragebogen (Titel, Join_ID, Autor, Kategorie)
                       VALUES (@t, @j, @a, @k);",
@@ -95,7 +113,7 @@ namespace Smart2Lose.Pages.Admin
                     fid = cmd.LastInsertedId;
                 }
 
-                // Fragen einfügen
+                // Fragen einfï¿½gen
                 foreach (var f in fb.Fragen)
                 {
                     using var cmd = new MySqlCommand(@"
@@ -104,13 +122,15 @@ namespace Smart2Lose.Pages.Admin
                              Antwort1, IstAntwort1Richtig,
                              Antwort2, IstAntwort2Richtig,
                              Antwort3, IstAntwort3Richtig,
-                             Antwort4, IstAntwort4Richtig)
+                             Antwort4, IstAntwort4Richtig,
+                             BildUrl, LinkUrl)
                         VALUES
                             (@id, @q,
                              @a1, @r1,
                              @a2, @r2,
                              @a3, @r3,
-                             @a4, @r4);",
+                             @a4, @r4,
+                             @bild, @link);",
                         con, tx);
 
                     cmd.Parameters.AddWithValue("@id", fb.JoinId);
@@ -127,6 +147,9 @@ namespace Smart2Lose.Pages.Admin
 
                     cmd.Parameters.AddWithValue("@a4", f.Antwort4 ?? "");
                     cmd.Parameters.AddWithValue("@r4", f.IstAntwort4Richtig);
+
+                    cmd.Parameters.AddWithValue("@bild", (object?)f.BildUrl ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@link", (object?)f.LinkUrl ?? DBNull.Value);
 
                     cmd.ExecuteNonQuery();
                 }

@@ -1,42 +1,51 @@
-﻿@page
+@page
 @model Smart2Lose.Pages._1Viewer.NameConfirmationModel
 @{
     ViewData["Title"] = "Kahoot | Namen eingeben";
 }
 
-
 <link rel="stylesheet" href="~/css/Playground/GrundViewer.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/Playground/NameConfirmation.css" asp-append-version="true" />
 
-
 <!-- Header -->
 <header class="header">
-    <div class="logo"> @Model.pn.Name</div>
+    <div class="logo">@Model.pn.Name</div>
     <nav class="nav-links">
         <a href="/Index">Quit</a>
     </nav>
 </header>
 
+<!-- Nickname-Karte -->
+<div class="nc-wrapper">
+    <div class="nc-karte">
 
-<!-- Nicknamen eingeben für die Bestenliste -->
-<div class="text-center">
-    <div class="main-content">
+        <div class="nc-icon">
+            <i class="fa-solid fa-gamepad"></i>
+        </div>
+
         <h1>Gleich geht es los!</h1>
-        <p>Gib den Namen ein, um beizutreten:</p>
+        <p>Gib deinen Namen ein, um beizutreten</p>
 
         <form method="post">
-            <div class="input-group">
-                <input type="text" asp-for="Nickname" required placeholder="Wie darf man dich nennen" />
-                <button type="submit" asp-page-handler="LogName" class="btn btn-success">
-                    Nächste Frage
-                </button>
-            </div>
+            <input class="nc-input"
+                   type="text"
+                   asp-for="Nickname"
+                   required
+                   placeholder="Wie darf man dich nennen?" />
+
+            <button type="submit" asp-page-handler="LogName" class="nc-btn">
+                <i class="fa-solid fa-arrow-right"></i>
+                Los geht's
+            </button>
         </form>
 
         @if (!string.IsNullOrEmpty(Model.ErrorMessage))
         {
-            <p style="color: red;">@Model.ErrorMessage</p>
+            <div class="nc-fehler">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                @Model.ErrorMessage
+            </div>
         }
-    </div>
 
+    </div>
 </div>

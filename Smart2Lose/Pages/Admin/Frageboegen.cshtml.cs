@@ -11,6 +11,9 @@ namespace Smart2Lose.Pages.Admin
     [Authorize(Roles = "Admin,User,ReadOnly")]
     public class FragebögenModel : PageModel
     {
+        private readonly IWebHostEnvironment _env;
+        public FragebögenModel(IWebHostEnvironment env) => _env = env;
+
         public projektName pn = new projektName();
         public int GamePin { get; set; }
         public int countPlayer { get; set; }
@@ -72,7 +75,8 @@ namespace Smart2Lose.Pages.Admin
                         Antwort1, IstAntwort1Richtig,
                         Antwort2, IstAntwort2Richtig,
                         Antwort3, IstAntwort3Richtig,
-                        Antwort4, IstAntwort4Richtig
+                        Antwort4, IstAntwort4Richtig,
+                        BildUrl, LinkUrl
                     FROM Fragen
                     WHERE FragebogenID = @ID
                     ORDER BY ID;";
@@ -144,7 +148,8 @@ namespace Smart2Lose.Pages.Admin
                         Antwort1, IstAntwort1Richtig,
                         Antwort2, IstAntwort2Richtig,
                         Antwort3, IstAntwort3Richtig,
-                        Antwort4, IstAntwort4Richtig
+                        Antwort4, IstAntwort4Richtig,
+                        BildUrl, LinkUrl
                     FROM Fragen
                     WHERE FragebogenID = @ID
                     ORDER BY ID;";
@@ -188,6 +193,26 @@ namespace Smart2Lose.Pages.Admin
                 using var connection = db.GetConnection();
                 connection.Open();
 
+                // Bild-Uploads verarbeiten
+                for (int i = 0; i < Fragen.Count; i++)
+                {
+                    var file = Request.Form.Files[$"bild_{i}"];
+                    if (file != null && file.Length > 0)
+                    {
+                        var uploadsPath = Path.Combine(_env.WebRootPath, "uploads", "fragen");
+                        Directory.CreateDirectory(uploadsPath);
+                        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+                        var fileName = $"{Guid.NewGuid()}{ext}";
+                        using var stream = System.IO.File.Create(Path.Combine(uploadsPath, fileName));
+                        file.CopyTo(stream);
+                        Fragen[i].BildUrl = $"/uploads/fragen/{fileName}";
+                    }
+                    else
+                    {
+                        Fragen[i].BildUrl = Request.Form[$"existingBild_{i}"];
+                    }
+                }
+
                 string getIdsQuery = "SELECT ID FROM Fragen WHERE FragebogenID = @FragebogenID ORDER BY ID;";
                 var frageIds = new List<int>();
 
@@ -219,7 +244,9 @@ namespace Smart2Lose.Pages.Admin
                         Antwort3 = @Antwort3,
                         IstAntwort3Richtig = @IstAntwort3Richtig,
                         Antwort4 = @Antwort4,
-                        IstAntwort4Richtig = @IstAntwort4Richtig
+                        IstAntwort4Richtig = @IstAntwort4Richtig,
+                        BildUrl = @BildUrl,
+                        LinkUrl = @LinkUrl
                     WHERE ID = @ID;";
 
                 using var transaction = connection.BeginTransaction();
@@ -241,6 +268,8 @@ namespace Smart2Lose.Pages.Admin
                         cmd.Parameters.AddWithValue("@IstAntwort3Richtig", frage.IstAntwort3Richtig);
                         cmd.Parameters.AddWithValue("@Antwort4", frage.Antwort4);
                         cmd.Parameters.AddWithValue("@IstAntwort4Richtig", frage.IstAntwort4Richtig);
+                        cmd.Parameters.AddWithValue("@BildUrl", (object?)frage.BildUrl ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("@LinkUrl", (object?)frage.LinkUrl ?? DBNull.Value);
 
                         cmd.ExecuteNonQuery();
                     }

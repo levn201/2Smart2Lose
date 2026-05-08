@@ -51,7 +51,7 @@ namespace Smart2Lose.Pages._1Viewer
             LadeFrage(currentOffset);
         }
 
-        // Lädt HTTP SESSIONS
+        // Lï¿½dt HTTP SESSIONS
         private void loadHTTP()
         {
             sd.GameID = HttpContext.Session.GetInt32("GameNumber") ?? 0;          // Spiel ID
@@ -60,7 +60,7 @@ namespace Smart2Lose.Pages._1Viewer
             fp.RightAnswer = HttpContext.Session.GetInt32("RightAnswer") ?? 0;
         }
 
-        // Lädt Fragen
+        // Lï¿½dt Fragen
         private void LadeFrage(int offset)
         {
             FragenDB.Clear();
@@ -74,13 +74,14 @@ namespace Smart2Lose.Pages._1Viewer
             using var connection = db.GetConnection();
             connection.Open();
 
-            string query = @" 
-                SELECT 
+            string query = @"
+                SELECT
                     Fragestellung,
                     Antwort1, IstAntwort1Richtig,
                     Antwort2, IstAntwort2Richtig,
                     Antwort3, IstAntwort3Richtig,
-                    Antwort4, IstAntwort4Richtig
+                    Antwort4, IstAntwort4Richtig,
+                    BildUrl, LinkUrl
                 FROM Fragen
                 WHERE FragebogenID = @ID
                 ORDER BY ID
@@ -93,24 +94,13 @@ namespace Smart2Lose.Pages._1Viewer
             using var reader = cmd.ExecuteReader();
             if (reader.Read())
             {
-                FragenDB.Add(new Fragen
-                {
-                    Fragestellung = reader.GetString("Fragestellung"),
-                    Antwort1 = reader.GetString("Antwort1"),
-                    IstAntwort1Richtig = reader.GetBoolean("IstAntwort1Richtig"),
-                    Antwort2 = reader.GetString("Antwort2"),
-                    IstAntwort2Richtig = reader.GetBoolean("IstAntwort2Richtig"),
-                    Antwort3 = reader.GetString("Antwort3"),
-                    IstAntwort3Richtig = reader.GetBoolean("IstAntwort3Richtig"),
-                    Antwort4 = reader.GetString("Antwort4"),
-                    IstAntwort4Richtig = reader.GetBoolean("IstAntwort4Richtig")
-                });
+                FragenDB.Add(Fragen.FromReader(reader));
             }
 
             QuestionCount = spiel.HowManyQuestions(sd.GameID);
         }
 
-        // Button: NÄCHSTE
+        // Button: Nï¿½CHSTE
         public IActionResult OnPostNextQuestion()
         {
             loadHTTP();
@@ -121,7 +111,7 @@ namespace Smart2Lose.Pages._1Viewer
             return RedirectToPage(new { CurrentOffset = CurrentOffset });
         }
 
-        // Button: ANTWORTEN PRÜFEN
+        // Button: ANTWORTEN PRï¿½FEN
         public IActionResult OnPostCheckAnswer()
         {
             loadHTTP();

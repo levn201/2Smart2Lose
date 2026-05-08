@@ -1,94 +1,175 @@
 ﻿/* ==========================================================================
-   NAMECONFIRMATION.CSS - Auflistung aller erstellten Fragebögen 
+   NAMECONFIRMATION.CSS
    ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
 
+:root {
+    --primary:      #024651;
+    --primary-h:    #013038;
+    --accent:       #04C68A;
+    --bg:           #F0EEE9;
+    --card:         #FFFFFF;
+    --text:         #0C1410;
+    --muted:        #6E7D78;
+    --border:       #DDE3DF;
+    --error:        #D93025;
+    --radius:       14px;
+    --shadow:       0 0 0 1px rgba(0,0,0,0.04), 0 4px 24px rgba(0,0,0,0.07);
+    --font-display: 'Syne', sans-serif;
+    --font-body:    'DM Sans', sans-serif;
+}
 
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #004552;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
-
-.text-center {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.main-content {
-    background-color: #06666f;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    max-width: 400px;
-    width: 90%;
-    text-align: center;
-}
-
-    .main-content h1 {
-        font-size: 28px;
-        margin-bottom: 20px;
-    }
-
-    .main-content p {
-        font-size: 16px;
-        margin-bottom: 20px;
-    }
-
-/* Input + Button */
-.input-group {
+    font-family: var(--font-body) !important;
+    background-color: var(--bg) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    color: var(--text) !important;
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
+    padding-top: 64px !important;
+}
+
+/* Header */
+.header {
+    background-color: var(--primary) !important;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.06), 0 2px 12px rgba(0,0,0,0.15) !important;
+    height: 64px !important;
+}
+
+.logo {
+    font-family: var(--font-display) !important;
+    font-weight: 800 !important;
+    font-size: 1.1rem !important;
+    letter-spacing: -0.4px !important;
+    color: #fff !important;
+}
+
+.nav-links a {
+    font-family: var(--font-body) !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    color: rgba(255,255,255,0.75) !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important;
+    transition: background 0.2s, color 0.2s !important;
+}
+.nav-links a:hover {
+    background-color: rgba(255,255,255,0.1) !important;
+    color: #fff !important;
+}
+
+/* Zentrierter Wrapper */
+.nc-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 15px;
+    padding: 2rem 1rem;
 }
 
-    .input-group input {
-        padding: 10px;
-        border-radius: 8px !important;
-        border: 2px solid #ccc;
-        width: 100%;
-        max-width: 250px;
-        font-size: 16px;
-        text-align: center;
-        outline: none;
-        transition: border-color 0.3s ease;
-        appearance: none;
-    }
-
-        .input-group input:focus {
-            border-color: #00c896;
-        }
-
-    .input-group button {
-        padding: 10px 20px;
-        background-color: #00c896;
-        color: white;
-        border: none;
-        border-radius: 8px !important;
-        cursor: pointer;
-        font-size: 16px;
-        transition: background-color 0.3s ease;
-        appearance: none;
-    }
-
-        .input-group button:hover {
-            background-color: #00a47a;
-        }
-
-/* Fehler */
-.main-content p[style*="color: red"] {
-    margin-top: 15px;
-    font-size: 14px;
-    color: #ff4c4c !important;
+/* Karte */
+.nc-karte {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 2.5rem 2rem;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
+.nc-karte::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+}
 
+.nc-icon {
+    font-size: 2.2rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+}
+
+.nc-karte h1 {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.6px;
+    color: var(--primary);
+    margin: 0 0 0.5rem;
+}
+
+.nc-karte p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin: 0 0 1.75rem;
+}
+
+/* Input */
+.nc-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 9px;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    color: var(--text);
+    background: #fff;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-bottom: 1rem;
+}
+
+.nc-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(4,198,138,0.2);
+}
+
+.nc-input::placeholder { color: #b0bfbc; }
+
+/* Button */
+.nc-btn {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background: var(--accent);
+    color: var(--primary);
+    border: none;
+    border-radius: 9px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.nc-btn:hover {
+    background: #03A874;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(4,198,138,0.3);
+}
+
+.nc-btn:active { transform: translateY(0); }
+
+/* Fehlermeldung */
+.nc-fehler {
+    margin-top: 1rem;
+    font-size: 0.82rem;
+    color: var(--error);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
 

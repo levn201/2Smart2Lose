@@ -35,7 +35,7 @@
 
     <h2>Neues Quiz</h2>
 
-    <form method="post" asp-page-handler="Speichern" id="fragenForm">
+    <form method="post" asp-page-handler="Speichern" id="fragenForm" enctype="multipart/form-data">
 
         <!-- META -->
         <div class="quiz-meta">
@@ -81,6 +81,18 @@
                 <textarea class="frage-text"
                           name="fb.Fragen[0].Fragestellung"
                           placeholder="Frage eingeben..."></textarea>
+
+                <div class="optional-felder">
+                    <label>Bild hochladen <span class="optional-hint">(optional)</span></label>
+                    <input type="file" class="optional-input"
+                           name="bild_0"
+                           accept="image/*" />
+
+                    <label>Link-URL <span class="optional-hint">(optional, z.B. Confluence)</span></label>
+                    <input type="url" class="optional-input"
+                           name="fb.Fragen[0].LinkUrl"
+                           placeholder="https://... Confluence oder anderer Link" />
+                </div>
 
                 <h3>Antwortoptionen</h3>
 
@@ -153,6 +165,12 @@
         const frage = neu.querySelector('textarea[name*="Fragestellung"]');
         frage.name = `fb.Fragen[${frageIndex}].Fragestellung`;
         frage.value = "";
+
+        // Optionale Felder
+        const bildInput = neu.querySelector('input[type="file"][name^="bild_"]');
+        if (bildInput) { bildInput.name = `bild_${frageIndex}`; bildInput.value = ""; }
+        const linkUrl = neu.querySelector('input[name*="LinkUrl"]');
+        if (linkUrl) { linkUrl.name = `fb.Fragen[${frageIndex}].LinkUrl`; linkUrl.value = ""; }
 
         // Antworten + bools
         for (let i = 1; i <= 4; i++) {
