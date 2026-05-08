@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Mockup — 2Smart2Lose</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #00434e;
+    color: #ffffff;
+    padding-top: 80px;
+    margin-bottom: 60px;
+  }
+
+  /* HEADER — identisch zu GrundDashboard.css */
+  .header {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    background-color: #00434e;
+    color: white;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,.2);
+    z-index: 1000;
+  }
+  .logo { font-weight: 700; font-size: 1.2rem; }
+  .nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    padding: .5rem .8rem;
+    border-radius: 4px;
+    transition: background-color .3s ease;
+    font-size: 15px;
+  }
+  .nav-links a:hover { background-color: rgba(255,255,255,.1); }
+  .nav-links a.active { background-color: rgba(255,255,255,.15); }
+
+  /* SEITEN-TITEL */
+  .seiten-titel-bereich {
+    max-width: 1100px;
+    margin: 2rem auto 1.2rem;
+    padding: 0 1.5rem;
+  }
+  .seiten-titel {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  /* MAIN WRAPPER */
+  .stats-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem 2rem;
+  }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: .75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: rgba(255,255,255,.55);
+    margin-bottom: .75rem;
+    margin-top: 1.8rem;
+  }
+
+  /* KPI CARDS */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: .5rem;
+  }
+  .kpi-grid.admin-row { grid-template-columns: repeat(4, 1fr); }
+
+  .kpi-card {
+    background: #ffffff;
+    color: #00434e;
+    border-radius: 10px;
+    padding: 20px 18px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    border-top: 3px solid #00434e;
+  }
+  .kpi-card.admin-only {
+    border-top-color: #c0392b;
+    opacity: .95;
+  }
+  .kpi-icon {
+    font-size: 1.4rem;
+    color: #00434e;
+    margin-bottom: 8px;
+  }
+  .kpi-card.admin-only .kpi-icon { color: #c0392b; }
+  .kpi-label {
+    font-size: .72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: #6b8a8f;
+    margin-bottom: 4px;
+  }
+  .kpi-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #00434e;
+    line-height: 1;
+  }
+  .kpi-badge {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: .65rem;
+    font-weight: 600;
+    background: #fde8e8;
+    color: #c0392b;
+    border-radius: 4px;
+    padding: 2px 7px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+  }
+
+  /* WHITE CARD (tables) */
+  .stat-card {
+    background: #ffffff;
+    color: #00434e;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .stat-card-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid #e8f0f1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .stat-card-header .title {
+    font-weight: 700;
+    font-size: .95rem;
+    color: #00434e;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .stat-card-header .title i { color: #00434e; font-size: .9rem; }
+  .role-badge {
+    font-size: .65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    border-radius: 20px;
+    padding: 3px 10px;
+  }
+  .role-badge.all { background: #e0f3f5; color: #00434e; }
+  .role-badge.admin { background: #fde8e8; color: #c0392b; }
+  .role-badge.mixed { background: #fff3cd; color: #856404; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    padding: 9px 16px;
+    text-align: left;
+    font-size: .68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: #6b8a8f;
+    border-bottom: 1px solid #e8f0f1;
+    background: #f7fafb;
+  }
+  tbody td {
+    padding: 11px 16px;
+    font-size: .88rem;
+    color: #00434e;
+    border-bottom: 1px solid #f0f5f6;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: #f0f8f9; }
+
+  .pin-badge {
+    font-family: monospace;
+    background: #e0f3f5;
+    color: #00434e;
+    padding: 2px 9px;
+    border-radius: 4px;
+    font-size: .82rem;
+    font-weight: 700;
+  }
+  .text-muted-teal { color: #6b8a8f; font-size: .82rem; }
+
+  /* DEV BEREICH */
+  .dev-details {
+    margin-top: 2rem;
+  }
+  .dev-details summary {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .82rem;
+    color: rgba(255,255,255,.5);
+    padding: 6px 0;
+    user-select: none;
+    list-style: none;
+  }
+  .dev-details summary::-webkit-details-marker { display: none; }
+  .dev-details summary i { font-size: .75rem; }
+  .dev-inner {
+    background: #fff;
+    color: #00434e;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-top: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    border: 1px dashed #b2cdd1;
+  }
+  .dev-inner p { font-size: .82rem; color: #6b8a8f; margin-bottom: 12px; }
+  .btn-dev {
+    display: inline-block;
+    padding: 7px 14px;
+    border-radius: 6px;
+    border: 1px solid #b2cdd1;
+    background: #f7fafb;
+    font-size: .82rem;
+    cursor: pointer;
+    margin-right: 8px;
+    color: #00434e;
+    font-family: 'Inter', sans-serif;
+  }
+  .status-out {
+    margin-top: 12px;
+    font-family: monospace;
+    font-size: .78rem;
+    color: #6b8a8f;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER — exakt wie bestehende Seiten -->
+<header class="header">
+  <div class="logo">2Smart2Lose</div>
+  <nav class="nav-links">
+    <a href="#" class="active">Dashboard</a>
+    <a href="#">User</a>
+    <a href="#">Fragebögen</a>
+    <a href="#">Neue anlegen</a>
+    <a href="#">Quit</a>
+  </nav>
+</header>
+
+<!-- SEITEN-TITEL -->
+<div class="seiten-titel-bereich">
+  <h1 class="seiten-titel">Dashboard</h1>
+</div>
+
+<div class="stats-wrapper">
+
+  <!-- KPI: ALLE USER -->
+  <div class="section-label">Übersicht</div>
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+      <div class="kpi-label">Gesamt-Quizze</div>
+      <div class="kpi-value">12</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="fa-solid fa-gamepad"></i></div>
+      <div class="kpi-label">Gesamt-Spiele</div>
+      <div class="kpi-value">47</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="fa-solid fa-calendar-day"></i></div>
+      <div class="kpi-label">Spiele heute</div>
+      <div class="kpi-value">3</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
+      <div class="kpi-label">Gesamt-Teilnehmer</div>
+      <div class="kpi-value">138</div>
+    </div>
+  </div>
+
+  <!-- KPI: NUR ADMIN -->
+  <div class="kpi-grid admin-row" style="margin-top:14px;">
+    <div class="kpi-card admin-only">
+      <div class="kpi-icon"><i class="fa-solid fa-user-shield"></i></div>
+      <div class="kpi-label">Registrierte User</div>
+      <div class="kpi-value">5</div>
+      <div class="kpi-badge">Nur Admin</div>
+    </div>
+  </div>
+
+  <!-- TABELLE 1: Letzte Spielsessions -->
+  <div class="section-label" style="margin-top:2rem;">Letzte Spielsessions</div>
+  <div class="stat-card">
+    <div class="stat-card-header">
+      <span class="title"><i class="fa-solid fa-clock-rotate-left"></i> Letzte 10 Spiele</span>
+      <span class="role-badge all">Alle Rollen</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>GamePin</th>
+          <th>Quiz-Titel</th>
+          <th>Spieler</th>
+          <th>Datum</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="pin-badge">3842</span></td>
+          <td>Hauptstädte Europas</td>
+          <td>8</td>
+          <td class="text-muted-teal">08.05.2026 · 14:32</td>
+        </tr>
+        <tr>
+          <td><span class="pin-badge">1291</span></td>
+          <td>Mathe Basics</td>
+          <td>5</td>
+          <td class="text-muted-teal">08.05.2026 · 11:15</td>
+        </tr>
+        <tr>
+          <td><span class="pin-badge">7734</span></td>
+          <td>Allgemeinwissen 2025</td>
+          <td>12</td>
+          <td class="text-muted-teal">07.05.2026 · 16:50</td>
+        </tr>
+        <tr>
+          <td><span class="pin-badge">4401</span></td>
+          <td>IT Grundlagen</td>
+          <td>3</td>
+          <td class="text-muted-teal">07.05.2026 · 09:20</td>
+        </tr>
+        <tr>
+          <td><span class="pin-badge">5512</span></td>
+          <td>Hauptstädte Europas</td>
+          <td>9</td>
+          <td class="text-muted-teal">06.05.2026 · 13:00</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TABELLE 2: Quiz-Aktivität -->
+  <div class="section-label">Quiz-Aktivität</div>
+  <div class="stat-card">
+    <div class="stat-card-header">
+      <span class="title"><i class="fa-solid fa-chart-simple"></i> Quizze &amp; Spielstatistik</span>
+      <span class="role-badge mixed">Admin: alle · User: eigene</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Quiz-Titel</th>
+          <th>Kategorie</th>
+          <th>Spiele gespielt</th>
+          <th>Teilnehmer gesamt</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Hauptstädte Europas</td>
+          <td>Geographie</td>
+          <td>8</td>
+          <td>61</td>
+        </tr>
+        <tr>
+          <td>Mathe Basics</td>
+          <td>Mathematik</td>
+          <td>5</td>
+          <td>28</td>
+        </tr>
+        <tr>
+          <td>Allgemeinwissen 2025</td>
+          <td>Allgemein</td>
+          <td>12</td>
+          <td>97</td>
+        </tr>
+        <tr>
+          <td>IT Grundlagen</td>
+          <td>IT</td>
+          <td>3</td>
+          <td>14</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- DEV-BEREICH (nur Admin, aufklappbar) -->
+  <details class="dev-details">
+    <summary>
+      <i class="fa-solid fa-chevron-right"></i>
+      Entwickler-Bereich
+      <span style="font-size:.65rem;background:#fde8e8;color:#c0392b;border-radius:4px;padding:2px 8px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;">Nur Admin</span>
+    </summary>
+    <div class="dev-inner">
+      <p>Datenbankverbindung testen und Testeinträge verwalten.</p>
+      <button class="btn-dev">Verbindung testen</button>
+      <button class="btn-dev">Eintrag hinzufügen</button>
+      <button class="btn-dev">Einträge anzeigen</button>
+      <div class="status-out">Status: Bereit zum Testen.</div>
+    </div>
+  </details>
+
+</div>
+
+</body>
+</html>

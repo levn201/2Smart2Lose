@@ -511,6 +511,268 @@ textarea:focus-visible {
 }
 
 /* ==========================================================================
+   STATS DASHBOARD — Design identisch zu Fragebögen
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+
+:root {
+    --db-primary:      #024651;
+    --db-primary-h:    #013038;
+    --db-accent:       #04C68A;
+    --db-bg:           #F0EEE9;
+    --db-card:         #FFFFFF;
+    --db-surface:      #F8F9F8;
+    --db-text:         #0C1410;
+    --db-muted:        #6E7D78;
+    --db-border:       #DDE3DF;
+    --db-error:        #D93025;
+    --db-radius:       14px;
+    --db-radius-sm:    9px;
+    --db-shadow:       0 0 0 1px rgba(0,0,0,0.04), 0 4px 24px rgba(0,0,0,0.07);
+    --db-shadow-h:     0 0 0 1px rgba(0,0,0,0.06), 0 12px 40px rgba(0,0,0,0.11);
+    --db-font-display: 'Syne', sans-serif;
+    --db-font-body:    'DM Sans', sans-serif;
+}
+
+body {
+    font-family: var(--db-font-body) !important;
+    background-color: var(--db-bg) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    color: var(--db-text) !important;
+}
+
+.header {
+    background-color: var(--db-primary) !important;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.06), 0 2px 12px rgba(0,0,0,0.15) !important;
+    height: 64px !important;
+}
+
+.logo {
+    font-family: var(--db-font-display) !important;
+    font-weight: 800 !important;
+    font-size: 1.1rem !important;
+    letter-spacing: -0.4px !important;
+    color: #fff !important;
+}
+
+.nav-links { display: flex; align-items: center; gap: 4px; }
+
+.nav-links a {
+    font-family: var(--db-font-body) !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    color: rgba(255,255,255,0.75) !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important;
+    transition: background 0.2s, color 0.2s !important;
+}
+.nav-links a:hover { background-color: rgba(255,255,255,0.1) !important; color: #fff !important; }
+.nav-links a.active { background-color: rgba(255,255,255,0.15) !important; color: #fff !important; font-weight: 600 !important; }
+
+/* Seitentitel */
+.seiten-titel-bereich { max-width: 100%; padding: 2rem 1.5rem 0; }
+.seiten-titel {
+    font-family: var(--db-font-display);
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -0.8px;
+    color: var(--db-primary);
+    margin: 0;
+}
+
+/* Dashboard Container */
+.dashboard-container { padding: 1.5rem 1.5rem 3rem; }
+
+/* Section Label */
+.section-label {
+    font-family: var(--db-font-body);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--db-muted);
+    margin: 2rem 0 0.75rem;
+}
+
+/* KPI Grid */
+.kpi-grid { display: grid; gap: 1rem; grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 680px) { .kpi-grid { grid-template-columns: repeat(4, 1fr); } }
+
+.kpi-karte {
+    background: var(--db-card);
+    border: 1px solid var(--db-border);
+    border-radius: var(--db-radius);
+    padding: 1.25rem 1.25rem 1.1rem;
+    box-shadow: var(--db-shadow);
+    position: relative;
+    overflow: hidden;
+}
+.kpi-karte::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--db-primary), var(--db-accent));
+}
+.kpi-karte.admin-only::before { background: linear-gradient(90deg, var(--db-error), #f17c72); }
+
+.kpi-icon { font-size: 1.2rem; color: var(--db-accent); margin-bottom: 0.6rem; }
+.kpi-karte.admin-only .kpi-icon { color: var(--db-error); }
+
+.kpi-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--db-muted);
+    margin-bottom: 0.3rem;
+}
+.kpi-wert {
+    font-family: var(--db-font-display);
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: var(--db-primary);
+    line-height: 1;
+}
+.kpi-badge-admin {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: rgba(217,48,37,0.1);
+    color: var(--db-error);
+    border-radius: 4px;
+    padding: 2px 7px;
+}
+
+/* Stat-Karte (Tabellen) */
+.stat-karte {
+    background: var(--db-card);
+    border: 1px solid var(--db-border);
+    border-radius: var(--db-radius);
+    box-shadow: var(--db-shadow);
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+.stat-karte-kopf {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--db-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.stat-karte-titel {
+    font-family: var(--db-font-display);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--db-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.stat-karte-titel i { color: var(--db-accent); font-size: 0.85rem; }
+
+.rollen-badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-radius: 20px;
+    padding: 3px 10px;
+}
+.rollen-badge.alle    { background: rgba(4,198,138,0.12); color: var(--db-primary); }
+.rollen-badge.admin   { background: rgba(217,48,37,0.1);  color: var(--db-error); }
+.rollen-badge.gemischt { background: rgba(2,70,81,0.08);  color: var(--db-primary); }
+
+/* Tabelle */
+.stat-tabelle { width: 100%; border-collapse: collapse; }
+.stat-tabelle thead th {
+    padding: 0.6rem 1.25rem;
+    text-align: left;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--db-muted);
+    border-bottom: 1px solid var(--db-border);
+    background: var(--db-surface);
+}
+.stat-tabelle tbody td {
+    padding: 0.85rem 1.25rem;
+    font-size: 0.875rem;
+    color: var(--db-text);
+    border-bottom: 1px solid var(--db-border);
+    font-weight: 400;
+}
+.stat-tabelle tbody tr:last-child td { border-bottom: none; }
+.stat-tabelle tbody tr:hover td { background: rgba(4,198,138,0.04); }
+
+.pin-badge {
+    font-family: monospace;
+    background: rgba(4,198,138,0.12);
+    color: var(--db-primary);
+    padding: 2px 9px;
+    border-radius: 5px;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+.text-gedaempft { color: var(--db-muted); font-size: 0.82rem; }
+.leer-hinweis { padding: 2rem 1.25rem; text-align: center; color: var(--db-muted); font-size: 0.875rem; }
+
+/* Dev-Bereich */
+.dev-details { margin-top: 2rem; }
+.dev-details summary {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--db-muted);
+    padding: 6px 0;
+    user-select: none;
+    list-style: none;
+    font-family: var(--db-font-body);
+}
+.dev-details summary::-webkit-details-marker { display: none; }
+.dev-details summary i { font-size: 0.7rem; transition: transform 0.2s; }
+.dev-details[open] summary i { transform: rotate(90deg); }
+.dev-inner {
+    background: var(--db-card);
+    border: 1px dashed var(--db-border);
+    border-radius: var(--db-radius);
+    padding: 1.25rem 1.5rem;
+    margin-top: 0.75rem;
+    box-shadow: var(--db-shadow);
+}
+.dev-inner p { font-size: 0.82rem; color: var(--db-muted); margin-bottom: 0.875rem; }
+.dev-knopf {
+    font-family: var(--db-font-body);
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--db-primary);
+    border: none;
+    border-radius: var(--db-radius-sm);
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.dev-knopf:hover { background: var(--db-primary-h); transform: translateY(-1px); }
+.dev-status { margin-top: 0.875rem; font-family: monospace; font-size: 0.78rem; color: var(--db-muted); white-space: pre-wrap; }
+
+@media (max-width: 520px) {
+    .dashboard-container { padding: 0 1rem 2rem; }
+    .kpi-wert { font-size: 1.7rem; }
+    .stat-tabelle thead th, .stat-tabelle tbody td { padding: 0.7rem 0.875rem; }
+}
+
+/* ==========================================================================
    11. UTILITY CLASSES
    ========================================================================== */
 .text-center {
