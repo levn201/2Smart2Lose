@@ -30,6 +30,7 @@ body {
     color: var(--text);
     min-height: 100vh;
     padding-top: 80px;
+    padding-bottom: 72px;
 }
 
 /* ─── Header ─────────────────────────────────────────── */
