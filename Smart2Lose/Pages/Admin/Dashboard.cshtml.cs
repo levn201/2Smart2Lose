@@ -20,6 +20,14 @@ namespace Smart2Lose.Pages.Admin
         public int GesamtTeilnehmer { get; set; }
         public int RegistrierteUser { get; set; }
 
+        // DB Status
+        public bool DbOnline { get; set; }
+        public long DbLatenzMs { get; set; }
+        public string DbVersion { get; set; } = "-";
+        public int DbThreadsConnected { get; set; }
+        public long DbGesamtAbfragen { get; set; }
+        public string DbUptime { get; set; } = "-";
+
         public List<SpielSession> LetzteSpielSessions { get; set; } = new();
         public List<QuizAktivitat> QuizAktivitaeten { get; set; } = new();
 
@@ -50,7 +58,38 @@ namespace Smart2Lose.Pages.Admin
             {
                 var db = new DatenbankZugriff();
                 using var connection = db.GetConnection();
+
+                var sw = System.Diagnostics.Stopwatch.StartNew();
                 connection.Open();
+                sw.Stop();
+                DbOnline = true;
+                DbLatenzMs = sw.ElapsedMilliseconds;
+
+                if (User.IsInRole("Admin"))
+                {
+                    using (var cmd = new MySqlCommand("SELECT VERSION()", connection))
+                        DbVersion = cmd.ExecuteScalar()?.ToString() ?? "-";
+
+                    using (var cmd = new MySqlCommand(
+                        "SHOW GLOBAL STATUS WHERE Variable_name IN ('Threads_connected','Queries','Uptime')", connection))
+                    using (var r = cmd.ExecuteReader())
+                    {
+                        while (r.Read())
+                        {
+                            switch (r.GetString("Variable_name"))
+                            {
+                                case "Threads_connected":
+                                    DbThreadsConnected = int.Parse(r.GetString("Value")); break;
+                                case "Queries":
+                                    DbGesamtAbfragen = long.Parse(r.GetString("Value")); break;
+                                case "Uptime":
+                                    var sek = long.Parse(r.GetString("Value"));
+                                    DbUptime = $"{sek / 86400}d {(sek % 86400) / 3600}h {(sek % 3600) / 60}m";
+                                    break;
+                            }
+                        }
+                    }
+                }
 
                 using (var cmd = new MySqlCommand("SELECT COUNT(*) FROM Fragebogen", connection))
                     GesamtQuizze = Convert.ToInt32(cmd.ExecuteScalar());
@@ -150,7 +189,7 @@ namespace Smart2Lose.Pages.Admin
             }
             catch
             {
-                // DB nicht erreichbar — Stats bleiben auf 0/leer
+                DbOnline = false;
             }
         }
 

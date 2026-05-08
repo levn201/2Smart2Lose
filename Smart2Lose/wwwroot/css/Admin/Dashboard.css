@@ -772,6 +772,102 @@ body {
     .stat-tabelle thead th, .stat-tabelle tbody td { padding: 0.7rem 0.875rem; }
 }
 
+/* ─── DB Status ──────────────────────────────────────── */
+.db-status-body {
+    padding: 1.25rem;
+}
+
+.db-status-zeile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+}
+
+.db-status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: db-pulse 2.5s ease-in-out infinite;
+}
+.db-status-dot.online  {
+    background: var(--db-accent);
+    box-shadow: 0 0 0 3px rgba(4, 198, 138, 0.2);
+}
+.db-status-dot.offline {
+    background: var(--db-error);
+    box-shadow: 0 0 0 3px rgba(217, 48, 37, 0.2);
+    animation: none;
+}
+
+@keyframes db-pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(4, 198, 138, 0.2); }
+    50%       { box-shadow: 0 0 0 5px rgba(4, 198, 138, 0.08); }
+}
+
+.db-status-label {
+    font-family: var(--db-font-body);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--db-text);
+}
+
+.db-latenz {
+    margin-left: auto;
+    font-family: monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--db-primary);
+    background: rgba(4, 198, 138, 0.1);
+    border: 1px solid rgba(4, 198, 138, 0.25);
+    border-radius: 5px;
+    padding: 2px 9px;
+}
+
+.db-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--db-border);
+    border: 1px solid var(--db-border);
+    border-radius: var(--db-radius-sm);
+    overflow: hidden;
+}
+
+.db-stat-item {
+    padding: 0.875rem 1rem;
+    background: var(--db-surface);
+}
+
+.db-stat-label {
+    font-size: 0.67rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--db-muted);
+    margin-bottom: 0.3rem;
+}
+
+.db-stat-wert {
+    font-family: var(--db-font-display);
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--db-primary);
+    line-height: 1.2;
+}
+.db-stat-wert.small {
+    font-size: 0.85rem;
+    letter-spacing: 0;
+    font-family: monospace;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .db-stat-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 /* ==========================================================================
    11. UTILITY CLASSES
    ========================================================================== */

@@ -75,6 +75,52 @@
         </div>
     }
 
+    <!-- DB Status (Admin) -->
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="section-label">Datenbankstatus</div>
+        <div class="stat-karte">
+            <div class="stat-karte-kopf">
+                <span class="stat-karte-titel">
+                    <i class="fa-solid fa-database"></i>
+                    MySQL Verbindung
+                </span>
+                <span class="rollen-badge admin">Nur Admin</span>
+            </div>
+            <div class="db-status-body">
+                <div class="db-status-zeile">
+                    <span class="db-status-dot @(Model.DbOnline ? "online" : "offline")"></span>
+                    <span class="db-status-label">@(Model.DbOnline ? "Verbunden" : "Keine Verbindung")</span>
+                    @if (Model.DbOnline)
+                    {
+                        <span class="db-latenz">@Model.DbLatenzMs ms</span>
+                    }
+                </div>
+                @if (Model.DbOnline)
+                {
+                    <div class="db-stat-grid">
+                        <div class="db-stat-item">
+                            <div class="db-stat-label">Version</div>
+                            <div class="db-stat-wert small">@Model.DbVersion</div>
+                        </div>
+                        <div class="db-stat-item">
+                            <div class="db-stat-label">Aktive Verbindungen</div>
+                            <div class="db-stat-wert">@Model.DbThreadsConnected</div>
+                        </div>
+                        <div class="db-stat-item">
+                            <div class="db-stat-label">Abfragen gesamt</div>
+                            <div class="db-stat-wert">@Model.DbGesamtAbfragen.ToString("N0")</div>
+                        </div>
+                        <div class="db-stat-item">
+                            <div class="db-stat-label">Server-Laufzeit</div>
+                            <div class="db-stat-wert small">@Model.DbUptime</div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
     <!-- Tabelle: Letzte Spielsessions -->
     <div class="section-label">Letzte Spielsessions</div>
     <div class="stat-karte">
