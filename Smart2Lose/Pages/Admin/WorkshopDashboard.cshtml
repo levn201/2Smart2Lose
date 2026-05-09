@@ -48,7 +48,7 @@
         </div>
     </div>
 
-    <div style="background:var(--card-bg,#1e1e2e); border:1px solid var(--border-color,#2a2d3e); border-radius:12px; padding:8px 0;">
+    <div style="background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:8px 0;">
         <table class="teilnehmer-tabelle">
             <thead>
                 <tr>
@@ -65,11 +65,10 @@
                     var prozent = t.QuestionCount > 0
                         ? (int)((double)t.AktuelleOffset / t.QuestionCount * 100)
                         : 0;
-                    var fertig  = t.AktuelleOffset >= t.QuestionCount && t.QuestionCount > 0;
-                    var inaktiv = !fertig && (DateTime.UtcNow - t.LetztesUpdate.ToUniversalTime()).TotalMinutes >= 2;
-                    var fuellung    = fertig ? "fertig" : (inaktiv ? "inaktiv" : "");
-                    var badgeKlasse = fertig ? "badge-fertig" : (inaktiv ? "badge-inaktiv" : "badge-aktiv");
-                    var statusText  = fertig ? "Fertig" : (inaktiv ? "Inaktiv" : "Aktiv");
+                    var fertig      = t.AktuelleOffset >= t.QuestionCount && t.QuestionCount > 0;
+                    var fuellung    = fertig ? "fertig" : "";
+                    var badgeKlasse = fertig ? "badge-fertig" : "badge-aktiv";
+                    var statusText  = fertig ? "Fertig" : "Aktiv";
                     <tr>
                         <td><strong>@t.Nickname</strong></td>
                         <td>
@@ -91,15 +90,6 @@
     const joinId = @Model.JoinId;
     const INAKTIV_MINUTEN = 2;
     let sekundenSeit = 0;
-
-    // XSS-Schutz: Nutzereingaben (Nickname) vor DOM-Einfuegen escapen
-    function escapeHtml(str) {
-        return String(str)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;');
-    }
 
     function statusBerechnen(aktuelleOffset, questionCount, letztesUpdateIso) {
         const fertig = questionCount > 0 && aktuelleOffset >= questionCount;
