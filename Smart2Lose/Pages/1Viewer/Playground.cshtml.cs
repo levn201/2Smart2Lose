@@ -197,8 +197,37 @@ namespace Smart2Lose.Pages._1Viewer
             SaveQuestionStates(AllQuestionStates);
 
             ComputeProgress();
+            AktualisiereWorkshopTracking();
 
             return Page();
+        }
+
+        private void AktualisiereWorkshopTracking()
+        {
+            try
+            {
+                var db = new SQLconnection.DatenbankZugriff();
+                using var con = db.GetConnection();
+                con.Open();
+                var cmd = new MySqlCommand(@"
+                    INSERT INTO WorkshopTeilnehmer (GamePin, Nickname, AktuelleOffset, QuestionCount, Punkte, LetztesUpdate)
+                    VALUES (@pin, @nick, @offset, @count, @pts, NOW())
+                    ON DUPLICATE KEY UPDATE
+                        AktuelleOffset = @offset,
+                        QuestionCount  = @count,
+                        Punkte         = @pts,
+                        LetztesUpdate  = NOW()", con);
+                cmd.Parameters.AddWithValue("@pin",    sd.GameID);
+                cmd.Parameters.AddWithValue("@nick",   sd.UserName);
+                cmd.Parameters.AddWithValue("@offset", CurrentOffset + 1);
+                cmd.Parameters.AddWithValue("@count",  QuestionCount);
+                cmd.Parameters.AddWithValue("@pts",    fp.PlayerPoints);
+                cmd.ExecuteNonQuery();
+            }
+            catch
+            {
+                // Tracking-Fehler sollen das Spielerlebnis nicht unterbrechen
+            }
         }
 
         public IActionResult OnPostFinishQuiz()
