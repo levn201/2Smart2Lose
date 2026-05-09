@@ -93,6 +93,10 @@
                             <input type="hidden" name="id" value="@fragebogen.JoinId" />
                             <button type="submit" class="knopf gefahr">Löschen</button>
                         </form>
+
+                        <a asp-page="/Admin/WorkshopDashboard"
+                           asp-route-joinId="@fragebogen.JoinId"
+                           class="knopf">Live</a>
                     }
                 </div>
             </div>
