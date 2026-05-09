@@ -221,6 +221,10 @@ body {
     border-radius: var(--radius-sm);
     padding: 7px 16px;
     cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+    line-height: normal;
+    vertical-align: middle;
     transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
     white-space: nowrap;
 }

@@ -37,6 +37,9 @@ bld/
 # Uncomment if you have tasks that create the project's static files in wwwroot
 #wwwroot/
 
+# User-uploaded files – stored locally on the server, not in version control
+wwwroot/uploads/
+
 # Visual Studio 2017 auto generated files
 Generated\ Files/
 

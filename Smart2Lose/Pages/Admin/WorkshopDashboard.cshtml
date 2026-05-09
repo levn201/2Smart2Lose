@@ -16,12 +16,12 @@
     </nav>
 </header>
 
-<div style="max-width:1100px; margin:32px auto; padding:0 16px;">
+<div class="dashboard-seite">
 
     <div class="dashboard-header">
         <div>
             <h1 class="seiten-titel">Live Dashboard</h1>
-            <p style="opacity:.6; margin-top:4px;">
+            <p class="untertitel">
                 @Model.FragebogenTitel &middot; PIN: <strong>@Model.JoinId</strong>
             </p>
             <p class="aktualisierung-info" id="aktualisierungInfo">Aktualisiert vor 0s</p>
@@ -31,15 +31,15 @@
 
     <div class="stats-reihe">
         <div class="stat-karte">
-            <div class="zahl" id="statFertig" style="color:#22c55e">0</div>
+            <div class="zahl" id="statFertig">0</div>
             <div class="bezeichnung">Fertig</div>
         </div>
         <div class="stat-karte">
-            <div class="zahl" id="statAktiv" style="color:#6c63ff">0</div>
+            <div class="zahl" id="statAktiv">0</div>
             <div class="bezeichnung">Aktiv</div>
         </div>
         <div class="stat-karte">
-            <div class="zahl" id="statInaktiv" style="color:#9ca3af">0</div>
+            <div class="zahl" id="statInaktiv">0</div>
             <div class="bezeichnung">Inaktiv</div>
         </div>
         <div class="stat-karte">
@@ -48,7 +48,7 @@
         </div>
     </div>
 
-    <div style="background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:8px 0;">
+    <div class="tabellen-wrapper">
         <table class="teilnehmer-tabelle">
             <thead>
                 <tr>

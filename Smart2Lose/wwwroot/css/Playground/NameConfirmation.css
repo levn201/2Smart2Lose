@@ -50,6 +50,8 @@ body {
     font-size: 0.875rem !important;
     font-weight: 500 !important;
     color: rgba(255,255,255,0.75) !important;
+    background: transparent !important;
+    border: none !important;
     padding: 6px 14px !important;
     border-radius: 6px !important;
     transition: background 0.2s, color 0.2s !important;
