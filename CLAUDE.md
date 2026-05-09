@@ -46,10 +46,12 @@ The two layers never mix. Do not use EF Core for game tables or raw SQL for Iden
 
 1. `Index` — player enters PIN → validated against `Fragebogen.Join_ID`
 2. `1Viewer/NameConfirmation` — nickname stored in session (`Name` key)
-3. `1Viewer/Playground` — questions loaded one at a time via OFFSET pagination; 100 pts correct / −5 pts wrong
+3. `1Viewer/Playground` — questions loaded one at a time via OFFSET pagination; 100 pts correct / −5 pts wrong. Fixed bottom nav bar shows all question numbers; green = correct, red = wrong, grey = not yet answered (locked). Clicking an answered number opens it in read-only review mode showing the player's original answer and the correct answer.
 4. `1Viewer/FinalResult` — score written to `PlayerPoints`; leaderboard filtered all-time or last 24 h
 
-Session keys: `GameNumber`, `Name`, `PlayerPoints`, `RightAnswer`
+Session keys: `GameNumber`, `Name`, `PlayerPoints`, `RightAnswer`, `QStates` (JSON array of `QuestionState?` per question — `null` = unanswered, `{Correct, SelectedAnswer}` = answered), `QStatesGameId` (resets `QStates` when a new game starts)
+
+**Playground review mode:** `PlaygroundModel.IsReview = true` when a player navigates back to an already-answered question via GET. In review mode the controls show "← Weiter zu Frage N" instead of "Antwort Prüfen". `CurrentProgressOffset` always points to the first unanswered question (or `QuestionCount` when all are done).
 
 ### Page structure
 
@@ -129,7 +131,7 @@ All four boolean flags (`IstAntwort1Richtig`…`IstAntwort4Richtig`) must match 
 
 ## Zuletzt gearbeitet an
 
-<!-- Datum + kurze Beschreibung hier manuell eintragen -->
+2026-05-08 — Playground: Fragen-Navigationsleiste unten (grün/rot/grau), Read-only-Review für bereits beantwortete Fragen, Session-Reset bei neuem Spiel
 
 ## CI/CD
 
