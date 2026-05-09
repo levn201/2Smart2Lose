@@ -207,16 +207,16 @@ namespace Smart2Lose.Pages._1Viewer
             try
             {
                 var db = new SQLconnection.DatenbankZugriff();
-                using var con = db.GetConnection();
-                con.Open();
-                var cmd = new MySqlCommand(@"
+                using var connection = db.GetConnection();
+                connection.Open();
+                using var cmd = new MySqlCommand(@"
                     INSERT INTO WorkshopTeilnehmer (GamePin, Nickname, AktuelleOffset, QuestionCount, Punkte, LetztesUpdate)
                     VALUES (@pin, @nick, @offset, @count, @pts, NOW())
                     ON DUPLICATE KEY UPDATE
                         AktuelleOffset = @offset,
                         QuestionCount  = @count,
                         Punkte         = @pts,
-                        LetztesUpdate  = NOW()", con);
+                        LetztesUpdate  = NOW()", connection);
                 cmd.Parameters.AddWithValue("@pin",    sd.GameID);
                 cmd.Parameters.AddWithValue("@nick",   sd.UserName);
                 cmd.Parameters.AddWithValue("@offset", CurrentOffset + 1);
