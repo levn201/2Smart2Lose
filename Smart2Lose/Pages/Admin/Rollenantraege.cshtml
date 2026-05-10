@@ -76,10 +76,8 @@
     {
         @foreach (var antrag in Model.OffeneAntraege)
         {
-            string avatarLetter = antrag.Email.Length > 0 ? antrag.Email[0].ToString().ToUpper() : "?";
-
             <div class="antrag-karte">
-                <div class="antrag-avatar">@avatarLetter</div>
+                <div class="antrag-avatar">@(string.IsNullOrEmpty(antrag.Email) ? "?" : antrag.Email[0].ToString().ToUpper())</div>
                 <div style="flex:1;min-width:0;">
                     <div class="antrag-email">
                         @antrag.Email
@@ -137,10 +135,8 @@
     {
         @foreach (var antrag in Model.Verlauf)
         {
-            string avatarLetter = antrag.Email.Length > 0 ? antrag.Email[0].ToString().ToUpper() : "?";
-
             <div class="antrag-karte verlauf">
-                <div class="antrag-avatar gedaempft">@avatarLetter</div>
+                <div class="antrag-avatar gedaempft">@(string.IsNullOrEmpty(antrag.Email) ? "?" : antrag.Email[0].ToString().ToUpper())</div>
                 <div style="flex:1;min-width:0;">
                     <div class="antrag-email">
                         @antrag.Email

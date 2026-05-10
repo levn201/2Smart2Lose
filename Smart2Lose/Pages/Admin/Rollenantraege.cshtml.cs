@@ -124,6 +124,15 @@ namespace Smart2Lose.Pages.Admin
                 Console.WriteLine($"[Rollenantraege] Genehmigen-Laden-Fehler: {ex.Message}");
             }
 
+            if (antrag == null) return RedirectToPage();
+
+            if (antrag.Status != "Ausstehend")
+                return RedirectToPage();
+
+            var erlaubteRollen = new[] { "User", "Admin" };
+            if (!erlaubteRollen.Contains(antrag.ZielRolle))
+                return RedirectToPage();
+
             if (antrag != null && !string.IsNullOrEmpty(antrag.UserId))
             {
                 var user = await _userManager.FindByIdAsync(antrag.UserId);
