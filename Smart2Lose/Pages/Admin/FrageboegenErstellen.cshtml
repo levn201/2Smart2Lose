@@ -24,6 +24,15 @@
             <a href="/Admin/FrageboegenErstellen" class="active">Neue anlegen</a>
         }
 
+        @if (User.IsInRole("Admin"))
+        {
+            <a href="/Admin/Rollenantraege">Anträge</a>
+        }
+        @if (User.IsInRole("ReadOnly"))
+        {
+            <a href="/Admin/Antrag">Antrag</a>
+        }
+
         <a href="/Index">Quit</a>
     </nav>
 </header>

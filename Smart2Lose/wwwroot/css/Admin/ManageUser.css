@@ -456,3 +456,11 @@ body {
     .spalte-aktionen { text-align: left; }
     .aktionen-inline { flex-wrap: wrap; }
 }
+
+/* ─── Nav Antrag Badge ───────────────────────────────── */
+.nav-antrag-dot {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #D93025; color: white; border-radius: 50%;
+    width: 16px; height: 16px; font-size: 0.6rem; font-weight: 700;
+    margin-left: 4px; vertical-align: middle;
+}

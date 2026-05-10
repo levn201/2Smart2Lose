@@ -28,6 +28,8 @@ namespace Smart2Lose.Pages.Admin
         public long DbGesamtAbfragen { get; set; }
         public string DbUptime { get; set; } = "-";
 
+        public int AusstehendAntraege { get; set; }
+
         public List<SpielSession> LetzteSpielSessions { get; set; } = new();
         public List<QuizAktivitat> QuizAktivitaeten { get; set; } = new();
 
@@ -189,6 +191,12 @@ namespace Smart2Lose.Pages.Admin
                             GesamtTeilnehmer = reader.GetInt32("GesamtTeilnehmer")
                         });
                     }
+                }
+
+                if (User.IsInRole("Admin"))
+                {
+                    using var countCmd = new MySqlCommand("SELECT COUNT(*) FROM RollenAntraege WHERE Status='Ausstehend'", connection);
+                    AusstehendAntraege = Convert.ToInt32(countCmd.ExecuteScalar());
                 }
             }
             catch
