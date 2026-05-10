@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
 using Smart2Lose.Model;
-using static Smart2Lose.Helper.SQLconnection;
+using Smart2Lose.Helper;
 
 namespace Smart2Lose.Pages.Admin
 {
