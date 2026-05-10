@@ -1,6 +1,5 @@
 SELECT * FROM kahootdatabase.aspnetusers;
 
-select
 
 -- Bild- und Link-URL pro Frage hinzufügen
 ALTER TABLE Fragen

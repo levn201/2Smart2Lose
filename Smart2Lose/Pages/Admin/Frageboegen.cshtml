@@ -97,6 +97,9 @@
                         <a asp-page="/Admin/WorkshopDashboard"
                            asp-route-joinId="@fragebogen.JoinId"
                            class="knopf">Live</a>
+
+                        <a href="/Admin/Frageboegen?handler=ExportCsv&id=@fragebogen.JoinId"
+                           class="knopf">CSV</a>
                     }
                 </div>
             </div>

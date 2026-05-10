@@ -33,6 +33,41 @@
 
 <div class="main-content">
 
+    <details class="import-bereich">
+        <summary>Quiz aus Excel importieren</summary>
+        <form method="post" asp-page-handler="ImportExcel" enctype="multipart/form-data" style="margin-top:1rem;">
+            <div class="quiz-meta">
+                <div class="filter-item">
+                    <label>Kategorie</label>
+                    <select name="importKategorie">
+                        <option value="Unternehmen">Unternehmen</option>
+                        <option value="Sicherheit">Sicherheit</option>
+                        <option value="Technik">Technik</option>
+                        <option value="Skills">Skills</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Titel</label>
+                    <input type="text" name="importTitel" placeholder="Quiz-Titel eingeben" />
+                </div>
+            </div>
+            <div class="filter-item" style="margin-top:0.75rem;">
+                <label>Excel-Datei (.xlsx)</label>
+                <input type="file" name="importDatei" accept=".xlsx" />
+            </div>
+            @if (!string.IsNullOrEmpty(Model.ImportError))
+            {
+                <div class="quiz-frage error-box" style="margin-top:0.75rem;">
+                    &#9888; @Model.ImportError
+                </div>
+            }
+            <div class="button-row" style="margin-top:1rem;">
+                <a href="?handler=Vorlage" class="knopf" style="display:inline-block;text-decoration:none;">Vorlage herunterladen</a>
+                <button type="submit" class="knopf">Importieren</button>
+            </div>
+        </form>
+    </details>
+
     <h2>Neues Quiz</h2>
 
     <form method="post" asp-page-handler="Speichern" id="fragenForm" enctype="multipart/form-data">

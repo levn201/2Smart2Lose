@@ -91,22 +91,26 @@ namespace Smart2Lose.Pages.Admin
                     }
                 }
 
-                using (var cmd = new MySqlCommand("SELECT COUNT(*) FROM Fragebogen", connection))
-                    GesamtQuizze = Convert.ToInt32(cmd.ExecuteScalar());
+                string kpiSql = @"
+                    SELECT
+                        (SELECT COUNT(*) FROM Fragebogen) AS GesamtQuizze,
+                        (SELECT COUNT(DISTINCT GamePin) FROM PlayerPoints) AS GesamtSpiele,
+                        (SELECT COUNT(DISTINCT GamePin) FROM PlayerPoints WHERE DATE(saveTime) = CURDATE()) AS SpieleHeute,
+                        (SELECT COUNT(DISTINCT User_Nickname) FROM PlayerPoints) AS GesamtTeilnehmer,
+                        (SELECT COUNT(*) FROM aspnetusers) AS RegistrierteUser";
 
-                using (var cmd = new MySqlCommand("SELECT COUNT(DISTINCT GamePin) FROM PlayerPoints", connection))
-                    GesamtSpiele = Convert.ToInt32(cmd.ExecuteScalar());
-
-                using (var cmd = new MySqlCommand("SELECT COUNT(DISTINCT GamePin) FROM PlayerPoints WHERE DATE(saveTime) = CURDATE()", connection))
-                    SpieleHeute = Convert.ToInt32(cmd.ExecuteScalar());
-
-                using (var cmd = new MySqlCommand("SELECT COUNT(DISTINCT User_Nickname) FROM PlayerPoints", connection))
-                    GesamtTeilnehmer = Convert.ToInt32(cmd.ExecuteScalar());
-
-                if (User.IsInRole("Admin"))
+                using (var cmd = new MySqlCommand(kpiSql, connection))
+                using (var r = cmd.ExecuteReader())
                 {
-                    using var cmd = new MySqlCommand("SELECT COUNT(*) FROM aspnetusers", connection);
-                    RegistrierteUser = Convert.ToInt32(cmd.ExecuteScalar());
+                    if (r.Read())
+                    {
+                        GesamtQuizze     = r.GetInt32("GesamtQuizze");
+                        GesamtSpiele     = r.GetInt32("GesamtSpiele");
+                        SpieleHeute      = r.GetInt32("SpieleHeute");
+                        GesamtTeilnehmer = r.GetInt32("GesamtTeilnehmer");
+                        if (User.IsInRole("Admin"))
+                            RegistrierteUser = r.GetInt32("RegistrierteUser");
+                    }
                 }
 
                 string sessionsSql = @"

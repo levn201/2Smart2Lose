@@ -177,6 +177,54 @@ namespace Smart2Lose.Pages.Admin
             return Page();
         }
 
+        public IActionResult OnGetExportCsv(int id)
+        {
+            fHelper.activeUser = User.FindFirstValue(ClaimTypes.Email);
+
+            if (!User.IsInRole("Admin") && !fHelper.CheckIfPlayerIsAutor(id))
+                return Forbid();
+
+            var db = new SQLconnection.DatenbankZugriff();
+            using var connection = db.GetConnection();
+            connection.Open();
+
+            string titel = id.ToString();
+            using (var cmd = new MySqlCommand("SELECT Titel FROM Fragebogen WHERE Join_ID = @id", connection))
+            {
+                cmd.Parameters.AddWithValue("@id", id);
+                var result = cmd.ExecuteScalar();
+                if (result != null) titel = result.ToString()!;
+            }
+
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine("Platz,Nickname,Punkte,Richtig,Gesamt,Datum");
+
+            using var cmd2 = new MySqlCommand(
+                "SELECT SessionPints, User_Nickname, CorrectAnswered, PossibleAnswers, saveTime FROM PlayerPoints WHERE GamePin = @id ORDER BY SessionPints DESC;",
+                connection);
+            cmd2.Parameters.AddWithValue("@id", id);
+            using var reader = cmd2.ExecuteReader();
+
+            int platz = 1;
+            while (reader.Read())
+            {
+                sb.AppendLine($"{platz},{EscapeCsv(reader.GetString("User_Nickname"))},{reader.GetInt32("SessionPints")},{reader.GetInt32("CorrectAnswered")},{reader.GetInt32("PossibleAnswers")},{reader.GetDateTime("saveTime"):dd.MM.yyyy HH:mm}");
+                platz++;
+            }
+
+            var bom = System.Text.Encoding.UTF8.GetPreamble();
+            var data = System.Text.Encoding.UTF8.GetBytes(sb.ToString());
+            var dateiname = $"Smart2Lose_{id}_{DateTime.Now:yyyyMMdd}.csv";
+            return File(bom.Concat(data).ToArray(), "text/csv", dateiname);
+        }
+
+        private static string EscapeCsv(string val)
+        {
+            if (val.Contains(',') || val.Contains('"') || val.Contains('\n'))
+                return $"\"{val.Replace("\"", "\"\"")}\"";
+            return val;
+        }
+
         // Card - Bearbeiten Button => Speichern der editierten Fragen
         public IActionResult OnPostSaveEdit(int fragebogenId, List<Fragen> Fragen)
         {

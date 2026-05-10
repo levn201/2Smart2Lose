@@ -90,6 +90,7 @@
     const joinId = @Model.JoinId;
     const INAKTIV_MINUTEN = 2;
     let sekundenSeit = 0;
+    let letzterStand = '';
 
     function statusBerechnen(aktuelleOffset, questionCount, letztesUpdateIso) {
         const fertig = questionCount > 0 && aktuelleOffset >= questionCount;
@@ -160,12 +161,15 @@
 
     function aktualisieren() {
         fetch('/Admin/WorkshopDashboard/' + joinId + '?handler=Data')
-            .then(function(r) { return r.json(); })
-            .then(function(daten) {
+            .then(function(r) { return r.text(); })
+            .then(function(text) {
+                sekundenSeit = 0;
+                if (text === letzterStand) return;
+                letzterStand = text;
+                const daten = JSON.parse(text);
                 const tbody = document.getElementById('teilnehmerBody');
                 tbody.replaceChildren.apply(tbody, daten.map(zeileErstellen));
                 statsAktualisieren(daten);
-                sekundenSeit = 0;
             })
             .catch(function() { /* Netzwerkfehler ignorieren */ });
     }
