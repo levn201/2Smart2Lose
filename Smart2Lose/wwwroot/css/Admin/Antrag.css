@@ -26,6 +26,21 @@ body {
     color: var(--db-text) !important;
 }
 
+/* ─── Page title (match Dashboard/Frageboegen exactly) ─── */
+.seiten-titel-bereich {
+    max-width: 100%;
+    padding: 2rem 1.5rem 0;
+}
+
+.seiten-titel {
+    font-family: 'Syne', sans-serif !important;
+    font-size: 1.9rem !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.8px !important;
+    color: #024651 !important;
+    margin: 0;
+}
+
 /* ─── Dashboard container ──────────────────────────────── */
 .dashboard-container {
     padding: 1.5rem 1.5rem 3rem;
@@ -135,6 +150,37 @@ body {
     margin-top: 0.75rem;
 }
 
+
+/* ─── Submit button ────────────────────────────────────── */
+.knopf.primary,
+button.knopf.primary {
+    background-color: #024651 !important;
+    color: #ffffff !important;
+    padding: 0.75rem 1.75rem;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--db-font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 2px 8px rgba(2,70,81,0.18);
+}
+
+.knopf.primary:hover,
+button.knopf.primary:hover {
+    background-color: #013038 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(2,70,81,0.28);
+}
+
+.knopf.primary:disabled,
+button.knopf.primary:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
 
 /* ─── Status cards ─────────────────────────────────────── */
 .antrag-status-karte {
