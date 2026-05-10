@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart2Lose — Rollenantrag Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --db-primary:      #024651;
+  --db-primary-h:    #013038;
+  --db-accent:       #04C68A;
+  --db-bg:           #F0EEE9;
+  --db-card:         #FFFFFF;
+  --db-surface:      #F8F9F8;
+  --db-text:         #0C1410;
+  --db-muted:        #6E7D78;
+  --db-border:       #DDE3DF;
+  --db-error:        #D93025;
+  --db-radius:       14px;
+  --db-radius-sm:    9px;
+  --db-shadow:       0 0 0 1px rgba(0,0,0,0.04), 0 4px 24px rgba(0,0,0,0.07);
+  --db-font-display: 'Syne', sans-serif;
+  --db-font-body:    'DM Sans', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--db-font-body);
+  background-color: var(--db-bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  color: var(--db-text);
+  padding-top: 64px;
+}
+
+/* ── HEADER ── */
+.header {
+  position: fixed; top: 0; left: 0; width: 100%;
+  background-color: var(--db-primary);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06), 0 2px 12px rgba(0,0,0,0.15);
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem; z-index: 1000;
+}
+.logo {
+  font-family: var(--db-font-display);
+  font-weight: 800; font-size: 1.1rem;
+  letter-spacing: -0.4px; color: #fff;
+}
+.nav-links { display: flex; align-items: center; gap: 4px; }
+.nav-links a {
+  font-family: var(--db-font-body);
+  font-size: 0.875rem; font-weight: 500;
+  color: rgba(255,255,255,0.75);
+  padding: 6px 14px; border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+.nav-links a:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.nav-links a.active { background: rgba(255,255,255,0.15); color: #fff; font-weight: 600; }
+
+/* ── TAB-SWITCHER (nur Mockup-Navigation) ── */
+.mockup-switcher {
+  background: var(--db-primary);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex; padding: 0 1.5rem; gap: 2px;
+}
+.mockup-tab {
+  padding: 10px 18px;
+  font-family: var(--db-font-body);
+  font-size: 0.8rem; font-weight: 500;
+  color: rgba(255,255,255,0.55);
+  cursor: pointer; border-bottom: 2px solid transparent;
+  transition: all 0.2s; user-select: none;
+}
+.mockup-tab:hover { color: rgba(255,255,255,0.85); }
+.mockup-tab.active { color: var(--db-accent); border-bottom-color: var(--db-accent); }
+
+/* ── VIEW CONTAINER ── */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ── PAGE STRUCTURE ── */
+.seiten-titel-bereich { padding: 2rem 1.5rem 0; }
+.seiten-titel {
+  font-family: var(--db-font-display);
+  font-size: 1.9rem; font-weight: 800;
+  letter-spacing: -0.8px; color: var(--db-primary); margin: 0;
+}
+.dashboard-container { padding: 1.5rem 1.5rem 3rem; }
+
+.section-label {
+  font-family: var(--db-font-body);
+  font-size: 0.7rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--db-muted);
+  margin: 2rem 0 0.75rem;
+}
+.section-label:first-child { margin-top: 0; }
+
+/* ── CARDS ── */
+.karte {
+  background: var(--db-card);
+  border: 1px solid var(--db-border);
+  border-radius: var(--db-radius);
+  box-shadow: var(--db-shadow);
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+.karte-kopf {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--db-border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.karte-titel {
+  font-family: var(--db-font-display);
+  font-size: 0.95rem; font-weight: 700; color: var(--db-primary);
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.karte-koerper { padding: 1.25rem; }
+
+/* ── KPI GRID ── */
+.kpi-grid { display: grid; gap: 1rem; grid-template-columns: repeat(3, 1fr); margin-bottom: 0.5rem; }
+.kpi-karte {
+  background: var(--db-card);
+  border: 1px solid var(--db-border);
+  border-radius: var(--db-radius);
+  padding: 1.25rem 1.25rem 1.1rem;
+  box-shadow: var(--db-shadow);
+  position: relative; overflow: hidden;
+}
+.kpi-karte::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--db-primary), var(--db-accent));
+}
+.kpi-karte.warn::before { background: linear-gradient(90deg, #e6a817, #f0c040); }
+.kpi-icon { font-size: 1.1rem; color: var(--db-accent); margin-bottom: 0.5rem; }
+.kpi-karte.warn .kpi-icon { color: #e6a817; }
+.kpi-label {
+  font-size: 0.68rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--db-muted); margin-bottom: 0.25rem;
+}
+.kpi-wert {
+  font-family: var(--db-font-display);
+  font-size: 2rem; font-weight: 800;
+  letter-spacing: -1px; color: var(--db-primary); line-height: 1;
+}
+.kpi-wert.accent { color: var(--db-accent); }
+.kpi-wert.warn   { color: #e6a817; }
+
+/* ── BADGES ── */
+.badge {
+  display: inline-block;
+  font-size: 0.62rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  border-radius: 20px; padding: 3px 10px;
+}
+.badge-warn     { background: rgba(230,168,23,0.12); color: #856404; border: 1px solid rgba(230,168,23,0.3); }
+.badge-success  { background: rgba(4,198,138,0.12);  color: #0a6641; border: 1px solid rgba(4,198,138,0.3); }
+.badge-danger   { background: rgba(217,48,37,0.1);   color: #9b2020; border: 1px solid rgba(217,48,37,0.25); }
+.badge-role     { background: rgba(2,70,81,0.08);    color: var(--db-primary); border: 1px solid rgba(2,70,81,0.15); }
+.badge-readonly { background: rgba(110,125,120,0.1); color: var(--db-muted); border: 1px solid var(--db-border); }
+
+/* ── BUTTONS ── */
+.knopf {
+  padding: 0.65rem 1.25rem;
+  border: none; border-radius: var(--db-radius-sm);
+  font-size: 0.875rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+  font-family: var(--db-font-body);
+  display: inline-block; text-align: center; text-decoration: none;
+}
+.knopf-primary  { background: var(--db-primary); color: white; }
+.knopf-primary:hover  { background: var(--db-primary-h); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(2,70,81,0.25); }
+.knopf-success  { background: var(--db-accent); color: white; }
+.knopf-success:hover  { background: #03a874; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(4,198,138,0.3); }
+.knopf-danger   { background: white; color: var(--db-error); border: 1.5px solid var(--db-error); }
+.knopf-danger:hover   { background: rgba(217,48,37,0.05); transform: translateY(-1px); }
+.knopf-ghost    { background: transparent; color: var(--db-muted); border: 1px solid var(--db-border); }
+.knopf-ghost:hover    { background: var(--db-surface); color: var(--db-text); }
+
+/* ── ALERT BANNER ── */
+.alert-banner {
+  border-left: 4px solid var(--db-primary);
+  background: rgba(2,70,81,0.06);
+  border-radius: 0 var(--db-radius-sm) var(--db-radius-sm) 0;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem; color: var(--db-text);
+}
+.alert-banner strong { display: block; font-weight: 700; color: var(--db-primary); margin-bottom: 0.25rem; font-size: 0.9rem; }
+.alert-banner.warn {
+  border-left-color: #e6a817;
+  background: rgba(230,168,23,0.07);
+}
+
+/* ── FORM ── */
+.form-gruppe { margin-bottom: 1.25rem; }
+.form-label {
+  display: block; font-weight: 600;
+  margin-bottom: 0.5rem; color: var(--db-primary);
+  font-size: 0.875rem;
+}
+.form-label .opt { font-weight: 400; color: var(--db-muted); font-size: 0.8rem; }
+.form-feld, .form-select, .form-textarea {
+  width: 100%; padding: 0.7rem 1rem;
+  border: 2px solid var(--db-border);
+  border-radius: var(--db-radius-sm);
+  font-size: 0.9rem; font-family: var(--db-font-body);
+  color: var(--db-text); background: var(--db-surface);
+  outline: none; transition: all 0.2s;
+}
+.form-feld:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--db-primary);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(2,70,81,0.08);
+}
+.form-textarea { resize: vertical; min-height: 88px; }
+
+/* ── STATUS KARTE (user side) ── */
+.status-karte {
+  background: var(--db-card);
+  border: 1px solid var(--db-border);
+  border-radius: var(--db-radius);
+  border-left: 4px solid var(--db-accent);
+  box-shadow: var(--db-shadow);
+  padding: 1.25rem;
+}
+.status-karte.ausstehend { border-left-color: #e6a817; }
+.status-karte.abgelehnt  { border-left-color: var(--db-error); }
+.status-zeile { display: flex; justify-content: space-between; align-items: center; }
+.status-detail { font-size: 0.82rem; color: var(--db-muted); margin-top: 0.5rem; }
+.status-detail strong { color: var(--db-text); }
+
+/* ── ANTRAG KARTE (admin side) ── */
+.antrag-karte {
+  background: var(--db-card);
+  border: 1px solid var(--db-border);
+  border-radius: var(--db-radius);
+  box-shadow: var(--db-shadow);
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 0.75rem;
+  display: flex; gap: 1rem; align-items: flex-start;
+  transition: box-shadow 0.2s;
+}
+.antrag-karte:hover { box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 8px 32px rgba(0,0,0,0.1); }
+.antrag-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--db-primary); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--db-font-display); font-weight: 800;
+  font-size: 0.95rem; flex-shrink: 0;
+}
+.antrag-avatar.gedaempft { background: var(--db-border); color: var(--db-muted); }
+.antrag-body { flex: 1; min-width: 0; }
+.antrag-email {
+  font-weight: 600; font-size: 0.9rem; color: var(--db-text);
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.antrag-meta { font-size: 0.78rem; color: var(--db-muted); margin-top: 3px; }
+.antrag-nachricht {
+  font-size: 0.82rem; color: var(--db-muted);
+  background: var(--db-surface);
+  border-radius: 6px; padding: 7px 10px;
+  margin-top: 0.75rem; font-style: italic;
+  border-left: 2px solid var(--db-border);
+}
+.antrag-aktionen { display: flex; gap: 8px; margin-top: 0.875rem; flex-wrap: wrap; }
+.antrag-karte.verlauf { opacity: 0.65; }
+
+/* ── DOT NOTIFICATION ── */
+.dot {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--db-error); color: white;
+  border-radius: 50%; width: 18px; height: 18px;
+  font-size: 0.65rem; font-weight: 700;
+  vertical-align: middle; margin-left: 6px;
+}
+
+/* ── TRENNLINIE ── */
+.trennlinie {
+  border: none; border-top: 1px solid var(--db-border);
+  margin: 1.75rem 0 1.5rem;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER (identisch echte App) -->
+<header class="header">
+  <div class="logo">Smart2Lose</div>
+  <nav class="nav-links">
+    <a href="#">Dashboard</a>
+    <a href="#">Fragebögen</a>
+    <a href="#" class="active">Antrag</a>
+    <a href="#">Quit</a>
+  </nav>
+</header>
+
+<!-- MOCKUP TAB SWITCHER -->
+<div class="mockup-switcher">
+  <div class="mockup-tab active" onclick="showView('user', this)">👤 ReadOnly-User Sicht</div>
+  <div class="mockup-tab" onclick="showView('admin', this)">🛡️ Admin Sicht — Rollenanträge</div>
+</div>
+
+
+<!-- ══════════════ USER VIEW ══════════════ -->
+<div class="view active" id="view-user">
+  <div class="seiten-titel-bereich">
+    <div class="seiten-titel">Zugang beantragen</div>
+  </div>
+
+  <div class="dashboard-container">
+
+    <!-- Info Banner -->
+    <div class="alert-banner warn">
+      <strong>Eingeschränkter Zugriff (ReadOnly)</strong>
+      Du kannst Fragebögen ansehen, aber nicht erstellen oder bearbeiten.
+      Stelle einen Antrag um mehr Rechte zu erhalten — ein Admin prüft ihn so bald wie möglich.
+    </div>
+
+    <!-- Antrag Formular -->
+    <div class="section-label">Neuen Antrag stellen</div>
+    <div class="karte">
+      <div class="karte-kopf">
+        <div class="karte-titel">Rollenerweiterung beantragen</div>
+        <span class="badge badge-readonly">ReadOnly</span>
+      </div>
+      <div class="karte-koerper">
+        <div class="form-gruppe">
+          <label class="form-label">Gewünschte Rolle</label>
+          <select class="form-select">
+            <option value="">– Bitte wählen –</option>
+            <option value="User" selected>User — kann eigene Quizze erstellen &amp; bearbeiten</option>
+            <option value="Admin">Admin — voller Zugriff</option>
+          </select>
+        </div>
+        <div class="form-gruppe">
+          <label class="form-label">Nachricht an den Admin <span class="opt">(optional)</span></label>
+          <textarea class="form-textarea" placeholder="z. B. Ich bin Trainer und möchte eigene Workshops anlegen…">Ich leite regelmäßige Workshops und möchte eigene Fragebögen erstellen können.</textarea>
+        </div>
+        <button class="knopf knopf-primary">Antrag absenden</button>
+      </div>
+    </div>
+
+    <!-- Laufender Antrag -->
+    <div class="section-label" style="margin-top:2rem;">Mein letzter Antrag</div>
+    <div class="status-karte ausstehend">
+      <div class="status-zeile">
+        <span style="font-weight:700; font-size:0.9rem; color:var(--db-primary)">Antrag: User-Zugang</span>
+        <span class="badge badge-warn">⏳ Ausstehend</span>
+      </div>
+      <div class="status-detail">Gestellt am: <strong>10.05.2026</strong></div>
+      <div class="status-detail">Nachricht: <strong>"Ich leite Workshops und möchte eigene Fragebögen erstellen."</strong></div>
+      <div class="status-detail" style="margin-top:0.625rem; font-size:0.78rem;">Warte auf Entscheidung des Admins…</div>
+    </div>
+
+    <!-- Abgelehnter Antrag (Beispiel) -->
+    <div style="margin-top:0.75rem;">
+      <div class="status-karte abgelehnt">
+        <div class="status-zeile">
+          <span style="font-weight:700; font-size:0.9rem; color:var(--db-primary)">Antrag: Admin-Zugang</span>
+          <span class="badge badge-danger">✗ Abgelehnt</span>
+        </div>
+        <div class="status-detail">Gestellt am: <strong>02.05.2026</strong></div>
+        <div class="status-detail">Admin-Kommentar: <strong>"Admin-Zugang wird intern vergeben."</strong></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════ ADMIN VIEW ══════════════ -->
+<div class="view" id="view-admin">
+  <div class="seiten-titel-bereich">
+    <div class="seiten-titel">Rollenanträge <span class="dot">3</span></div>
+  </div>
+
+  <div class="dashboard-container">
+
+    <!-- KPI Strip -->
+    <div class="kpi-grid">
+      <div class="kpi-karte warn">
+        <div class="kpi-icon">⏳</div>
+        <div class="kpi-label">Ausstehend</div>
+        <div class="kpi-wert warn">3</div>
+      </div>
+      <div class="kpi-karte">
+        <div class="kpi-icon">✓</div>
+        <div class="kpi-label">Genehmigt</div>
+        <div class="kpi-wert accent">12</div>
+      </div>
+      <div class="kpi-karte">
+        <div class="kpi-icon">✗</div>
+        <div class="kpi-label">Abgelehnt</div>
+        <div class="kpi-wert">4</div>
+      </div>
+    </div>
+
+    <!-- Offene Anträge -->
+    <div class="section-label" style="margin-top:1.75rem;">Offene Anträge</div>
+
+    <!-- Antrag 1 -->
+    <div class="antrag-karte">
+      <div class="antrag-avatar">M</div>
+      <div class="antrag-body">
+        <div class="antrag-email">
+          max.mustermann@example.com
+          <span class="badge badge-role">→ User</span>
+          <span class="badge badge-warn">⏳ Ausstehend</span>
+        </div>
+        <div class="antrag-meta">Gestellt am 10.05.2026 · Registriert seit 08.05.2026</div>
+        <div class="antrag-nachricht">"Ich leite Workshops und möchte eigene Fragebögen erstellen können."</div>
+        <div class="antrag-aktionen">
+          <button class="knopf knopf-success">✓ Genehmigen</button>
+          <button class="knopf knopf-danger">✗ Ablehnen</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Antrag 2 -->
+    <div class="antrag-karte">
+      <div class="antrag-avatar">S</div>
+      <div class="antrag-body">
+        <div class="antrag-email">
+          sarah.klein@firma.de
+          <span class="badge badge-role">→ User</span>
+          <span class="badge badge-warn">⏳ Ausstehend</span>
+        </div>
+        <div class="antrag-meta">Gestellt am 09.05.2026 · Registriert seit 09.05.2026</div>
+        <div class="antrag-nachricht">"Neue Mitarbeiterin — benötige Zugang für Onboarding-Quizze."</div>
+        <div class="antrag-aktionen">
+          <button class="knopf knopf-success">✓ Genehmigen</button>
+          <button class="knopf knopf-danger">✗ Ablehnen</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Antrag 3 -->
+    <div class="antrag-karte">
+      <div class="antrag-avatar">T</div>
+      <div class="antrag-body">
+        <div class="antrag-email">
+          thomas.b@example.com
+          <span class="badge badge-role">→ Admin</span>
+          <span class="badge badge-warn">⏳ Ausstehend</span>
+        </div>
+        <div class="antrag-meta">Gestellt am 08.05.2026 · Registriert seit 07.05.2026</div>
+        <div class="antrag-nachricht" style="font-style:normal; color:var(--db-border); font-size:0.8rem;">— keine Nachricht —</div>
+        <div class="antrag-aktionen">
+          <button class="knopf knopf-success">✓ Genehmigen</button>
+          <button class="knopf knopf-danger">✗ Ablehnen</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Verlauf -->
+    <hr class="trennlinie">
+    <div class="section-label">Verlauf</div>
+
+    <div class="antrag-karte verlauf">
+      <div class="antrag-avatar" style="background:var(--db-accent);">L</div>
+      <div class="antrag-body">
+        <div class="antrag-email">
+          lena.w@firma.de
+          <span class="badge badge-role">→ User</span>
+          <span class="badge badge-success">✓ Genehmigt</span>
+        </div>
+        <div class="antrag-meta">Entschieden am 07.05.2026</div>
+      </div>
+    </div>
+
+    <div class="antrag-karte verlauf">
+      <div class="antrag-avatar gedaempft">R</div>
+      <div class="antrag-body">
+        <div class="antrag-email">
+          robert.x@spam.de
+          <span class="badge badge-role">→ Admin</span>
+          <span class="badge badge-danger">✗ Abgelehnt</span>
+        </div>
+        <div class="antrag-meta">Entschieden am 06.05.2026</div>
+        <div class="antrag-nachricht">"Admin-Zugang wird intern vergeben."</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function showView(name, el) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.mockup-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>

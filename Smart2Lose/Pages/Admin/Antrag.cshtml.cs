@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MySql.Data.MySqlClient;
@@ -11,13 +10,6 @@ namespace Smart2Lose.Pages.Admin
     [Authorize(Roles = "Admin,User,ReadOnly")]
     public class AntragModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
-
-        public AntragModel(UserManager<IdentityUser> userManager)
-        {
-            _userManager = userManager;
-        }
-
         public projektName pn = new projektName();
         public List<AntragZeile> MeineAntraege { get; set; } = new();
         public string? StatusNachricht { get; set; }
@@ -32,21 +24,26 @@ namespace Smart2Lose.Pages.Admin
             public string? AdminKommentar { get; set; }
         }
 
-        public async Task OnGetAsync()
+        public IActionResult OnGet()
         {
-            await LadeMeineAntraege();
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
+            if (string.IsNullOrEmpty(uid)) return RedirectToPage("/Account/Login");
+            MeineAntraege = LadeMeineAntraege(uid);
+            return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(string zielRolle, string? nachricht)
+        public IActionResult OnPost(string zielRolle, string? nachricht)
         {
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
+            if (string.IsNullOrEmpty(uid)) return RedirectToPage("/Account/Login");
+
             if (zielRolle != "User" && zielRolle != "Admin")
             {
                 StatusNachricht = "Ungültige Zielrolle.";
-                await LadeMeineAntraege();
+                MeineAntraege = LadeMeineAntraege(uid);
                 return Page();
             }
 
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var email = User.FindFirstValue(ClaimTypes.Email) ?? string.Empty;
 
             try
@@ -65,7 +62,7 @@ namespace Smart2Lose.Pages.Admin
                 if (existing > 0)
                 {
                     StatusNachricht = "Du hast bereits einen offenen Antrag.";
-                    await LadeMeineAntraege();
+                    MeineAntraege = LadeMeineAntraege(uid);
                     return Page();
                 }
 
@@ -87,13 +84,13 @@ namespace Smart2Lose.Pages.Admin
                 StatusNachricht = "Fehler beim Stellen des Antrags. Bitte versuche es erneut.";
             }
 
-            await LadeMeineAntraege();
+            MeineAntraege = LadeMeineAntraege(uid);
             return Page();
         }
 
-        private async Task LadeMeineAntraege()
+        private List<AntragZeile> LadeMeineAntraege(string uid)
         {
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var liste = new List<AntragZeile>();
 
             try
             {
@@ -110,7 +107,7 @@ namespace Smart2Lose.Pages.Admin
 
                 while (reader.Read())
                 {
-                    MeineAntraege.Add(new AntragZeile
+                    liste.Add(new AntragZeile
                     {
                         Id = reader.GetInt32("Id"),
                         ZielRolle = reader.GetString("ZielRolle"),
@@ -130,7 +127,7 @@ namespace Smart2Lose.Pages.Admin
                 Console.WriteLine($"Fehler beim Laden der Anträge: {ex.Message}");
             }
 
-            await Task.CompletedTask;
+            return liste;
         }
     }
 }
