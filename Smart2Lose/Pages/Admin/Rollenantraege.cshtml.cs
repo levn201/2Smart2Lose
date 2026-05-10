@@ -133,7 +133,7 @@ namespace Smart2Lose.Pages.Admin
             if (!erlaubteRollen.Contains(antrag.ZielRolle))
                 return RedirectToPage();
 
-            if (antrag != null && !string.IsNullOrEmpty(antrag.UserId))
+            if (!string.IsNullOrEmpty(antrag.UserId))
             {
                 var user = await _userManager.FindByIdAsync(antrag.UserId);
                 if (user != null)
@@ -146,7 +146,10 @@ namespace Smart2Lose.Pages.Admin
                     // Zielrolle zuweisen
                     await _userManager.AddToRoleAsync(user, antrag.ZielRolle);
                 }
-                // Wenn User nicht gefunden: trotzdem als Genehmigt markieren
+                else
+                {
+                    TempData["WarnMessage"] = $"Benutzer {antrag.Email} nicht gefunden — Rolle wurde nicht zugewiesen.";
+                }
             }
 
             // Status in DB aktualisieren
@@ -170,6 +173,28 @@ namespace Smart2Lose.Pages.Admin
 
         public IActionResult OnPostAblehnen(int id, string? kommentar)
         {
+            AntragZeile? antrag = null;
+            try
+            {
+                var db = new SQLconnection.DatenbankZugriff();
+                using var connection = db.GetConnection();
+                connection.Open();
+                using var loadCmd = new MySqlCommand(
+                    "SELECT Id, UserId, Email, ZielRolle, Nachricht, Status, ErstelltAm, BearbeitetAm, AdminKommentar " +
+                    "FROM RollenAntraege WHERE Id = @id LIMIT 1", connection);
+                loadCmd.Parameters.AddWithValue("@id", id);
+                using var reader = loadCmd.ExecuteReader();
+                if (reader.Read())
+                    antrag = LeseZeile(reader);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Rollenantraege] Ablehnen-Laden-Fehler: {ex.Message}");
+            }
+
+            if (antrag == null) return RedirectToPage();
+            if (antrag.Status != "Ausstehend") return RedirectToPage();
+
             try
             {
                 var db = new SQLconnection.DatenbankZugriff();
