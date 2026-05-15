@@ -13,12 +13,13 @@ jobs:
       - name: Code auschecken
         uses: actions/checkout@v4
 
-      # setup-dotnet ENTFERNT - .NET ist bereits auf dem Server installiert
+      - name: App stoppen
+        run: sudo systemctl stop myapp
 
       - name: Restore & Publish
         run: |
           dotnet restore
           dotnet publish -c Release -o /var/www/myapp
 
-      - name: App neu starten
-        run: sudo systemctl restart myapp
+      - name: App starten
+        run: sudo systemctl start myapp
