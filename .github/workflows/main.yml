@@ -7,16 +7,13 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted  # <-- Dein Runner auf dem Server
+    runs-on: self-hosted
 
     steps:
       - name: Code auschecken
         uses: actions/checkout@v4
 
-      - name: .NET Setup
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
+      # setup-dotnet ENTFERNT - .NET ist bereits auf dem Server installiert
 
       - name: Restore & Publish
         run: |
