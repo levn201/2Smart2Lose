@@ -1,0 +1,27 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted  # <-- Dein Runner auf dem Server
+
+    steps:
+      - name: Code auschecken
+        uses: actions/checkout@v4
+
+      - name: .NET Setup
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore & Publish
+        run: |
+          dotnet restore
+          dotnet publish -c Release -o /var/www/myapp
+
+      - name: App neu starten
+        run: sudo systemctl restart myapp
