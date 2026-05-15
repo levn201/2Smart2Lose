@@ -1,8 +1,8 @@
 @page
 @model Smart2Lose.Pages.Admin.FrageboegenErstellenModel
 
-<link rel="stylesheet" href="~/css/Admin/FrageboegenErstellen.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/Admin/GrundDashboard.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Admin/FrageboegenErstellen.css" asp-append-version="true" />
 
 
 <!-- Header -->
@@ -17,11 +17,20 @@
         }
         @if (User.IsInRole("Admin") || User.IsInRole("User") || User.IsInRole("ReadOnly"))
         {
-            <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
+            <a href="/Admin/Frageboegen">Fragebögen</a>
         }
         @if (User.IsInRole("Admin") || User.IsInRole("User"))
         {
-            <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
+            <a href="/Admin/FrageboegenErstellen" class="active">Neue anlegen</a>
+        }
+
+        @if (User.IsInRole("Admin"))
+        {
+            <a href="/Admin/Rollenantraege">Anträge</a>
+        }
+        @if (User.IsInRole("ReadOnly"))
+        {
+            <a href="/Admin/Antrag">Antrag</a>
         }
 
         <a href="/Index">Quit</a>
@@ -33,9 +42,44 @@
 
 <div class="main-content">
 
+    <details class="import-bereich">
+        <summary>Quiz aus Excel importieren</summary>
+        <form method="post" asp-page-handler="ImportExcel" enctype="multipart/form-data" style="margin-top:1rem;">
+            <div class="quiz-meta">
+                <div class="filter-item">
+                    <label>Kategorie</label>
+                    <select name="importKategorie">
+                        <option value="Unternehmen">Unternehmen</option>
+                        <option value="Sicherheit">Sicherheit</option>
+                        <option value="Technik">Technik</option>
+                        <option value="Skills">Skills</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Titel</label>
+                    <input type="text" name="importTitel" placeholder="Quiz-Titel eingeben" />
+                </div>
+            </div>
+            <div class="filter-item" style="margin-top:0.75rem;">
+                <label>Excel-Datei (.xlsx)</label>
+                <input type="file" name="importDatei" accept=".xlsx" />
+            </div>
+            @if (!string.IsNullOrEmpty(Model.ImportError))
+            {
+                <div class="quiz-frage error-box" style="margin-top:0.75rem;">
+                    &#9888; @Model.ImportError
+                </div>
+            }
+            <div class="button-row" style="margin-top:1rem;">
+                <a href="?handler=Vorlage" class="knopf" style="display:inline-block;text-decoration:none;">Vorlage herunterladen</a>
+                <button type="submit" class="knopf">Importieren</button>
+            </div>
+        </form>
+    </details>
+
     <h2>Neues Quiz</h2>
 
-    <form method="post" asp-page-handler="Speichern" id="fragenForm">
+    <form method="post" asp-page-handler="Speichern" id="fragenForm" enctype="multipart/form-data">
 
         <!-- META -->
         <div class="quiz-meta">
@@ -81,6 +125,18 @@
                 <textarea class="frage-text"
                           name="fb.Fragen[0].Fragestellung"
                           placeholder="Frage eingeben..."></textarea>
+
+                <div class="optional-felder">
+                    <label>Bild hochladen <span class="optional-hint">(optional)</span></label>
+                    <input type="file" class="optional-input"
+                           name="bild_0"
+                           accept="image/*" />
+
+                    <label>Link-URL <span class="optional-hint">(optional, z.B. Confluence)</span></label>
+                    <input type="url" class="optional-input"
+                           name="fb.Fragen[0].LinkUrl"
+                           placeholder="https://... Confluence oder anderer Link" />
+                </div>
 
                 <h3>Antwortoptionen</h3>
 
@@ -153,6 +209,12 @@
         const frage = neu.querySelector('textarea[name*="Fragestellung"]');
         frage.name = `fb.Fragen[${frageIndex}].Fragestellung`;
         frage.value = "";
+
+        // Optionale Felder
+        const bildInput = neu.querySelector('input[type="file"][name^="bild_"]');
+        if (bildInput) { bildInput.name = `bild_${frageIndex}`; bildInput.value = ""; }
+        const linkUrl = neu.querySelector('input[name*="LinkUrl"]');
+        if (linkUrl) { linkUrl.name = `fb.Fragen[${frageIndex}].LinkUrl`; linkUrl.value = ""; }
 
         // Antworten + bools
         for (let i = 1; i <= 4; i++) {

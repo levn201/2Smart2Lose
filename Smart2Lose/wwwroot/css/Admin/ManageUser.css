@@ -1,138 +1,292 @@
-﻿/* ===============================
-   Tabelle
-   =============================== */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
 
-.user-tabelle {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
-    color: #00434e;
-    border-radius: 10px;
+/* ─── Tokens ─────────────────────────────────────────── */
+:root {
+    --primary:      #024651;
+    --primary-h:    #013038;
+    --accent:       #04C68A;
+    --ring:         rgba(4, 198, 138, 0.3);
+    --bg:           #F0EEE9;
+    --card:         #FFFFFF;
+    --surface:      #F8F9F8;
+    --text:         #0C1410;
+    --muted:        #6E7D78;
+    --border:       #DDE3DF;
+    --error:        #D93025;
+    --warning:      #D97706;
+    --info:         #2563EB;
+    --success:      #059669;
+    --radius:       14px;
+    --radius-sm:    9px;
+    --shadow:       0 0 0 1px rgba(0,0,0,0.04), 0 4px 24px rgba(0,0,0,0.07);
+    --font-display: 'Syne', sans-serif;
+    --font-body:    'DM Sans', sans-serif;
+}
+
+/* ─── Body & Header override ─────────────────────────── */
+body {
+    font-family: var(--font-body) !important;
+    background-color: var(--bg) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    color: var(--text) !important;
+}
+
+.header {
+    background-color: var(--primary) !important;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.06), 0 2px 12px rgba(0,0,0,0.15) !important;
+    height: 64px !important;
+}
+
+.logo {
+    font-family: var(--font-display) !important;
+    font-weight: 800 !important;
+    font-size: 1.1rem !important;
+    letter-spacing: -0.4px !important;
+    color: #fff !important;
+}
+
+.nav-links { display: flex; align-items: center; gap: 4px; }
+
+.nav-links a {
+    font-family: var(--font-body) !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    color: rgba(255,255,255,0.75) !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important;
+    transition: background 0.2s, color 0.2s !important;
+}
+.nav-links a:hover { background: rgba(255,255,255,0.1) !important; color: #fff !important; }
+.nav-links a.active { background: rgba(255,255,255,0.15) !important; color: #fff !important; font-weight: 600 !important; }
+
+/* ─── Container ──────────────────────────────────────── */
+.admin-container {
+    max-width: 900px;
+    margin: 2.5rem auto 4rem;
+    padding: 0 1.5rem;
+}
+
+/* ─── Seitentitel ────────────────────────────────────── */
+.admin-header { margin-bottom: 1.75rem; }
+
+.admin-titel {
+    font-family: var(--font-display);
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -0.8px;
+    color: var(--primary);
+    margin: 0;
+}
+
+/* ─── Alerts ─────────────────────────────────────────── */
+.admin-alert {
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+    font-weight: 500;
+}
+
+.admin-alert p { margin: 0 0 4px; }
+.admin-alert p:last-child { margin: 0; }
+.admin-alert hr { border-color: rgba(0,0,0,0.1); margin: 0.75rem 0; }
+
+.admin-alert.erfolg {
+    background: rgba(5,150,105,0.07);
+    border: 1px solid rgba(5,150,105,0.2);
+    color: #065F46;
+}
+
+.admin-alert.fehler {
+    background: rgba(217,48,37,0.07);
+    border: 1px solid rgba(217,48,37,0.2);
+    color: var(--error);
+}
+
+.passwort-anzeige {
+    display: inline-block;
+    background: rgba(0,0,0,0.06);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #065F46;
+    margin-top: 4px;
+}
+
+/* ─── Tabellen-Wrapper ───────────────────────────────── */
+.user-tabelle-wrapper {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
     overflow: hidden;
 }
 
-    .user-tabelle thead {
-        background: #00434e;
-        color: #fff;
-    }
-
-    .user-tabelle th,
-    .user-tabelle td {
-        padding: 0.9rem;
-        font-size: 0.85rem;
-    }
-
-    .user-tabelle tbody tr {
-        height: 72px;
-        border-bottom: 1px solid #eee;
-    }
-
-        .user-tabelle tbody tr:hover {
-            background: rgba(0, 67, 78, 0.04);
-        }
-
-/* ===============================
-   Rollen & Aktionen
-   =============================== */
-
-.spalte-rollen {
-    text-align: center;
+/* ─── Tabelle ────────────────────────────────────────── */
+.user-tabelle {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--text);
 }
+
+.user-tabelle thead {
+    background: var(--primary);
+}
+
+.user-tabelle thead th {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.8);
+    padding: 14px 16px;
+    text-align: left;
+}
+
+.user-tabelle tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+}
+.user-tabelle tbody tr:last-child { border-bottom: none; }
+.user-tabelle tbody tr:hover { background: var(--surface); }
+
+.user-tabelle td {
+    padding: 14px 16px;
+    font-size: 0.875rem;
+    vertical-align: middle;
+}
+
+.spalte-email {
+    font-weight: 500;
+    color: var(--text);
+}
+
+/* ─── Rollen-Badges ──────────────────────────────────── */
+.spalte-rollen { text-align: left; }
 
 .rolle-badge {
-    background: #00434e;
-    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    background: rgba(2,70,81,0.1);
+    color: var(--primary);
     border-radius: 999px;
-    padding: 0.3rem 0.6rem;
-    font-size: 0.75rem;
+    padding: 3px 10px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    margin: 2px;
 }
 
-.spalte-aktionen {
-    text-align: right;
-}
+.text-muted { color: var(--muted); font-size: 0.85rem; }
+
+/* ─── Aktionen ───────────────────────────────────────── */
+.spalte-aktionen { text-align: right; }
 
 .aktionen-inline {
     display: inline-flex;
-    gap: 0.5rem;
+    gap: 6px;
+    align-items: center;
 }
+.aktionen-inline form { margin: 0; }
 
-    .aktionen-inline form {
-        margin: 0;
-    }
-
-/* ===============================
-   Buttons
-   =============================== */
-
+/* ─── Admin-Buttons ──────────────────────────────────── */
 .admin-knopf {
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 600;
     border: none;
-    border-radius: 8px;
-    padding: 0.35rem 0.7rem;
-    font-size: 0.75rem;
+    border-radius: 7px;
+    padding: 6px 13px;
     cursor: pointer;
+    transition: opacity 0.15s, transform 0.15s, box-shadow 0.15s;
+    white-space: nowrap;
 }
+.admin-knopf:hover { transform: translateY(-1px); opacity: 0.9; }
+.admin-knopf:active { transform: translateY(0); }
 
-    .admin-knopf.warnung {
-        background: #f1c40f;
-    }
-
-    .admin-knopf.info {
-        background: #3498db;
-        color: #fff;
-    }
-
-    .admin-knopf.gefahr {
-        background: #e74c3c;
-        color: #fff;
-    }
-
-    .admin-knopf.erfolg {
-        background: #2ecc71;
-        color: #fff;
-    }
-
-    .admin-knopf.sekundaer {
-        background: #e0e0e0;
-        color: #00434e;
-    }
-
-/* ===============================
-   Modal
-   =============================== */
-
-.admin-modal * {
-    user-select: none;
+.admin-knopf.warnung {
+    background: rgba(217,119,6,0.12);
+    color: var(--warning);
+    border: 1px solid rgba(217,119,6,0.25);
 }
+.admin-knopf.warnung:hover { background: var(--warning); color: #fff; }
+
+.admin-knopf.info {
+    background: rgba(37,99,235,0.1);
+    color: var(--info);
+    border: 1px solid rgba(37,99,235,0.2);
+}
+.admin-knopf.info:hover { background: var(--info); color: #fff; }
+
+.admin-knopf.gefahr {
+    background: transparent;
+    color: var(--error);
+    border: 1px solid rgba(217,48,37,0.25);
+}
+.admin-knopf.gefahr:hover { background: var(--error); color: #fff; box-shadow: 0 3px 10px rgba(217,48,37,0.25); }
+
+.admin-knopf.erfolg {
+    background: rgba(5,150,105,0.1);
+    color: var(--success);
+    border: 1px solid rgba(5,150,105,0.2);
+}
+.admin-knopf.erfolg:hover { background: var(--success); color: #fff; }
+
+.admin-knopf.sekundaer {
+    background: var(--surface);
+    color: var(--muted);
+    border: 1px solid var(--border);
+}
+.admin-knopf.sekundaer:hover { background: var(--border); color: var(--text); }
+
+/* ─── Rollen-Badge Varianten ─────────────────────────── */
+.rolle-badge--readonly { background: rgba(37,99,235,0.1);  color: #2563EB; }
+.rolle-badge--user     { background: rgba(2,70,81,0.1);    color: var(--primary); }
+.rolle-badge--admin    { background: rgba(217,119,6,0.12); color: var(--warning); }
+
+/* ─── Modal ──────────────────────────────────────────── */
+.admin-modal * { user-select: none; }
 
 .admin-modal .modal-content {
-    border-radius: 12px;
     border: none;
+    border-radius: var(--radius);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+    overflow: hidden;
 }
 
 .admin-modal .modal-header {
-    background: #00434e;
+    background: var(--primary);
     color: #fff;
     border-bottom: none;
+    padding: 18px 20px;
 }
 
-.admin-modal .btn-close {
-    filter: invert(1);
+.admin-modal .modal-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.2px;
 }
+
+.admin-modal .btn-close { filter: invert(1) opacity(0.8); }
 
 .rollen-modal-body {
-    padding: 1.25rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--surface);
 }
 
-.rollen-section {
-    margin-bottom: 1rem;
-}
+.rollen-section { margin-bottom: 1.25rem; }
+.rollen-section:last-child { margin-bottom: 0; }
 
 .rollen-title {
     font-size: 0.7rem;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #777;
-    margin-bottom: 0.5rem;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
 }
 
 .rollen-liste {
@@ -142,23 +296,171 @@
 }
 
 .rollen-item button {
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 600;
     border: none;
     border-radius: 999px;
-    padding: 0.35rem 0.7rem;
-    font-size: 0.75rem;
+    padding: 5px 14px;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.15s;
 }
+.rollen-item button:hover { opacity: 0.85; transform: translateY(-1px); }
 
 .rollen-remove button {
-    background: #e74c3c;
-    color: #fff;
+    background: rgba(217,48,37,0.1);
+    color: var(--error);
+    border: 1px solid rgba(217,48,37,0.2);
 }
+.rollen-remove button:hover { background: var(--error); color: #fff; }
 
 .rollen-add button {
-    background: #2ecc71;
-    color: #fff;
+    background: rgba(5,150,105,0.1);
+    color: var(--success);
+    border: 1px solid rgba(5,150,105,0.2);
 }
+.rollen-add button:hover { background: var(--success); color: #fff; }
 
 .rollen-empty {
+    font-size: 0.82rem;
+    color: var(--muted);
+}
+
+/* ─── Modal Subtitle ─────────────────────────────────── */
+.modal-subtitle {
     font-size: 0.8rem;
-    color: #999;
+    color: rgba(255,255,255,0.6);
+    margin-top: 2px;
+    font-weight: 400;
+}
+
+/* ─── Rollen-Karten ──────────────────────────────────── */
+.rollen-modal-body {
+    padding: 1rem 1.25rem;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+}
+
+.rolle-karte {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 0.875rem 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.rolle-karte--aktiv {
+    border-color: var(--accent);
+    background: rgba(4,198,138,0.04);
+    box-shadow: 0 0 0 3px rgba(4,198,138,0.1);
+}
+
+.rolle-karte-links {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.rolle-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+.rolle-icon--readonly { background: rgba(37,99,235,0.1); }
+.rolle-icon--user     { background: rgba(2,70,81,0.1); }
+.rolle-icon--admin    { background: rgba(217,119,6,0.1); }
+
+.rolle-karte-text { display: flex; flex-direction: column; gap: 2px; }
+
+.rolle-karte-name {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text);
+}
+
+.rolle-karte-beschreibung {
+    font-size: 0.775rem;
+    color: var(--muted);
+    line-height: 1.4;
+}
+
+.rolle-karte-rechts {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.rolle-status-aktiv {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--accent);
+    background: rgba(4,198,138,0.12);
+    border: 1px solid rgba(4,198,138,0.25);
+    border-radius: 999px;
+    padding: 3px 10px;
+    white-space: nowrap;
+}
+
+.rolle-btn {
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-radius: 7px;
+    padding: 6px 13px;
+    cursor: pointer;
+    border: 1px solid;
+    transition: background 0.15s, color 0.15s, transform 0.15s;
+    white-space: nowrap;
+}
+.rolle-btn:hover { transform: translateY(-1px); }
+
+.rolle-btn--entfernen {
+    background: transparent;
+    color: var(--error);
+    border-color: rgba(217,48,37,0.25);
+}
+.rolle-btn--entfernen:hover { background: var(--error); color: #fff; }
+
+.rolle-btn--hinzufuegen {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+}
+.rolle-btn--hinzufuegen:hover { background: var(--primary-h); }
+
+/* ─── Modal Footer ───────────────────────────────────── */
+.admin-modal .modal-footer {
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    padding: 12px 16px;
+}
+
+/* ─── Responsive ─────────────────────────────────────── */
+@media (max-width: 640px) {
+    .admin-container { padding: 0 1rem; }
+    .user-tabelle thead { display: none; }
+    .user-tabelle tbody tr { display: block; padding: 1rem; border-bottom: 1px solid var(--border); }
+    .user-tabelle td { display: block; padding: 4px 0; border: none; }
+    .spalte-aktionen { text-align: left; }
+    .aktionen-inline { flex-wrap: wrap; }
+}
+
+/* ─── Nav Antrag Badge ───────────────────────────────── */
+.nav-antrag-dot {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #D93025; color: white; border-radius: 50%;
+    width: 16px; height: 16px; font-size: 0.6rem; font-weight: 700;
+    margin-left: 4px; vertical-align: middle;
 }

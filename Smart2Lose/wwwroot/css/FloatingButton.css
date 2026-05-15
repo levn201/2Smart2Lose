@@ -1,9 +1,11 @@
-﻿:root {
-    --main-bg: #004552;
-    --panel-bg: #06666f;
-    --accent: #00c896;
-    --accent-hover: #00a47a;
-    --text: #ffffff;
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap');
+
+:root {
+    --main-bg:    #024651;
+    --panel-bg:   #025260;
+    --accent:     #04C68A;
+    --accent-hover: #03A874;
+    --text:       #ffffff;
 }
 
 .chat-wrapper {
@@ -19,20 +21,21 @@
     height: 70px;
     border-radius: 50%;
     border: none;
-    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+    background: var(--main-bg);
+    box-shadow: 0 8px 24px rgba(2, 70, 81, 0.45), 0 2px 6px rgba(0,0,0,0.2);
     cursor: pointer;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.45);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.25s ease;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
     .chat-fab:hover {
-        transform: scale(1.12);
+        transform: scale(1.1);
+        box-shadow: 0 12px 32px rgba(2, 70, 81, 0.55);
     }
 
-/* Hamburger icon (3 lines) */
+/* Hamburger icon */
 .hamburger {
     width: 28px;
     height: 20px;
@@ -48,21 +51,21 @@
         display: block;
     }
 
-/* Panel (anchored to the button, not centered) */
+/* Panel */
 .chat-widget {
     width: 400px;
     background: var(--panel-bg);
     border-radius: 18px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.06);
     overflow: hidden;
     position: absolute;
     bottom: 90px;
     right: 0;
     display: flex;
     flex-direction: column;
+    font-family: 'DM Sans', sans-serif;
 }
 
-/* Make sure nothing breaks into columns */
 .chat-widget,
 .chat-header,
 .chat-body,
@@ -78,7 +81,7 @@
 /* Header */
 .chat-header {
     padding: 16px 16px 12px 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.15);
+    border-bottom: 1px solid rgba(255,255,255,0.12);
     color: var(--text);
     text-align: left;
 }
@@ -99,14 +102,14 @@
 .chat-header-subtitle {
     margin-top: 10px;
     font-size: 14px;
-    opacity: 0.9;
+    opacity: 0.8;
     line-height: 1.4;
 }
 
 /* Header icons */
 .chat-header-icons {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     justify-content: flex-end;
     align-items: center;
 }
@@ -119,16 +122,15 @@
         height: 34px;
         border-radius: 10px;
         text-decoration: none;
-        background: rgba(255,255,255,0.10);
+        background: rgba(255,255,255,0.08);
         transition: all 0.2s ease;
     }
 
         .chat-header-icons a:hover {
-            background: rgba(0,200,150,0.22);
+            background: rgba(4, 198, 138, 0.22);
             transform: scale(1.08);
         }
 
-    /* SVG icon styling (THIS is what you were missing) */
     .chat-header-icons .icon {
         width: 18px;
         height: 18px;
@@ -140,7 +142,7 @@
         fill: var(--accent);
     }
 
-/* Body messages */
+/* Body */
 .chat-body {
     padding: 16px;
     height: 280px;
@@ -157,27 +159,25 @@
     max-width: 85%;
     padding: 10px 12px;
     border-radius: 14px;
-    background: rgba(255,255,255,0.12);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    background: rgba(255,255,255,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     white-space: pre-wrap;
     word-wrap: break-word;
 }
 
-.msg-bot {
-    align-self: flex-start;
-}
+.msg-bot  { align-self: flex-start; }
 
 .msg-user {
     align-self: flex-end;
-    background: rgba(0,200,150,0.25);
-    border: 1px solid rgba(0,200,150,0.35);
+    background: rgba(4, 198, 138, 0.22);
+    border: 1px solid rgba(4, 198, 138, 0.3);
 }
 
 /* Footer */
 .chat-footer {
     padding: 14px 14px 16px 14px;
-    border-top: 1px solid rgba(255,255,255,0.15);
-    background: rgba(0,0,0,0.06);
+    border-top: 1px solid rgba(255,255,255,0.12);
+    background: rgba(0,0,0,0.08);
 }
 
 .chat-input-wrapper {
@@ -190,66 +190,64 @@
     flex: 1;
     padding: 12px 14px;
     border-radius: 16px;
-    border: none;
+    border: 1px solid rgba(255,255,255,0.12);
     outline: none;
-    background: #f2f2f2;
-    font-size: 15px;
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
     resize: none;
-    min-height: 96px; /* bigger multi-line */
+    min-height: 96px;
 }
+
+    .chat-input::placeholder { color: rgba(255,255,255,0.35); }
+    .chat-input:focus { border-color: var(--accent); }
 
 .chat-send {
     width: 52px;
     height: 52px;
     border-radius: 50%;
     border: none;
-    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
-    color: white;
+    background: var(--accent);
+    color: var(--main-bg);
     font-size: 22px;
+    font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 10px 22px rgba(0,0,0,0.25);
-    transition: transform 0.2s ease;
+    box-shadow: 0 6px 18px rgba(4,198,138,0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
     .chat-send:hover {
         transform: scale(1.06);
+        box-shadow: 0 8px 22px rgba(4,198,138,0.45);
     }
 
 /* Mobile */
 @media (max-width: 450px) {
-    .chat-wrapper {
-        right: 14px;
-        bottom: 14px;
-    }
-
-    .chat-widget {
-        width: min(92vw, 380px);
-        right: 0;
-    }
+    .chat-wrapper { right: 14px; bottom: 14px; }
+    .chat-widget  { width: min(92vw, 380px); right: 0; }
 }
+
 /* --- HARD OVERRIDES: stop vertical text + layout weirdness --- */
 .chat-widget,
 .chat-widget * {
-    writing-mode: horizontal-tb !important;
+    writing-mode:    horizontal-tb !important;
     text-orientation: mixed !important;
-    letter-spacing: normal !important;
-    white-space: normal !important;
-    word-break: normal !important;
-    overflow-wrap: anywhere !important;
+    letter-spacing:  normal !important;
+    white-space:     normal !important;
+    word-break:      normal !important;
+    overflow-wrap:   anywhere !important;
 }
 
-/* Ensure column layout never happens */
-.chat-widget {
-}
-
-/* Make sections full width */
 .chat-header,
 .chat-body,
 .chat-footer {
     width: 100% !important;
 }
 
-/* Header: don’t squeeze */
 .chat-header-top {
     display: flex !important;
     justify-content: space-between !important;
@@ -264,7 +262,6 @@
     writing-mode: horizontal-tb !important;
 }
 
-/* Prevent the sidebar-thin effect */
 .chat-widget {
     min-width: 340px !important;
 }

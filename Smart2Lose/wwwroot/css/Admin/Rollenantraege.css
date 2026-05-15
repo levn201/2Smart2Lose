@@ -1,0 +1,342 @@
+/* ==========================================================================
+   ROLLENANTRAEGE.CSS — Admin Rollenantraege page
+   Requires GrundDashboard.css (loaded first)
+   ========================================================================== */
+
+/* ─── Tokens ────────────────────────────────────────────── */
+:root {
+    --db-primary:    #024651;
+    --db-accent:     #04C68A;
+    --db-bg:         #F0EEE9;
+    --db-card:       #FFFFFF;
+    --db-surface:    #F8F9F8;
+    --db-border:     #DDE3DF;
+    --db-muted:      #6E7D78;
+    --db-text:       #0C1410;
+    --db-error:      #D93025;
+    --db-radius:     14px;
+    --db-radius-sm:  9px;
+    --db-font-body:  'DM Sans', sans-serif;
+    --db-font-disp:  'Syne', sans-serif;
+    --db-shadow:     0 0 0 1px rgba(0,0,0,0.04), 0 4px 24px rgba(0,0,0,0.07);
+}
+
+/* ─── Body override ─────────────────────────────────────── */
+body {
+    font-family: var(--db-font-body) !important;
+    background-color: var(--db-bg) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E") !important;
+    color: var(--db-text) !important;
+}
+
+/* ─── Header overrides (same design language as ManageUser) ── */
+.header {
+    background-color: var(--db-primary) !important;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.06), 0 2px 12px rgba(0,0,0,0.15) !important;
+    height: 64px !important;
+}
+
+.logo {
+    font-family: var(--db-font-disp) !important;
+    font-weight: 800 !important;
+    font-size: 1.1rem !important;
+    letter-spacing: -0.4px !important;
+    color: #fff !important;
+}
+
+.nav-links { display: flex; align-items: center; gap: 4px; }
+
+.nav-links a {
+    font-family: var(--db-font-body) !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    color: rgba(255,255,255,0.75) !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important;
+    transition: background 0.2s, color 0.2s !important;
+}
+.nav-links a:hover  { background: rgba(255,255,255,0.1)  !important; color: #fff !important; }
+.nav-links a.active { background: rgba(255,255,255,0.15) !important; color: #fff !important; font-weight: 600 !important; }
+
+/* ─── Page title area ────────────────────────────────────── */
+.seiten-titel-bereich {
+    max-width: 860px;
+    margin: 2.5rem auto 0;
+    padding: 0 1.5rem;
+}
+
+.seiten-titel {
+    font-family: var(--db-font-disp);
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -0.8px;
+    color: var(--db-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ─── Dashboard container ────────────────────────────────── */
+.dashboard-container {
+    max-width: 860px;
+    margin: 1.75rem auto 4rem;
+    padding: 0 1.5rem;
+}
+
+/* ─── Section label ──────────────────────────────────────── */
+.section-label {
+    font-family: var(--db-font-body);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--db-muted);
+    margin: 0 0 0.75rem;
+}
+
+/* ─── KPI grid ───────────────────────────────────────────── */
+.kpi-grid--3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.875rem;
+}
+
+.kpi-karte {
+    background: var(--db-card);
+    border: 1px solid var(--db-border);
+    border-radius: var(--db-radius);
+    padding: 1.25rem 1.5rem;
+    box-shadow: var(--db-shadow);
+}
+
+.kpi-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--db-muted);
+    margin-bottom: 0.4rem;
+}
+
+.kpi-wert {
+    font-family: var(--db-font-disp);
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: var(--db-primary);
+    line-height: 1;
+}
+
+.kpi-ausstehend { border-top: 3px solid #E6A817; }
+.kpi-ausstehend .kpi-wert { color: #854D0E; }
+
+.kpi-genehmigt  { border-top: 3px solid var(--db-accent); }
+.kpi-genehmigt  .kpi-wert { color: #065F46; }
+
+/* ─── Antrag card ────────────────────────────────────────── */
+.antrag-karte {
+    background: var(--db-card);
+    border: 1px solid var(--db-border);
+    border-radius: var(--db-radius);
+    box-shadow: var(--db-shadow);
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 0.875rem;
+}
+
+/* ─── Avatar ─────────────────────────────────────────────── */
+.antrag-avatar {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 50%;
+    background: var(--db-primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+    align-self: flex-start;
+    margin-top: 1px;
+}
+
+.antrag-avatar.gedaempft {
+    background: var(--db-border);
+    color: var(--db-muted);
+}
+
+/* ─── Email row ──────────────────────────────────────────── */
+.antrag-email {
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    color: var(--db-text);
+}
+
+/* ─── Meta ───────────────────────────────────────────────── */
+.antrag-meta {
+    font-size: 0.78rem;
+    color: var(--db-muted);
+    margin-top: 3px;
+}
+
+/* ─── Nachricht block ────────────────────────────────────── */
+.antrag-nachricht {
+    font-style: italic;
+    font-size: 0.875rem;
+    background: var(--db-surface);
+    border-left: 2px solid var(--db-border);
+    padding: 7px 10px;
+    border-radius: 6px;
+    margin-top: 0.75rem;
+    color: var(--db-muted);
+    line-height: 1.5;
+}
+
+/* ─── Action row ─────────────────────────────────────────── */
+.antrag-aktionen {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 0.875rem;
+    flex-wrap: wrap;
+}
+
+/* ─── Verlauf card (muted) ───────────────────────────────── */
+.antrag-karte.verlauf {
+    opacity: 0.7;
+}
+
+/* ─── Inline Ablehnen form ───────────────────────────────── */
+.ablehnen-form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.ablehnen-textarea {
+    min-height: 52px;
+    font-family: var(--db-font-body);
+    font-size: 0.82rem;
+    border: 1px solid var(--db-border);
+    border-radius: var(--db-radius-sm);
+    padding: 6px 8px;
+    resize: vertical;
+    width: 100%;
+    background: var(--db-bg);
+    color: var(--db-text);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+}
+
+.ablehnen-textarea:focus {
+    border-color: var(--db-error);
+    box-shadow: 0 0 0 3px rgba(217,48,37,0.12);
+}
+
+/* ─── Status badges ──────────────────────────────────────── */
+.status-badge-ausstehend,
+.status-badge-genehmigt,
+.status-badge-abgelehnt,
+.status-badge-rolle {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 2px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.status-badge-ausstehend {
+    background: #FEF9C3;
+    color: #854D0E;
+}
+
+.status-badge-genehmigt {
+    background: #DCFCE7;
+    color: #166534;
+}
+
+.status-badge-abgelehnt {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+.status-badge-rolle {
+    background: rgba(2,70,81,0.1);
+    color: var(--db-primary);
+}
+
+/* ─── Pending dot badge (title) ──────────────────────────── */
+.antrag-dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: #D93025;
+    color: #fff;
+    font-family: var(--db-font-body);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1;
+}
+
+/* ─── Admin buttons (reuse ManageUser pattern) ───────────── */
+.admin-knopf {
+    font-family: var(--db-font-body);
+    font-size: 0.78rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 7px;
+    padding: 6px 13px;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.15s, box-shadow 0.15s;
+    white-space: nowrap;
+}
+.admin-knopf:hover  { transform: translateY(-1px); opacity: 0.9; }
+.admin-knopf:active { transform: translateY(0); }
+
+.admin-knopf.erfolg {
+    background: rgba(5,150,105,0.1);
+    color: #059669;
+    border: 1px solid rgba(5,150,105,0.2);
+}
+.admin-knopf.erfolg:hover { background: #059669; color: #fff; }
+
+.admin-knopf.gefahr {
+    background: transparent;
+    color: var(--db-error);
+    border: 1px solid rgba(217,48,37,0.25);
+}
+.admin-knopf.gefahr:hover { background: var(--db-error); color: #fff; box-shadow: 0 3px 10px rgba(217,48,37,0.25); }
+
+/* ─── Verlauf divider ────────────────────────────────────── */
+.verlauf-divider {
+    border: none;
+    border-top: 1px solid var(--db-border);
+    margin: 2rem 0 1.5rem;
+}
+
+/* ─── Responsive ─────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .kpi-grid--3 { grid-template-columns: 1fr 1fr; }
+    .antrag-karte { flex-direction: column; }
+    .antrag-avatar { align-self: auto; }
+}

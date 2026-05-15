@@ -1,15 +1,22 @@
-﻿@page
+@page
 @model Smart2Lose.Pages.Admin.ManageUsersModel
 
 @{
     ViewData["Title"] = "2Smart2Lose | User Manager";
+
+    var rolleBeschreibung = new Dictionary<string, (string Icon, string Text)>
+    {
+        ["ReadOnly"] = ("👁", "Kann Fragebögen nur ansehen, nichts bearbeiten"),
+        ["User"]     = ("✏️", "Kann eigene Fragebögen erstellen und bearbeiten"),
+        ["Admin"]    = ("⚙️", "Vollzugriff inkl. Benutzerverwaltung")
+    };
 }
 
 <link rel="stylesheet" href="~/css/Admin/GrundDashboard.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/Admin/ManageUser.css" asp-append-version="true" />
 
 <header class="header">
-    <div class="logo">name</div>
+    <div class="logo">2Smart2Lose</div>
     <nav class="nav-links">
         <a href="/Admin/Dashboard">Dashboard</a>
 
@@ -17,15 +24,22 @@
         {
             <a href="/Admin/ManageUser" class="active">User</a>
         }
-
         @if (User.IsInRole("Admin") || User.IsInRole("User") || User.IsInRole("ReadOnly"))
         {
             <a href="/Admin/Frageboegen">Fragebögen</a>
         }
-
         @if (User.IsInRole("Admin") || User.IsInRole("User"))
         {
             <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
+        }
+
+        @if (User.IsInRole("Admin"))
+        {
+            <a href="/Admin/Rollenantraege">Anträge</a>
+        }
+        @if (User.IsInRole("ReadOnly"))
+        {
+            <a href="/Admin/Antrag">Antrag</a>
         }
 
         <a href="/Index">Quit</a>
@@ -38,12 +52,10 @@
         <h2 class="admin-titel">Benutzerverwaltung</h2>
     </div>
 
-    @* Erfolg *@
     @if (TempData["SuccessMessage"] != null)
     {
         <div class="admin-alert erfolg">
             <p>@TempData["SuccessMessage"]</p>
-
             @if (TempData["TempPassword"] != null && TempData["UserEmail"] != null)
             {
                 <hr />
@@ -53,16 +65,13 @@
         </div>
     }
 
-    @* Fehler *@
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="admin-alert fehler">
-            @TempData["ErrorMessage"]
-        </div>
+        <div class="admin-alert fehler">@TempData["ErrorMessage"]</div>
     }
 
-@if (Model.Users.Any())
-{
+    @if (Model.Users.Any())
+    {
         <div class="user-tabelle-wrapper">
             <table class="user-tabelle">
                 <thead>
@@ -72,7 +81,6 @@
                         <th>Aktionen</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     @foreach (var user in Model.Users)
                     {
@@ -84,7 +92,7 @@
                                 {
                                     foreach (var role in user.Roles)
                                     {
-                                        <span class="rolle-badge">@role</span>
+                                        <span class="rolle-badge rolle-badge--@role.ToLower()">@role</span>
                                     }
                                 }
                                 else
@@ -98,12 +106,12 @@
                                     <button class="admin-knopf warnung"
                                             data-bs-toggle="modal"
                                             data-bs-target="#roleModal-@user.Id">
-                                        Rollen
+                                        Rollen verwalten
                                     </button>
 
                                     <form method="post" asp-page-handler="ResetPassword">
                                         <input type="hidden" name="userId" value="@user.Id" />
-                                        <button class="admin-knopf info">Passwort</button>
+                                        <button class="admin-knopf info">Passwort reset</button>
                                     </form>
 
                                     <form method="post" asp-page-handler="DeleteUser">
@@ -119,69 +127,58 @@
                              id="roleModal-@user.Id"
                              tabindex="-1"
                              aria-hidden="true">
-
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
 
                                     <div class="modal-header">
-                                        <h5 class="modal-title">
-                                            Rollen für @user.Email
-                                        </h5>
-                                        <button type="button"
-                                                class="btn-close"
-                                                data-bs-dismiss="modal"></button>
+                                        <div>
+                                            <h5 class="modal-title">Rollen verwalten</h5>
+                                            <div class="modal-subtitle">@user.Email</div>
+                                        </div>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
 
                                     <div class="modal-body rollen-modal-body">
+                                        @foreach (var role in Model.AllRoles)
+                                        {
+                                            bool hatRolle = user.Roles.Contains(role);
+                                            var info = rolleBeschreibung.ContainsKey(role)
+                                                ? rolleBeschreibung[role]
+                                                : (Icon: "●", Text: role);
 
-                                        <section class="rollen-section">
-                                            <div class="rollen-title">Aktuelle Rollen</div>
-
-                                            <div class="rollen-liste">
-                                                @if (user.Roles.Any())
-                                                {
-                                                    foreach (var role in user.Roles)
+                                            <div class="rolle-karte @(hatRolle ? "rolle-karte--aktiv" : "")">
+                                                <div class="rolle-karte-links">
+                                                    <span class="rolle-icon rolle-icon--@role.ToLower()">@info.Icon</span>
+                                                    <div class="rolle-karte-text">
+                                                        <div class="rolle-karte-name">@role</div>
+                                                        <div class="rolle-karte-beschreibung">@info.Text</div>
+                                                    </div>
+                                                </div>
+                                                <div class="rolle-karte-rechts">
+                                                    @if (hatRolle)
                                                     {
-                                                        <form method="post"
-                                                              asp-page-handler="RemoveRole"
-                                                              class="rollen-item rollen-remove">
+                                                        <span class="rolle-status-aktiv">Aktiv</span>
+                                                        <form method="post" asp-page-handler="RemoveRole" style="display:inline;">
                                                             <input type="hidden" name="userId" value="@user.Id" />
                                                             <input type="hidden" name="role" value="@role" />
-                                                            <button type="submit">@role</button>
+                                                            <button type="submit" class="rolle-btn rolle-btn--entfernen">Entfernen</button>
                                                         </form>
                                                     }
-                                                }
-                                                else
-                                                {
-                                                    <span class="rollen-empty">Keine Rollen</span>
-                                                }
+                                                    else
+                                                    {
+                                                        <form method="post" asp-page-handler="AddRole" style="display:inline;">
+                                                            <input type="hidden" name="userId" value="@user.Id" />
+                                                            <input type="hidden" name="role" value="@role" />
+                                                            <button type="submit" class="rolle-btn rolle-btn--hinzufuegen">Zuweisen</button>
+                                                        </form>
+                                                    }
+                                                </div>
                                             </div>
-                                        </section>
-
-                                        <section class="rollen-section">
-                                            <div class="rollen-title">Rolle hinzufügen</div>
-
-                                            <div class="rollen-liste">
-                                                @foreach (var role in Model.AllRoles.Where(r => !user.Roles.Contains(r)))
-                                                {
-                                                    <form method="post"
-                                                          asp-page-handler="AddRole"
-                                                          class="rollen-item rollen-add">
-                                                        <input type="hidden" name="userId" value="@user.Id" />
-                                                        <input type="hidden" name="role" value="@role" />
-                                                        <button type="submit">@role</button>
-                                                    </form>
-                                                }
-                                            </div>
-                                        </section>
-
+                                        }
                                     </div>
 
                                     <div class="modal-footer">
-                                        <button class="admin-knopf sekundaer"
-                                                data-bs-dismiss="modal">
-                                            Schließen
-                                        </button>
+                                        <button class="admin-knopf sekundaer" data-bs-dismiss="modal">Schließen</button>
                                     </div>
 
                                 </div>
@@ -191,4 +188,6 @@
                 </tbody>
             </table>
         </div>
-}
+    }
+
+</div>

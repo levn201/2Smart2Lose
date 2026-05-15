@@ -26,13 +26,26 @@
             <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
         }
 
+        @if (User.IsInRole("Admin"))
+        {
+            <a href="/Admin/Rollenantraege">Anträge</a>
+        }
+        @if (User.IsInRole("ReadOnly"))
+        {
+            <a href="/Admin/Antrag">Antrag</a>
+        }
+
         <a href="/Index">Quit</a>
     </nav>
 </header>
 
 
-<h1>  </h1>
-<!-- Card anzeige  -->
+<!-- Seitentitel -->
+<div class="seiten-titel-bereich">
+    <h1 class="seiten-titel">Fragebögen</h1>
+</div>
+
+<!-- Card anzeige -->
 <div class="fragebogen-container">
     <div class="fragebogen-gitter">
         @foreach (var fragebogen in Model.Frageboegen)
@@ -89,6 +102,13 @@
                             <input type="hidden" name="id" value="@fragebogen.JoinId" />
                             <button type="submit" class="knopf gefahr">Löschen</button>
                         </form>
+
+                        <a asp-page="/Admin/WorkshopDashboard"
+                           asp-route-joinId="@fragebogen.JoinId"
+                           class="knopf">Live</a>
+
+                        <a href="/Admin/Frageboegen?handler=ExportCsv&id=@fragebogen.JoinId"
+                           class="knopf">CSV</a>
                     }
                 </div>
             </div>
@@ -120,6 +140,24 @@
         document.getElementById("editPopup").style.display = "none";
         document.body.style.overflow = "";
     }
+
+    // Edit Popup: nur eine richtige Antwort pro Frage erlaubt
+    document.addEventListener("change", function (e) {
+        if (e.target.classList.contains("checkmark-edit")) {
+            const container = e.target.closest(".frage-container");
+            container.querySelectorAll(".checkmark-edit").forEach(function (cb) {
+                if (cb !== e.target) cb.checked = false;
+            });
+        }
+    });
+
+    // Overlay-Klick schließt Popup
+    document.getElementById("viewPopup").addEventListener("click", function (e) {
+        if (e.target === this) closeViewPopup();
+    });
+    document.getElementById("editPopup").addEventListener("click", function (e) {
+        if (e.target === this) closeEditPopup();
+    });
 </script>
 
 
@@ -154,13 +192,27 @@
             <button type="button" class="close-btn" onclick="closeViewPopup()">×</button>
         </div>
         <div class="popup-body">
-            @if (Model.FragenDB != null && Model.FragenDB.Any())
+            @if (Model._FragenDB != null && Model._FragenDB.Any())
             {
-                @for (int i = 0; i < Model.FragenDB.Count; i++)
+                @for (int i = 0; i < Model._FragenDB.Count; i++)
                 {
-                    var frage = Model.FragenDB[i];
+                    var frage = Model._FragenDB[i];
                     <div class="frage-container">
                         <div class="frage-text">Frage @(i + 1): @frage.Fragestellung</div>
+                        @if (!string.IsNullOrEmpty(frage.BildUrl))
+                        {
+                            <div class="frage-media-preview">
+                                <img src="@frage.BildUrl" alt="Frage Bild" class="frage-bild-preview" />
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(frage.LinkUrl))
+                        {
+                            <div class="frage-link-preview">
+                                <a href="@frage.LinkUrl" target="_blank" rel="noopener noreferrer">
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Weiterführender Link
+                                </a>
+                            </div>
+                        }
                         <div class="antwort-grid">
                             <div class="antwort-card bg-1 @(frage.IstAntwort1Richtig ? "richtige-antwort" : "")">
                                 <input type="checkbox" @(frage.IstAntwort1Richtig ? "checked" : "") disabled class="checkmark" />
@@ -198,14 +250,14 @@
             <button type="button" class="close-btn" onclick="closeEditPopup()">×</button>
         </div>
         <div class="popup-body">
-            <form method="post" asp-page-handler="SaveEdit">
+            <form method="post" asp-page-handler="SaveEdit" enctype="multipart/form-data">
                 <input type="hidden" name="fragebogenId" value="@Model.GamePin" />
 
-                @if (Model.FragenDB != null && Model.FragenDB.Any())
+                @if (Model._FragenDB != null && Model._FragenDB.Any())
                 {
-                    @for (int i = 0; i < Model.FragenDB.Count; i++)
+                    @for (int i = 0; i < Model._FragenDB.Count; i++)
                     {
-                        var frage = Model.FragenDB[i];
+                        var frage = Model._FragenDB[i];
                         <div class="frage-container">
                             <div class="frage-input-group">
                                 <label>Frage @(i + 1):</label>
@@ -214,6 +266,23 @@
                                        value="@frage.Fragestellung"
                                        class="frage-input"
                                        required />
+                            </div>
+
+                            <div class="optional-felder">
+                                <label>Bild <span class="optional-hint">(optional – neues Bild hochladen ersetzt das alte)</span></label>
+                                @if (!string.IsNullOrEmpty(frage.BildUrl))
+                                {
+                                    <img src="@frage.BildUrl" class="current-bild-preview" alt="Aktuelles Bild" />
+                                    <input type="hidden" name="existingBild_@i" value="@frage.BildUrl" />
+                                }
+                                <input type="file" name="bild_@i" accept="image/*" class="optional-input" />
+
+                                <label>Link-URL <span class="optional-hint">(optional)</span></label>
+                                <input type="url"
+                                       name="Fragen[@i].LinkUrl"
+                                       value="@(frage.LinkUrl ?? "")"
+                                       class="frage-input"
+                                       placeholder="https://... Confluence oder anderer Link" />
                             </div>
 
                             <div class="antwort-grid">

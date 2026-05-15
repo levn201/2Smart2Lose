@@ -1,0 +1,163 @@
+@page
+@model Smart2Lose.Pages.Admin.AntragModel
+@{
+    ViewData["Title"] = "Smart2Lose | Zugang beantragen";
+    bool hatAusstehend = Model.MeineAntraege.Any(a => a.Status == "Ausstehend");
+}
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" />
+<link rel="stylesheet" href="~/css/Admin/GrundDashboard.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Admin/Antrag.css" asp-append-version="true" />
+
+<header class="header">
+    <div class="logo">@Model.pn.Name</div>
+    <nav class="nav-links">
+        <a href="/Admin/Dashboard">Dashboard</a>
+        @if (User.IsInRole("Admin"))
+        {
+            <a href="/Admin/ManageUser">User</a>
+        }
+        @if (User.IsInRole("Admin") || User.IsInRole("User") || User.IsInRole("ReadOnly"))
+        {
+            <a href="/Admin/Frageboegen">Fragebögen</a>
+        }
+        @if (User.IsInRole("Admin") || User.IsInRole("User"))
+        {
+            <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
+        }
+        @if (User.IsInRole("Admin"))
+        {
+            <a href="/Admin/Rollenantraege">Anträge</a>
+        }
+        @if (User.IsInRole("ReadOnly"))
+        {
+            <a href="/Admin/Antrag" class="active">Antrag</a>
+        }
+        <a href="/Index">Quit</a>
+    </nav>
+</header>
+
+<div class="seiten-titel-bereich">
+    <h1 class="seiten-titel">Zugang beantragen</h1>
+</div>
+
+<div class="dashboard-container">
+
+    @if (User.IsInRole("ReadOnly"))
+    {
+        <div class="warn-banner">
+            <strong>Eingeschränkter Zugriff (ReadOnly)</strong><br />
+            Dein Konto hat eingeschränkten Zugriff (ReadOnly). Du kannst Fragebögen ansehen, aber keine eigenen erstellen oder bearbeiten. Stelle hier einen Antrag, um erweiterte Rechte zu erhalten.
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.StatusNachricht))
+    {
+        bool isSuccess = Model.StatusNachricht.Contains("erfolgreich");
+        <div class="alert @(isSuccess ? "alert-success" : "alert-warning")" style="margin-bottom:1.5rem;">
+            @Model.StatusNachricht
+        </div>
+    }
+
+    <!-- Antragsformular -->
+    <div class="section-label">Neuen Antrag stellen</div>
+    <div class="antrag-form-karte">
+        <form method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="form-gruppe">
+                <label class="form-label" for="zielRolle">Gewünschte Rolle</label>
+                <select id="zielRolle" name="zielRolle" class="form-select" @(hatAusstehend ? "disabled" : "")>
+                    <option value="User">User (eigene Quizze erstellen)</option>
+                    <option value="Admin">Admin (voller Zugriff)</option>
+                </select>
+            </div>
+
+            <div class="form-gruppe">
+                <label class="form-label" for="nachricht">Nachricht (optional)</label>
+                <textarea id="nachricht"
+                          name="nachricht"
+                          class="form-textarea"
+                          rows="4"
+                          placeholder="Beschreibe kurz, warum du erweiterten Zugriff benötigst..."
+                          @(hatAusstehend ? "disabled" : "")></textarea>
+            </div>
+
+            <button type="submit"
+                    class="knopf primary"
+                    @(hatAusstehend ? "disabled" : "")>
+                Antrag absenden
+            </button>
+
+            @if (hatAusstehend)
+            {
+                <p class="form-hinweis">Du hast bereits einen offenen Antrag. Bitte warte auf die Bearbeitung.</p>
+            }
+        </form>
+    </div>
+
+    <!-- Meine Anträge -->
+    <div class="section-label" style="margin-top:2rem;">Meine Anträge</div>
+
+    @if (!Model.MeineAntraege.Any())
+    {
+        <div class="antrag-form-karte" style="color: var(--db-muted, #6E7D78); font-size:0.9rem;">
+            Noch kein Antrag gestellt.
+        </div>
+    }
+    else
+    {
+        @foreach (var antrag in Model.MeineAntraege)
+        {
+            string borderColor = antrag.Status switch
+            {
+                "Ausstehend" => "#E6A817",
+                "Genehmigt"  => "#04C68A",
+                "Abgelehnt"  => "#D93025",
+                _            => "#DDE3DF"
+            };
+
+            <div class="antrag-status-karte" style="border-left-color: @borderColor;">
+                <div class="antrag-karte-kopf">
+                    <div>
+                        <span class="antrag-zielrolle">Rolle: <strong>@antrag.ZielRolle</strong></span>
+                        <span class="antrag-datum">@antrag.ErstelltAm.ToString("dd.MM.yyyy · HH:mm")</span>
+                    </div>
+                    <div>
+                        @if (antrag.Status == "Ausstehend")
+                        {
+                            <span class="status-badge-ausstehend">Ausstehend</span>
+                        }
+                        else if (antrag.Status == "Genehmigt")
+                        {
+                            <span class="status-badge-genehmigt">Genehmigt</span>
+                        }
+                        else if (antrag.Status == "Abgelehnt")
+                        {
+                            <span class="status-badge-abgelehnt">Abgelehnt</span>
+                        }
+                        else
+                        {
+                            <span class="status-badge-ausstehend">@antrag.Status</span>
+                        }
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(antrag.Nachricht))
+                {
+                    <p class="antrag-nachricht">@antrag.Nachricht</p>
+                }
+
+                @if (antrag.Status == "Abgelehnt" && !string.IsNullOrEmpty(antrag.AdminKommentar))
+                {
+                    <div class="antrag-admin-kommentar">
+                        <strong>Admin-Kommentar:</strong> @antrag.AdminKommentar
+                    </div>
+                }
+            </div>
+        }
+    }
+
+</div>

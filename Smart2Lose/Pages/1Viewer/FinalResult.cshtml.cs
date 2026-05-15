@@ -43,11 +43,9 @@ namespace Smart2Lose.Pages._1Viewer
         public string PlaceThree { get; set; }
 
 
-        // Start loader
         public void OnGet()
         {
             GamePin = HttpContext.Session.GetInt32("GameNumber") ?? 0;
-
             DBquery = f.DefaultQuery;
             loadPLayerList();
         }
@@ -110,6 +108,10 @@ namespace Smart2Lose.Pages._1Viewer
                     .Take(3)
                     .Select(p => p.Nickname)
                     .ToArray();
+
+                if (top3.Length > 0) PlaceOne   = top3[0];
+                if (top3.Length > 1) PlaceTwo   = top3[1];
+                if (top3.Length > 2) PlaceThree = top3[2];
 
                 PlaceOne   = top3.Length > 0 ? top3[0] : "-";
                 PlaceTwo   = top3.Length > 1 ? top3[1] : "-";

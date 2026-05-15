@@ -11,5 +11,30 @@
         public bool IstAntwort3Richtig { get; set; }
         public string Antwort4 { get; set; } = string.Empty;
         public bool IstAntwort4Richtig { get; set; }
+        public string? BildUrl { get; set; }
+        public string? LinkUrl { get; set; }
+
+        public static Fragen FromReader(MySql.Data.MySqlClient.MySqlDataReader reader)
+        {
+            int bildOrd = reader.GetOrdinal("BildUrl");
+            int linkOrd = reader.GetOrdinal("LinkUrl");
+            return new Fragen
+            {
+                Fragestellung = reader.GetString("Fragestellung"),
+                Antwort1 = reader.GetString("Antwort1"),
+                IstAntwort1Richtig = reader.GetBoolean("IstAntwort1Richtig"),
+                Antwort2 = reader.GetString("Antwort2"),
+                IstAntwort2Richtig = reader.GetBoolean("IstAntwort2Richtig"),
+                Antwort3 = reader.GetString("Antwort3"),
+                IstAntwort3Richtig = reader.GetBoolean("IstAntwort3Richtig"),
+                Antwort4 = reader.GetString("Antwort4"),
+                IstAntwort4Richtig = reader.GetBoolean("IstAntwort4Richtig"),
+                BildUrl = reader.IsDBNull(bildOrd) ? null : reader.GetString(bildOrd),
+                LinkUrl = reader.IsDBNull(linkOrd) ? null : reader.GetString(linkOrd)
+            };
+        }
+
     }
+
+
 }

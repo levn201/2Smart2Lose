@@ -1,0 +1,199 @@
+@page "{joinId:int}"
+@model Smart2Lose.Pages.Admin.WorkshopDashboardModel
+@{
+    ViewData["Title"] = "Live Dashboard – " + Model.FragebogenTitel;
+}
+
+<link rel="stylesheet" href="~/css/Admin/GrundDashboard.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Admin/WorkshopDashboard.css" asp-append-version="true" />
+
+<header class="header">
+    <div class="logo">@Model.pn.Name</div>
+    <nav class="nav-links">
+        <a href="/Admin/Dashboard">Dashboard</a>
+        <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
+        <a href="/Index">Quit</a>
+    </nav>
+</header>
+
+<div class="dashboard-seite">
+
+    <div class="dashboard-header">
+        <div>
+            <h1 class="seiten-titel">Live Dashboard</h1>
+            <p class="untertitel">
+                @Model.FragebogenTitel &middot; PIN: <strong>@Model.JoinId</strong>
+            </p>
+            <p class="aktualisierung-info" id="aktualisierungInfo">Aktualisiert vor 0s</p>
+        </div>
+        <a href="/Admin/Frageboegen" class="knopf">&larr; Zurück</a>
+    </div>
+
+    <div class="stats-reihe">
+        <div class="stat-karte">
+            <div class="zahl" id="statFertig">0</div>
+            <div class="bezeichnung">Fertig</div>
+        </div>
+        <div class="stat-karte">
+            <div class="zahl" id="statAktiv">0</div>
+            <div class="bezeichnung">Aktiv</div>
+        </div>
+        <div class="stat-karte">
+            <div class="zahl" id="statInaktiv">0</div>
+            <div class="bezeichnung">Inaktiv</div>
+        </div>
+        <div class="stat-karte">
+            <div class="zahl" id="statGesamt">@Model.Teilnehmer.Count</div>
+            <div class="bezeichnung">Gesamt</div>
+        </div>
+    </div>
+
+    <div class="tabellen-wrapper">
+        <table class="teilnehmer-tabelle">
+            <thead>
+                <tr>
+                    <th>Nickname</th>
+                    <th>Fortschritt</th>
+                    <th>Frage</th>
+                    <th>Punkte</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="teilnehmerBody">
+                @foreach (var t in Model.Teilnehmer)
+                {
+                    var prozent = t.QuestionCount > 0
+                        ? (int)((double)t.AktuelleOffset / t.QuestionCount * 100)
+                        : 0;
+                    var fertig      = t.AktuelleOffset >= t.QuestionCount && t.QuestionCount > 0;
+                    var fuellung    = fertig ? "fertig" : "";
+                    var badgeKlasse = fertig ? "badge-fertig" : "badge-aktiv";
+                    var statusText  = fertig ? "Fertig" : "Aktiv";
+                    <tr>
+                        <td><strong>@t.Nickname</strong></td>
+                        <td>
+                            <div class="fortschritt-balken">
+                                <div class="fuellstand @fuellung" style="width:@prozent%"></div>
+                            </div>
+                        </td>
+                        <td>@t.AktuelleOffset / @t.QuestionCount</td>
+                        <td><strong>@t.Punkte</strong></td>
+                        <td><span class="@badgeKlasse">@statusText</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const joinId = @Model.JoinId;
+    const INAKTIV_MINUTEN = 2;
+    let sekundenSeit = 0;
+    let letzterStand = '';
+
+    function statusBerechnen(aktuelleOffset, questionCount, letztesUpdateIso) {
+        const fertig = questionCount > 0 && aktuelleOffset >= questionCount;
+        if (fertig) return 'fertig';
+        const diffMinuten = (Date.now() - new Date(letztesUpdateIso).getTime()) / 60000;
+        return diffMinuten >= INAKTIV_MINUTEN ? 'inaktiv' : 'aktiv';
+    }
+
+    function zeileErstellen(t) {
+        const status   = statusBerechnen(t.aktuelleOffset, t.questionCount, t.letztesUpdate);
+        const prozent  = t.questionCount > 0
+            ? Math.round(t.aktuelleOffset / t.questionCount * 100) : 0;
+        const fuellung    = status === 'fertig' ? 'fertig' : (status === 'inaktiv' ? 'inaktiv' : '');
+        const badgeKlasse = status === 'fertig' ? 'badge-fertig' : (status === 'inaktiv' ? 'badge-inaktiv' : 'badge-aktiv');
+        const badgeText   = status === 'fertig' ? 'Fertig' : (status === 'inaktiv' ? 'Inaktiv' : 'Aktiv');
+
+        const tr = document.createElement('tr');
+
+        const tdName = document.createElement('td');
+        const strong = document.createElement('strong');
+        strong.textContent = t.nickname;
+        tdName.appendChild(strong);
+
+        const tdBalken = document.createElement('td');
+        const balken = document.createElement('div');
+        balken.className = 'fortschritt-balken';
+        const fuell = document.createElement('div');
+        fuell.className = 'fuellstand ' + fuellung;
+        fuell.style.width = prozent + '%';
+        balken.appendChild(fuell);
+        tdBalken.appendChild(balken);
+
+        const tdFrage = document.createElement('td');
+        tdFrage.textContent = t.aktuelleOffset + ' / ' + t.questionCount;
+
+        const tdPunkte = document.createElement('td');
+        const strongPts = document.createElement('strong');
+        strongPts.textContent = t.punkte;
+        tdPunkte.appendChild(strongPts);
+
+        const tdStatus = document.createElement('td');
+        const span = document.createElement('span');
+        span.className = badgeKlasse;
+        span.textContent = badgeText;
+        tdStatus.appendChild(span);
+
+        tr.appendChild(tdName);
+        tr.appendChild(tdBalken);
+        tr.appendChild(tdFrage);
+        tr.appendChild(tdPunkte);
+        tr.appendChild(tdStatus);
+        return tr;
+    }
+
+    function statsAktualisieren(daten) {
+        let fertig = 0, aktiv = 0, inaktiv = 0;
+        daten.forEach(function(t) {
+            const s = statusBerechnen(t.aktuelleOffset, t.questionCount, t.letztesUpdate);
+            if (s === 'fertig') fertig++;
+            else if (s === 'inaktiv') inaktiv++;
+            else aktiv++;
+        });
+        document.getElementById('statFertig').textContent  = fertig;
+        document.getElementById('statAktiv').textContent   = aktiv;
+        document.getElementById('statInaktiv').textContent = inaktiv;
+        document.getElementById('statGesamt').textContent  = daten.length;
+    }
+
+    function aktualisieren() {
+        fetch('/Admin/WorkshopDashboard/' + joinId + '?handler=Data')
+            .then(function(r) { return r.text(); })
+            .then(function(text) {
+                sekundenSeit = 0;
+                if (text === letzterStand) return;
+                letzterStand = text;
+                const daten = JSON.parse(text);
+                const tbody = document.getElementById('teilnehmerBody');
+                tbody.replaceChildren.apply(tbody, daten.map(zeileErstellen));
+                statsAktualisieren(daten);
+            })
+            .catch(function() { /* Netzwerkfehler ignorieren */ });
+    }
+
+    setInterval(function() {
+        sekundenSeit++;
+        document.getElementById('aktualisierungInfo').textContent =
+            'Aktualisiert vor ' + sekundenSeit + 's';
+    }, 1000);
+
+    setInterval(aktualisieren, 5000);
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const zeilen = document.querySelectorAll('#teilnehmerBody tr');
+        let fertig = 0, aktiv = 0, inaktiv = 0;
+        zeilen.forEach(function(z) {
+            const badge = z.querySelector('span');
+            if (!badge) return;
+            if (badge.classList.contains('badge-fertig'))  fertig++;
+            else if (badge.classList.contains('badge-inaktiv')) inaktiv++;
+            else aktiv++;
+        });
+        document.getElementById('statFertig').textContent  = fertig;
+        document.getElementById('statAktiv').textContent   = aktiv;
+        document.getElementById('statInaktiv').textContent = inaktiv;
+    });
+</script>

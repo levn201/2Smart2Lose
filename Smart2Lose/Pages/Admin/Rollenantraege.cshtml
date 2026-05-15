@@ -1,0 +1,167 @@
+@page
+@model Smart2Lose.Pages.Admin.RollenantraegeModel
+@{
+    ViewData["Title"] = "Smart2Lose | Rollenantraege";
+}
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" />
+<link rel="stylesheet" href="~/css/Admin/GrundDashboard.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Admin/Rollenantraege.css" asp-append-version="true" />
+
+<header class="header">
+    <div class="logo">@Model.pn.Name</div>
+    <nav class="nav-links">
+        <a href="/Admin/Dashboard">Dashboard</a>
+        @if (User.IsInRole("Admin"))
+        {
+            <a href="/Admin/ManageUser">User</a>
+        }
+        @if (User.IsInRole("Admin") || User.IsInRole("User") || User.IsInRole("ReadOnly"))
+        {
+            <a href="/Admin/Frageboegen">Fragebögen</a>
+        }
+        @if (User.IsInRole("Admin") || User.IsInRole("User"))
+        {
+            <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
+        }
+        @if (User.IsInRole("Admin"))
+        {
+            <a href="/Admin/Rollenantraege" class="active">Anträge</a>
+        }
+        <a href="/Index">Quit</a>
+    </nav>
+</header>
+
+<div class="seiten-titel-bereich">
+    <h1 class="seiten-titel">
+        Rollenanträge
+        @if (Model.AusstehendCount > 0)
+        {
+            <span class="antrag-dot">@Model.AusstehendCount</span>
+        }
+    </h1>
+</div>
+
+<div class="dashboard-container">
+
+    <!-- KPIs -->
+    <div class="section-label">Übersicht</div>
+    <div class="kpi-grid kpi-grid--3">
+        <div class="kpi-karte kpi-ausstehend">
+            <div class="kpi-label">Ausstehend</div>
+            <div class="kpi-wert">@Model.AusstehendCount</div>
+        </div>
+        <div class="kpi-karte kpi-genehmigt">
+            <div class="kpi-label">Genehmigt</div>
+            <div class="kpi-wert">@Model.GesamtGenehmigt</div>
+        </div>
+        <div class="kpi-karte">
+            <div class="kpi-label">Abgelehnt</div>
+            <div class="kpi-wert">@Model.GesamtAbgelehnt</div>
+        </div>
+    </div>
+
+    <!-- Offene Anträge -->
+    <div class="section-label" style="margin-top:2rem;">Offene Anträge</div>
+
+    @if (!Model.OffeneAntraege.Any())
+    {
+        <div class="antrag-karte" style="color:var(--db-muted);font-size:0.9rem;justify-content:center;">
+            Keine offenen Anträge vorhanden.
+        </div>
+    }
+    else
+    {
+        @foreach (var antrag in Model.OffeneAntraege)
+        {
+            <div class="antrag-karte">
+                <div class="antrag-avatar">@(string.IsNullOrEmpty(antrag.Email) ? "?" : antrag.Email[0].ToString().ToUpper())</div>
+                <div style="flex:1;min-width:0;">
+                    <div class="antrag-email">
+                        @antrag.Email
+                        <span class="status-badge-rolle">@antrag.ZielRolle</span>
+                        <span class="status-badge-ausstehend">Ausstehend</span>
+                    </div>
+                    <div class="antrag-meta">Eingereicht am @antrag.ErstelltAm.ToString("dd.MM.yyyy · HH:mm")</div>
+
+                    @if (!string.IsNullOrEmpty(antrag.Nachricht))
+                    {
+                        <div class="antrag-nachricht">@antrag.Nachricht</div>
+                    }
+
+                    <div class="antrag-aktionen">
+                        <!-- Genehmigen -->
+                        <form method="post" asp-page-handler="Genehmigen" style="margin:0;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@antrag.Id" />
+                            <button type="submit" class="admin-knopf erfolg">Genehmigen</button>
+                        </form>
+
+                        <!-- Ablehnen -->
+                        <div>
+                            <button type="button"
+                                    class="admin-knopf gefahr"
+                                    onclick="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                                Ablehnen
+                            </button>
+                            <form method="post" asp-page-handler="Ablehnen" class="ablehnen-form" style="display:none;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@antrag.Id" />
+                                <textarea name="kommentar"
+                                          class="ablehnen-textarea"
+                                          placeholder="Kommentar (optional)..."></textarea>
+                                <button type="submit" class="admin-knopf gefahr">Ablehnung bestätigen</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    <!-- Verlauf -->
+    <hr class="verlauf-divider" />
+    <div class="section-label">Verlauf (letzte 20)</div>
+
+    @if (!Model.Verlauf.Any())
+    {
+        <div class="antrag-karte verlauf" style="color:var(--db-muted);font-size:0.9rem;justify-content:center;">
+            Noch keine bearbeiteten Anträge.
+        </div>
+    }
+    else
+    {
+        @foreach (var antrag in Model.Verlauf)
+        {
+            <div class="antrag-karte verlauf">
+                <div class="antrag-avatar gedaempft">@(string.IsNullOrEmpty(antrag.Email) ? "?" : antrag.Email[0].ToString().ToUpper())</div>
+                <div style="flex:1;min-width:0;">
+                    <div class="antrag-email">
+                        @antrag.Email
+                        <span class="status-badge-rolle">@antrag.ZielRolle</span>
+                        @if (antrag.Status == "Genehmigt")
+                        {
+                            <span class="status-badge-genehmigt">Genehmigt</span>
+                        }
+                        else
+                        {
+                            <span class="status-badge-abgelehnt">Abgelehnt</span>
+                        }
+                    </div>
+                    <div class="antrag-meta">
+                        Bearbeitet am @(antrag.BearbeitetAm?.ToString("dd.MM.yyyy · HH:mm") ?? "–")
+                    </div>
+                    @if (!string.IsNullOrEmpty(antrag.AdminKommentar))
+                    {
+                        <div class="antrag-nachricht" style="border-left-color:var(--db-error);color:var(--db-muted);">
+                            <strong>Admin-Kommentar:</strong> @antrag.AdminKommentar
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+
+</div>

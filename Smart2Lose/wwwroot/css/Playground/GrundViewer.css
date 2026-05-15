@@ -1,39 +1,86 @@
-﻿/* ==========================================================================
-   GRUNDVIEWER.CSS - Auflistung aller erstellten Fragebögen 
-   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
 
-/* HEADER */
+/* ─── Tokens ─────────────────────────────────────────── */
+:root {
+    --bg:            #F0EEE9;
+    --card:          #FFFFFF;
+    --primary:       #024651;
+    --primary-h:     #013038;
+    --accent:        #04C68A;
+    --accent-h:      #03A874;
+    --text:          #0C1410;
+    --muted:         #6E7D78;
+    --border:        #DDE3DF;
+    --error:         #D93025;
+    --ring:          rgba(4, 198, 138, 0.35);
+    --shadow-card:   0 0 0 1px rgba(0,0,0,0.04), 0 8px 40px rgba(0,0,0,0.09);
+    --shadow-hover:  0 0 0 1px rgba(0,0,0,0.06), 0 20px 60px rgba(0,0,0,0.13);
+    --radius:        16px;
+    --radius-sm:     10px;
+    --font-display:  'Syne', sans-serif;
+    --font-body:     'DM Sans', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    color: var(--text);
+    min-height: 100vh;
+    padding-top: 80px;
+    padding-bottom: 72px;
+}
+
+/* ─── Header ─────────────────────────────────────────── */
 .header {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    background-color: #00434e;
-    color: white;
-    height: 80px;
+    right: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 2rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
+    padding: 0 32px;
+    height: 72px;
+    z-index: 100;
+    background: rgba(240, 238, 233, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
 }
 
-/* Damit der Inhalt nicht unter den Header rutscht */
-body {
-    margin: 0;
-    font-family: 'Inter', sans-serif;
-    background-color: #00434e;
-    color: #ffffff;
-    padding-top: 80px;
+.logo {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: -0.5px;
+    color: var(--primary);
 }
 
-/* Navigation */
+/* ─── Navigation ─────────────────────────────────────── */
 .nav-links a {
-    color: white;
-    text-decoration: none;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
     font-weight: 500;
-    padding: 0.5rem 0.8rem;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
+    color: var(--primary);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 18px;
+    text-decoration: none;
+    transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.nav-links a:hover {
+    background: #F7F5F0;
+    border-color: #C4CEC9;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* ─── Responsive ─────────────────────────────────────── */
+@media (max-width: 520px) {
+    .header { padding: 0 20px; height: 64px; }
+    body { padding-top: 72px; }
 }

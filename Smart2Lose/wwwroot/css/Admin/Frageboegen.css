@@ -1,276 +1,282 @@
-﻿/* ==========================================================================
-   FRAGEBOGEN.CSS - Karten-Darstellung aller erstellten Fragebögen 
-   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
 
-/* ==========================================================================
-   FRAGEBOGEN CARD SECTION
-   ========================================================================== */
-
-.fragebogen-container {
-    margin-top: 2%;
-    padding: 1rem;
+/* ─── Tokens ─────────────────────────────────────────── */
+:root {
+    --primary:     #024651;
+    --primary-h:   #013038;
+    --accent:      #04C68A;
+    --ring:        rgba(4, 198, 138, 0.3);
+    --bg:          #F0EEE9;
+    --card:        #FFFFFF;
+    --surface:     #F8F9F8;
+    --text:        #0C1410;
+    --muted:       #6E7D78;
+    --border:      #DDE3DF;
+    --error:       #D93025;
+    --radius:      14px;
+    --radius-sm:   9px;
+    --shadow:      0 0 0 1px rgba(0,0,0,0.04), 0 4px 24px rgba(0,0,0,0.07);
+    --shadow-h:    0 0 0 1px rgba(0,0,0,0.06), 0 12px 40px rgba(0,0,0,0.11);
+    --font-display: 'Syne', sans-serif;
+    --font-body:    'DM Sans', sans-serif;
 }
 
-/* Grid Layout */
+/* ─── Body override (GrundDashboard setzt #00434e) ───── */
+body {
+    font-family: var(--font-body) !important;
+    background-color: var(--bg) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    color: var(--text) !important;
+}
+
+/* ─── Header override ────────────────────────────────── */
+.header {
+    background-color: var(--primary) !important;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.06), 0 2px 12px rgba(0,0,0,0.15) !important;
+    height: 64px !important;
+}
+
+.logo {
+    font-family: var(--font-display) !important;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: -0.4px;
+    color: #fff !important;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.nav-links a {
+    font-family: var(--font-body) !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    color: rgba(255,255,255,0.75) !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s !important;
+}
+
+.nav-links a:hover {
+    background-color: rgba(255,255,255,0.1) !important;
+    color: #fff !important;
+}
+
+.nav-links a.active {
+    background-color: rgba(255,255,255,0.15) !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+}
+
+/* ─── Seitentitel ────────────────────────────────────── */
+.seiten-titel-bereich {
+    max-width: 100%;
+    padding: 2rem 1.5rem 0;
+}
+
+.seiten-titel {
+    font-family: var(--font-display);
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -0.8px;
+    color: var(--primary);
+    margin: 0;
+}
+
+/* ─── Container ──────────────────────────────────────── */
+.fragebogen-container {
+    margin-top: 2rem;
+    padding: 0 1.5rem 3rem;
+}
+
+/* ─── Grid ───────────────────────────────────────────── */
 .fragebogen-gitter {
     display: grid;
-    gap: 1.5rem;
-    max-width: 100%;
-    grid-template-columns: 1fr; /* Mobile: 1 Card pro Reihe */
+    gap: 1.25rem;
+    grid-template-columns: 1fr;
 }
 
-/* Responsive Grid */
-@media (min-width: 768px) {
-    .fragebogen-gitter {
-        grid-template-columns: repeat(2, 1fr);
-    }
+@media (min-width: 680px) {
+    .fragebogen-gitter { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1060px) {
+    .fragebogen-gitter { grid-template-columns: repeat(3, 1fr); }
 }
 
-@media (min-width: 1024px) {
-    .fragebogen-gitter {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-/* Card Styling */
+/* ─── Karte ──────────────────────────────────────────── */
 .fragebogen-karte {
-    background-color: #ffffff;
-    border: 1px solid #dce3e8;
-    border-radius: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     padding: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0, 67, 78, 0.08);
-    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.25s ease, transform 0.2s ease;
     position: relative;
     overflow: hidden;
 }
 
-    .fragebogen-karte:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 25px rgba(0, 67, 78, 0.15);
-        border-color: #0c7485;
-    }
-
-    .fragebogen-karte::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #0c7485, #00434e);
-    }
-
-.fragebogen-karte {
-    position: relative;
+.fragebogen-karte:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-h);
 }
 
+/* Farbstreifen oben */
+.fragebogen-karte::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+}
+
+/* ─── Lock-Icon ──────────────────────────────────────── */
 .lock-icon {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    background: #dc3545;
-    color: white;
+    top: 14px;
+    right: 14px;
+    background: var(--error);
+    color: #fff;
     width: 28px;
     height: 28px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    font-size: 12px;
+    box-shadow: 0 2px 8px rgba(217,48,37,0.3);
 }
 
-/* Card Header */
+/* ─── Karten-Header ──────────────────────────────────── */
 .fragebogen-kopf {
     margin-bottom: 1rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #f0f4f7;
+    padding-bottom: 0.875rem;
+    border-bottom: 1px solid var(--border);
 }
 
 .fragebogen-titel {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #00434e;
-    margin: 0 0 0.5rem 0;
-    line-height: 1.4;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--primary);
+    margin: 0;
+    line-height: 1.3;
+    padding-right: 36px; /* Platz für Lock-Icon */
 }
 
-/* Card Info */
+/* ─── Karten-Info ────────────────────────────────────── */
 .fragebogen-info {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.45rem;
 }
 
 .fragebogen-feld {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.9rem;
-    color: #5a6c75;
+    font-size: 0.855rem;
 }
 
 .feld-label {
-    font-weight: 500;
-    color: #00434e;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-size: 0.8rem;
+    color: var(--muted);
 }
 
 .feld-wert {
-    color: #5a6c75;
-    font-weight: 400;
-}
-
-/* Card Actions */
-.fragebogen-aktionen {
-    margin-top: 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    align-items: center;
-}
-
-    .fragebogen-aktionen form {
-        display: inline-block;
-        margin: 0;
-    }
-
-/* Empty State */
-.fragebogen-leer {
-    text-align: center;
-    padding: 3rem 1rem;
-    color: #5a6c75;
-}
-
-.fragebogen-leer-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    opacity: 0.5;
-}
-
-/* Loading State */
-.fragebogen-karte.laden {
-    opacity: 0.7;
-    pointer-events: none;
-}
-
-    .fragebogen-karte.laden::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 255, 255, 0.8);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-/* ==========================================================================
-   BUTTON STYLES
-   ========================================================================== */
-
-.knopf {
-    background-color: #00434e;
-    color: white;
-    border: none;
-    padding: 0.6rem 1.25rem;
-    border-radius: 6px;
-    font-size: 0.9rem;
+    color: var(--text);
     font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-decoration: none;
+}
+
+/* ─── Karten-Aktionen ────────────────────────────────── */
+.fragebogen-aktionen {
+    margin-top: 1.25rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.fragebogen-aktionen form {
     display: inline-block;
-    text-align: center;
-    min-width: 90px;
-    font-family: 'Inter', sans-serif;
+    margin: 0;
+}
+
+/* ─── Buttons ────────────────────────────────────────── */
+.knopf {
+    font-family: var(--font-body);
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--primary);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 7px 16px;
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+    line-height: normal;
+    vertical-align: middle;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
     white-space: nowrap;
 }
 
-    .knopf:hover {
-        background-color: #003540;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    }
-
-    .knopf:active {
-        transform: translateY(0);
-    }
-
-    /* Button Variants */
-    .knopf.haupt {
-        background-color: #007bff;
-        font-weight: 600;
-    }
-
-        .knopf.haupt:hover {
-            background-color: #0056b3;
-        }
-
-    .knopf.gefahr {
-        background-color: #dc3545;
-    }
-
-        .knopf.gefahr:hover {
-            background-color: #c82333;
-        }
-
-/* ==========================================================================
-   STATUS INDICATORS
-   ========================================================================== */
-
-.status {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+.knopf:hover {
+    background: var(--primary-h);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(2,70,81,0.22);
 }
 
-    .status.aktiv {
-        background-color: #d4edda;
-        color: #155724;
-    }
+.knopf:active { transform: translateY(0); }
 
-    .status.entwurf {
-        background-color: #fff3cd;
-        color: #856404;
-    }
+.knopf.haupt {
+    background: var(--accent);
+    color: var(--primary);
+}
+.knopf.haupt:hover {
+    background: #03A874;
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(4,198,138,0.3);
+}
 
-    .status.geschlossen {
-        background-color: #f8d7da;
-        color: #721c24;
-    }
+.knopf.gefahr {
+    background: transparent;
+    color: var(--error);
+    border: 1px solid rgba(217,48,37,0.25);
+}
+.knopf.gefahr:hover {
+    background: var(--error);
+    color: #fff;
+    border-color: var(--error);
+    box-shadow: 0 3px 10px rgba(217,48,37,0.25);
+}
 
-/* ==========================================================================
-   RESPONSIVE DESIGN - MOBILE
-   ========================================================================== */
+/* ─── Empty / Loading states ─────────────────────────── */
+.fragebogen-karte.laden {
+    opacity: 0.6;
+    pointer-events: none;
+}
 
-@media (max-width: 767px) {
-    .fragebogen-gitter {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
+/* ─── Mobile ─────────────────────────────────────────── */
+@media (max-width: 520px) {
+    .fragebogen-container { padding: 0 1rem 2rem; }
+    .fragebogen-karte { padding: 1.25rem; }
+    .fragebogen-aktionen { flex-direction: column; }
+    .knopf { width: 100%; text-align: center; }
+}
 
-    .fragebogen-karte {
-        padding: 1rem;
-    }
-
-    .fragebogen-aktionen {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-        .fragebogen-aktionen .knopf {
-            width: 100%;
-            min-width: auto;
-        }
+/* ─── Nav Antrag Badge ───────────────────────────────── */
+.nav-antrag-dot {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #D93025; color: white; border-radius: 50%;
+    width: 16px; height: 16px; font-size: 0.6rem; font-weight: 700;
+    margin-left: 4px; vertical-align: middle;
 }
