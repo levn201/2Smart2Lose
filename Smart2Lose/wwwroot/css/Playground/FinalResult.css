@@ -168,3 +168,14 @@
     margin-bottom: 5px;
     color: #e0e0e0;
 }
+
+.place-empty .platform {
+    opacity: 0.35;
+}
+
+.place-empty .winner-name {
+    background-color: #555;
+    color: #aaa;
+    font-weight: normal;
+    font-style: italic;
+}

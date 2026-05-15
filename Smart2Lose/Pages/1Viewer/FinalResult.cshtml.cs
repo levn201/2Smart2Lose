@@ -103,7 +103,6 @@ namespace Smart2Lose.Pages._1Viewer
                     });
                 }
 
-                // => LINQ Methoden https://csharp-hilfe.de/c-sharp-linq/ 
                 var top3 = Player
                     .OrderByDescending(p => p.Points)
                     .Take(3)
@@ -113,6 +112,10 @@ namespace Smart2Lose.Pages._1Viewer
                 if (top3.Length > 0) PlaceOne   = top3[0];
                 if (top3.Length > 1) PlaceTwo   = top3[1];
                 if (top3.Length > 2) PlaceThree = top3[2];
+
+                PlaceOne   = top3.Length > 0 ? top3[0] : "-";
+                PlaceTwo   = top3.Length > 1 ? top3[1] : "-";
+                PlaceThree = top3.Length > 2 ? top3[2] : "-";
 
             }
             catch (Exception ex)

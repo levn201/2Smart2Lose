@@ -9,6 +9,7 @@ namespace Smart2Lose.Data
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            var config = serviceProvider.GetRequiredService<IConfiguration>();
 
             // Definiere deine Rollen
             string[] roleNames = { "Admin", "User", "ReadOnly" };
@@ -36,7 +37,8 @@ namespace Smart2Lose.Data
                     EmailConfirmed = true
                 };
 
-                var result = await userManager.CreateAsync(newAdmin, "Admin123!");
+                var adminPassword = config["AdminSettings:InitialPassword"] ?? "Admin123!";
+                var result = await userManager.CreateAsync(newAdmin, adminPassword);
 
                 if (result.Succeeded)
                 {

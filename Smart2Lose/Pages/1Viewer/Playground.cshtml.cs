@@ -148,7 +148,6 @@ namespace Smart2Lose.Pages._1Viewer
             if (CurrentProgressOffset == -1)
                 CurrentProgressOffset = QuestionCount;
         }
-
         public IActionResult OnPostNextQuestion()
         {
             loadHTTP();
@@ -247,8 +246,8 @@ namespace Smart2Lose.Pages._1Viewer
             cmd.Parameters.AddWithValue("@pin", sd.GameID);
             cmd.Parameters.AddWithValue("@points", fp.PlayerPoints);
             cmd.Parameters.AddWithValue("@name", sd.UserName);
-            cmd.Parameters.AddWithValue("@Correct", fp.RightAnswer);
-            cmd.Parameters.AddWithValue("@Possible", spiel.HowManyQuestions(sd.GameID));
+            cmd.Parameters.AddWithValue("@correct", fp.RightAnswer);
+            cmd.Parameters.AddWithValue("@possible", spiel.HowManyQuestions(sd.GameID));
 
             cmd.ExecuteNonQuery();
 

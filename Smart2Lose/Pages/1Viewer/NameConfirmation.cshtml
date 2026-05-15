@@ -27,6 +27,7 @@
         <p>Gib deinen Namen ein, um beizutreten</p>
 
         <form method="post">
+
             <input class="nc-input"
                    type="text"
                    asp-for="Nickname"
@@ -37,6 +38,14 @@
                 <i class="fa-solid fa-arrow-right"></i>
                 Los geht's
             </button>
+
+            <div class="input-group">
+                <input type="text" asp-for="Nickname" required minlength="2" maxlength="20" placeholder="Wie darf man dich nennen" />
+                <button type="submit" asp-page-handler="LogName" class="btn btn-success">
+                    Nächste Frage
+                </button>
+            </div>
+
         </form>
 
         @if (!string.IsNullOrEmpty(Model.ErrorMessage))

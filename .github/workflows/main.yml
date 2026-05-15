@@ -1,0 +1,24 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Code auschecken
+        uses: actions/checkout@v4
+
+      # setup-dotnet ENTFERNT - .NET ist bereits auf dem Server installiert
+
+      - name: Restore & Publish
+        run: |
+          dotnet restore
+          dotnet publish -c Release -o /var/www/myapp
+
+      - name: App neu starten
+        run: sudo systemctl restart myapp

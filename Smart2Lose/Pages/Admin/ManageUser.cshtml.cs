@@ -66,13 +66,13 @@ namespace Smart2Lose.Pages.Admin
                 await _userManager.SetAuthenticationTokenAsync(
                     user, "Default", "MustChangePassword", "true");
 
-                TempData["SuccessMessage"] = $"? Passwort für {user.Email} wurde zurückgesetzt!";
+                TempData["SuccessMessage"] = $"Passwort fÃ¼r {user.Email} wurde zurÃ¼ckgesetzt!";
                 TempData["TempPassword"] = newPassword;
                 TempData["UserEmail"] = user.Email;
             }
             else
             {
-                TempData["ErrorMessage"] = "? Fehler beim Zurücksetzen des Passworts.";
+                TempData["ErrorMessage"] = "Fehler beim ZurÃ¼cksetzen des Passworts.";
             }
 
             return RedirectToPage();
@@ -89,7 +89,7 @@ namespace Smart2Lose.Pages.Admin
             if (!await _userManager.IsInRoleAsync(user, role))
             {
                 await _userManager.AddToRoleAsync(user, role);
-                TempData["SuccessMessage"] = $"? Rolle '{role}' wurde zu {user.Email} hinzugefügt.";
+                TempData["SuccessMessage"] = $"Rolle '{role}' wurde zu {user.Email} hinzugefÃ¼gt.";
             }
 
             return RedirectToPage();
@@ -106,7 +106,7 @@ namespace Smart2Lose.Pages.Admin
             if (await _userManager.IsInRoleAsync(user, role))
             {
                 await _userManager.RemoveFromRoleAsync(user, role);
-                TempData["SuccessMessage"] = $"? Rolle '{role}' wurde von {user.Email} entfernt.";
+                TempData["SuccessMessage"] = $"Rolle '{role}' wurde von {user.Email} entfernt.";
             }
 
             return RedirectToPage();
@@ -123,14 +123,14 @@ namespace Smart2Lose.Pages.Admin
             var currentUser = await _userManager.GetUserAsync(User);
             if (user.Id == currentUser.Id)
             {
-                TempData["ErrorMessage"] = "? Sie können sich nicht selbst löschen!";
+                TempData["ErrorMessage"] = "Sie kÃ¶nnen sich nicht selbst lÃ¶schen!";
                 return RedirectToPage();
             }
 
             var result = await _userManager.DeleteAsync(user);
             if (result.Succeeded)
             {
-                TempData["SuccessMessage"] = $"? Benutzer {user.Email} wurde gelöscht.";
+                TempData["SuccessMessage"] = $"Benutzer {user.Email} wurde gelÃ¶scht.";
             }
 
             return RedirectToPage();

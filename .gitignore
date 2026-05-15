@@ -403,3 +403,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+
+# Claude Code
+.claude/
+.superpowers/
