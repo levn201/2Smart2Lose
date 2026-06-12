@@ -63,9 +63,8 @@
 <table class="survey-table">
     <thead>
         <tr>
-            <th>Punkte</th>
             <th>Name</th>
-            <th>Statistik</th>
+            <th>Richtig / Gesamt</th>
             <th>Erstellt am</th>
         </tr>
     </thead>
@@ -73,11 +72,9 @@
         @foreach (var list in Model.Player)
         {
             <tr>
-                <td>@list.Points</td>
                 <td>@list.Nickname</td>
                 <td>@list.korrekteFagen / @list.alleFragen</td>
                 <td>@list.Time.ToString("dd.MM.yyyy HH:mm")</td>
-
             </tr>
         }
     </tbody>

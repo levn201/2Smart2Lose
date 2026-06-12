@@ -20,7 +20,6 @@ namespace Smart2Lose.Pages._1Viewer
         public List<PlayerList> Player { get; set; } = new();
         public class PlayerList
         {
-            public int Points { get; set; }
             public string Nickname { get; set; }
             public int GamePin { get; set; }
             public int korrekteFagen { get; set; }
@@ -94,24 +93,19 @@ namespace Smart2Lose.Pages._1Viewer
                 {
                     Player.Add(new PlayerList
                     {
-                        Points = reader.GetInt32("SessionPints"), 
-                        Nickname = reader.GetString("User_Nickname"),
-                        GamePin = reader.GetInt32("GamePin"),
+                        Nickname      = reader.GetString("User_Nickname"),
+                        GamePin       = reader.GetInt32("GamePin"),
                         korrekteFagen = reader.GetInt32("CorrectAnswered"),
-                        alleFragen = reader.GetInt32("PossibleAnswers"),
-                        Time = reader.GetDateTime("saveTime")
+                        alleFragen    = reader.GetInt32("PossibleAnswers"),
+                        Time          = reader.GetDateTime("saveTime")
                     });
                 }
 
                 var top3 = Player
-                    .OrderByDescending(p => p.Points)
+                    .OrderByDescending(p => p.korrekteFagen)
                     .Take(3)
                     .Select(p => p.Nickname)
                     .ToArray();
-
-                if (top3.Length > 0) PlaceOne   = top3[0];
-                if (top3.Length > 1) PlaceTwo   = top3[1];
-                if (top3.Length > 2) PlaceThree = top3[2];
 
                 PlaceOne   = top3.Length > 0 ? top3[0] : "-";
                 PlaceTwo   = top3.Length > 1 ? top3[1] : "-";
