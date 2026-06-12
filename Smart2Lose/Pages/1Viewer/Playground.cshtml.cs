@@ -41,9 +41,14 @@ namespace Smart2Lose.Pages._1Viewer
         private const string QStatesKey = "QStates";
         private const string QStatesGameKey = "QStatesGameId";
 
+        public string QuizTyp { get; set; } = "MC";
+        private const string QuizTypKey     = "QuizTyp";
+        private const string QuizTypGameKey = "QuizTypGameId";
+
         public void OnGet(int currentOffset)
         {
             loadHTTP();
+            LadeQuizTyp();
             CurrentOffset = currentOffset;
             QuestionCount = spiel.HowManyQuestions(sd.GameID);
             LadeFrage(currentOffset);
@@ -75,6 +80,28 @@ namespace Smart2Lose.Pages._1Viewer
             sd.GameID  = HttpContext.Session.GetInt32("GameNumber") ?? 0;
             sd.UserName = HttpContext.Session.GetString("Name") ?? "";
             fp.RightAnswer = HttpContext.Session.GetInt32("RightAnswer") ?? 0;
+        }
+
+        private void LadeQuizTyp()
+        {
+            var storedGameId = HttpContext.Session.GetInt32(QuizTypGameKey) ?? 0;
+            if (storedGameId == sd.GameID)
+            {
+                QuizTyp = HttpContext.Session.GetString(QuizTypKey) ?? "MC";
+                return;
+            }
+
+            var db = new SQLconnection.DatenbankZugriff();
+            using var connection = db.GetConnection();
+            connection.Open();
+            using var cmd = new MySqlCommand(
+                "SELECT Typ FROM Fragebogen WHERE Join_ID = @id;", connection);
+            cmd.Parameters.AddWithValue("@id", sd.GameID);
+            var result = cmd.ExecuteScalar();
+            QuizTyp = result?.ToString() ?? "MC";
+
+            HttpContext.Session.SetString(QuizTypKey, QuizTyp);
+            HttpContext.Session.SetInt32(QuizTypGameKey, sd.GameID);
         }
 
         private void LadeFrage(int offset)
@@ -150,6 +177,7 @@ namespace Smart2Lose.Pages._1Viewer
         public IActionResult OnPostNextQuestion()
         {
             loadHTTP();
+            LadeQuizTyp();
             CurrentOffset++;
             fp.AnswerChecked = false;
             return RedirectToPage(new { CurrentOffset = CurrentOffset });
@@ -158,6 +186,7 @@ namespace Smart2Lose.Pages._1Viewer
         public IActionResult OnPostCheckAnswer()
         {
             loadHTTP();
+            LadeQuizTyp();
             LadeFrage(CurrentOffset);
 
             var currentQuestion = FragenDB[0];
@@ -223,6 +252,7 @@ namespace Smart2Lose.Pages._1Viewer
         public IActionResult OnPostFinishQuiz()
         {
             loadHTTP();
+            LadeQuizTyp();
 
             var db = new SQLconnection.DatenbankZugriff();
             using var connection = db.GetConnection();
