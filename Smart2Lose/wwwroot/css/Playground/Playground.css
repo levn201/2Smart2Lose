@@ -347,3 +347,66 @@
 .tf-karte.wrong-answer   { background: rgba(217,48,37,0.10) !important; border-color: var(--error) !important; }
 
 @media (max-width: 600px) { .tf-grid { grid-template-columns: 1fr; } }
+
+/* ─── Passwort-Eingabe ───────────────────────────────── */
+.pw-eingabe-wrapper {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.pw-eingabe {
+    width: 100%;
+    max-width: 420px;
+    padding: 14px 18px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text);
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    text-align: center;
+}
+
+.pw-eingabe:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(4,198,138,0.2);
+}
+
+.pw-hint { font-size: 0.75rem; color: var(--muted); }
+
+.pw-review {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pw-review-zeile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.pw-review-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    min-width: 90px;
+}
+
+.pw-user-zeile  { background: rgba(217,48,37,0.06); border: 1px solid rgba(217,48,37,0.2); }
+.pw-user-zeile.richtig { background: rgba(4,198,138,0.08); border-color: rgba(4,198,138,0.3); }
+.pw-richtig-zeile { background: rgba(4,198,138,0.08); border: 1px solid rgba(4,198,138,0.3); }

@@ -11,7 +11,8 @@ namespace Smart2Lose.Pages._1Viewer
     public class QuestionState
     {
         public bool Correct { get; set; }
-        public int SelectedAnswer { get; set; } // 1–4
+        public int SelectedAnswer { get; set; }
+        public string SelectedAnswerText { get; set; } = "";
     }
 
     public class PlaygroundModel : PageModel
@@ -37,6 +38,7 @@ namespace Smart2Lose.Pages._1Viewer
 
         public string ErrorMessage { get; set; } = string.Empty;
         public string SuccessMessage { get; set; } = string.Empty;
+        public string ReviewPasswordAnswer { get; set; } = "";
 
         private const string QStatesKey = "QStates";
         private const string QStatesGameKey = "QStatesGameId";
@@ -62,13 +64,20 @@ namespace Smart2Lose.Pages._1Viewer
             {
                 fp.AnswerChecked = true;
                 fp.AnswerCorrect = state.Correct;
-                UserAnswer = new Fragen
+                if (QuizTyp == "Passwort")
                 {
-                    IstAntwort1Richtig = state.SelectedAnswer == 1,
-                    IstAntwort2Richtig = state.SelectedAnswer == 2,
-                    IstAntwort3Richtig = state.SelectedAnswer == 3,
-                    IstAntwort4Richtig = state.SelectedAnswer == 4,
-                };
+                    ReviewPasswordAnswer = state.SelectedAnswerText;
+                }
+                else
+                {
+                    UserAnswer = new Fragen
+                    {
+                        IstAntwort1Richtig = state.SelectedAnswer == 1,
+                        IstAntwort2Richtig = state.SelectedAnswer == 2,
+                        IstAntwort3Richtig = state.SelectedAnswer == 3,
+                        IstAntwort4Richtig = state.SelectedAnswer == 4,
+                    };
+                }
                 IsReview = true;
             }
 
@@ -190,11 +199,24 @@ namespace Smart2Lose.Pages._1Viewer
             LadeFrage(CurrentOffset);
 
             var currentQuestion = FragenDB[0];
+            bool isCorrect;
+            string passwordInput = "";
 
-            bool isCorrect = UserAnswer.IstAntwort1Richtig == currentQuestion.IstAntwort1Richtig &&
-                             UserAnswer.IstAntwort2Richtig == currentQuestion.IstAntwort2Richtig &&
-                             UserAnswer.IstAntwort3Richtig == currentQuestion.IstAntwort3Richtig &&
-                             UserAnswer.IstAntwort4Richtig == currentQuestion.IstAntwort4Richtig;
+            if (QuizTyp == "Passwort")
+            {
+                passwordInput = Request.Form["PasswordInput"].ToString().Trim();
+                isCorrect = string.Equals(
+                    passwordInput,
+                    currentQuestion.Antwort1.Trim(),
+                    StringComparison.OrdinalIgnoreCase);
+            }
+            else
+            {
+                isCorrect = UserAnswer.IstAntwort1Richtig == currentQuestion.IstAntwort1Richtig &&
+                            UserAnswer.IstAntwort2Richtig == currentQuestion.IstAntwort2Richtig &&
+                            UserAnswer.IstAntwort3Richtig == currentQuestion.IstAntwort3Richtig &&
+                            UserAnswer.IstAntwort4Richtig == currentQuestion.IstAntwort4Richtig;
+            }
 
             fp.AnswerChecked = true;
             fp.AnswerCorrect = isCorrect;
@@ -208,12 +230,21 @@ namespace Smart2Lose.Pages._1Viewer
             AllQuestionStates = LoadQuestionStates();
             EnsureStatesLength();
 
-            int selectedAnswer = UserAnswer.IstAntwort1Richtig ? 1 :
+            int selectedAnswer = 0;
+            if (QuizTyp != "Passwort")
+            {
+                selectedAnswer = UserAnswer.IstAntwort1Richtig ? 1 :
                                  UserAnswer.IstAntwort2Richtig ? 2 :
                                  UserAnswer.IstAntwort3Richtig ? 3 :
                                  UserAnswer.IstAntwort4Richtig ? 4 : 0;
+            }
 
-            AllQuestionStates[CurrentOffset] = new QuestionState { Correct = isCorrect, SelectedAnswer = selectedAnswer };
+            AllQuestionStates[CurrentOffset] = new QuestionState
+            {
+                Correct            = isCorrect,
+                SelectedAnswer     = selectedAnswer,
+                SelectedAnswerText = QuizTyp == "Passwort" ? passwordInput : ""
+            };
             SaveQuestionStates(AllQuestionStates);
 
             ComputeProgress();

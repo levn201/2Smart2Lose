@@ -46,7 +46,34 @@
 
                 <h3>@frage.Fragestellung</h3>
 
-                @if (Model.QuizTyp == "TrueFalse")
+                @if (Model.QuizTyp == "Passwort")
+                {
+                    <div class="pw-eingabe-wrapper">
+                        @if (!Model.fp.AnswerChecked)
+                        {
+                            <input type="text"
+                                   name="PasswordInput"
+                                   class="pw-eingabe"
+                                   placeholder="Antwort eingeben..."
+                                   autocomplete="off" />
+                            <span class="pw-hint">Groß-/Kleinschreibung wird ignoriert</span>
+                        }
+                        else
+                        {
+                            <div class="pw-review">
+                                <div class="pw-review-zeile pw-user-zeile @(Model.fp.AnswerCorrect ? "richtig" : "")">
+                                    <span class="pw-review-label">Deine Antwort</span>
+                                    <span>@(string.IsNullOrEmpty(Model.ReviewPasswordAnswer) ? "–" : Model.ReviewPasswordAnswer)</span>
+                                </div>
+                                <div class="pw-review-zeile pw-richtig-zeile">
+                                    <span class="pw-review-label">Richtig wäre</span>
+                                    <span>@frage.Antwort1</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else if (Model.QuizTyp == "TrueFalse")
                 {
                     <div class="tf-grid">
                         <div class="tf-karte tf-wahr @(Model.fp.AnswerChecked
