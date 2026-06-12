@@ -11,7 +11,29 @@
     <div class="logo">@Model.pn.Name</div>
     <nav class="nav-links">
         <a href="/Admin/Dashboard">Dashboard</a>
-        <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <a href="/Admin/ManageUser">User</a>
+        }
+        @if (User.IsInRole("Admin") || User.IsInRole("User") || User.IsInRole("ReadOnly"))
+        {
+            <a href="/Admin/Frageboegen" class="active">Fragebögen</a>
+        }
+        @if (User.IsInRole("Admin") || User.IsInRole("User"))
+        {
+            <a href="/Admin/FrageboegenErstellen">Neue anlegen</a>
+        }
+
+        @if (User.IsInRole("Admin"))
+        {
+            <a href="/Admin/Rollenantraege">Anträge</a>
+        }
+        @if (User.IsInRole("ReadOnly"))
+        {
+            <a href="/Admin/Antrag">Antrag</a>
+        }
+
         <a href="/Index">Quit</a>
     </nav>
 </header>
