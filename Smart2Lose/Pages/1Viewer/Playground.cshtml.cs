@@ -72,9 +72,8 @@ namespace Smart2Lose.Pages._1Viewer
 
         private void loadHTTP()
         {
-            sd.GameID = HttpContext.Session.GetInt32("GameNumber") ?? 0;
+            sd.GameID  = HttpContext.Session.GetInt32("GameNumber") ?? 0;
             sd.UserName = HttpContext.Session.GetString("Name") ?? "";
-            fp.PlayerPoints = HttpContext.Session.GetInt32("PlayerPoints") ?? 0;
             fp.RightAnswer = HttpContext.Session.GetInt32("RightAnswer") ?? 0;
         }
 
@@ -174,14 +173,7 @@ namespace Smart2Lose.Pages._1Viewer
             if (isCorrect)
             {
                 fp.RightAnswer += 1;
-                fp.PlayerPoints += 100;
-                HttpContext.Session.SetInt32("PlayerPoints", fp.PlayerPoints);
                 HttpContext.Session.SetInt32("RightAnswer", fp.RightAnswer);
-            }
-            else
-            {
-                fp.PlayerPoints -= 5;
-                HttpContext.Session.SetInt32("PlayerPoints", fp.PlayerPoints);
             }
 
             AllQuestionStates = LoadQuestionStates();
@@ -210,17 +202,16 @@ namespace Smart2Lose.Pages._1Viewer
                 connection.Open();
                 using var cmd = new MySqlCommand(@"
                     INSERT INTO WorkshopTeilnehmer (GamePin, Nickname, AktuelleOffset, QuestionCount, Punkte, LetztesUpdate)
-                    VALUES (@pin, @nick, @offset, @count, @pts, NOW())
+                    VALUES (@pin, @nick, @offset, @count, 0, NOW())
                     ON DUPLICATE KEY UPDATE
                         AktuelleOffset = @offset,
                         QuestionCount  = @count,
-                        Punkte         = @pts,
+                        Punkte         = 0,
                         LetztesUpdate  = NOW()", connection);
                 cmd.Parameters.AddWithValue("@pin",    sd.GameID);
                 cmd.Parameters.AddWithValue("@nick",   sd.UserName);
                 cmd.Parameters.AddWithValue("@offset", CurrentOffset + 1);
                 cmd.Parameters.AddWithValue("@count",  QuestionCount);
-                cmd.Parameters.AddWithValue("@pts",    fp.PlayerPoints);
                 cmd.ExecuteNonQuery();
             }
             catch
@@ -233,22 +224,19 @@ namespace Smart2Lose.Pages._1Viewer
         {
             loadHTTP();
 
-            fp.PlayerPoints = HttpContext.Session.GetInt32("PlayerPoints") ?? 0;
-
             var db = new SQLconnection.DatenbankZugriff();
             using var connection = db.GetConnection();
             connection.Open();
 
-            string query = @"INSERT INTO playerpoints (User_Nickname, SessionPints, GamePin, CorrectAnswered, PossibleAnswers)
-                VALUES (@name, @points, @pin, @correct, @possible);";
+            string query = @"INSERT INTO playerpoints
+        (User_Nickname, SessionPints, GamePin, CorrectAnswered, PossibleAnswers)
+        VALUES (@name, 0, @pin, @correct, @possible);";
 
             using var cmd = new MySqlCommand(query, connection);
-            cmd.Parameters.AddWithValue("@pin", sd.GameID);
-            cmd.Parameters.AddWithValue("@points", fp.PlayerPoints);
-            cmd.Parameters.AddWithValue("@name", sd.UserName);
-            cmd.Parameters.AddWithValue("@correct", fp.RightAnswer);
+            cmd.Parameters.AddWithValue("@pin",      sd.GameID);
+            cmd.Parameters.AddWithValue("@name",     sd.UserName);
+            cmd.Parameters.AddWithValue("@correct",  fp.RightAnswer);
             cmd.Parameters.AddWithValue("@possible", spiel.HowManyQuestions(sd.GameID));
-
             cmd.ExecuteNonQuery();
 
             return RedirectToPage("/1Viewer/FinalResult");
