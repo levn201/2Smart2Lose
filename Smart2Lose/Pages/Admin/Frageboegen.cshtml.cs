@@ -41,7 +41,7 @@ namespace Smart2Lose.Pages.Admin
                 using var connection = db.GetConnection();
                 connection.Open();
 
-                string query = "SELECT Join_ID, Titel, Autor, Kategorie, ErstelltAm FROM Fragebogen ORDER BY Join_ID ASC;";
+                string query = "SELECT Join_ID, Titel, Autor, Kategorie, Typ, ErstelltAm FROM Fragebogen ORDER BY Join_ID ASC;";
                 using var cmd = new MySqlCommand(query, connection);
                 using var reader = cmd.ExecuteReader();
 
