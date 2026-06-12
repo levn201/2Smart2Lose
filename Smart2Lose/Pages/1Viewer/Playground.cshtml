@@ -46,57 +46,82 @@
 
                 <h3>@frage.Fragestellung</h3>
 
-                <div class="antwort-grid">
-
-                    <div class="antwort-card bg-1 @(Model.fp.AnswerChecked
-                                             ? (frage.IstAntwort1Richtig ? "correct-answer"
-                                             : (Model.UserAnswer.IstAntwort1Richtig ? "wrong-answer" : ""))
+                @if (Model.QuizTyp == "TrueFalse")
+                {
+                    <div class="tf-grid">
+                        <div class="tf-karte tf-wahr @(Model.fp.AnswerChecked
+                                ? (frage.IstAntwort1Richtig ? "correct-answer"
+                                : (Model.UserAnswer.IstAntwort1Richtig ? "wrong-answer" : ""))
+                                : "")"
+                             onclick="@(Model.fp.AnswerChecked ? "" : "selectTf(this, 'tf1')")">
+                            <input type="checkbox" id="tf1" class="checkmark"
+                                   asp-for="UserAnswer.IstAntwort1Richtig"
+                                   onchange="updateSelectionTf(this)"
+                                   disabled="@Model.fp.AnswerChecked" />
+                            ✓ Wahr
+                        </div>
+                        <div class="tf-karte tf-falsch @(Model.fp.AnswerChecked
+                                ? (frage.IstAntwort2Richtig ? "correct-answer"
+                                : (Model.UserAnswer.IstAntwort2Richtig ? "wrong-answer" : ""))
+                                : "")"
+                             onclick="@(Model.fp.AnswerChecked ? "" : "selectTf(this, 'tf2')")">
+                            <input type="checkbox" id="tf2" class="checkmark"
+                                   asp-for="UserAnswer.IstAntwort2Richtig"
+                                   onchange="updateSelectionTf(this)"
+                                   disabled="@Model.fp.AnswerChecked" />
+                            ✗ Falsch
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="antwort-grid">
+                        <div class="antwort-card bg-1 @(Model.fp.AnswerChecked
+                                                 ? (frage.IstAntwort1Richtig ? "correct-answer"
+                                                 : (Model.UserAnswer.IstAntwort1Richtig ? "wrong-answer" : ""))
+                                                 : "")"
+                             onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
+                            <input type="checkbox" class="checkmark"
+                                   asp-for="UserAnswer.IstAntwort1Richtig"
+                                   onchange="updateSelection(this)"
+                                   disabled="@Model.fp.AnswerChecked" />
+                            <label>@frage.Antwort1</label>
+                        </div>
+                        <div class="antwort-card bg-2 @(Model.fp.AnswerChecked
+                                             ? (frage.IstAntwort2Richtig ? "correct-answer"
+                                             : (Model.UserAnswer.IstAntwort2Richtig ? "wrong-answer" : ""))
                                              : "")"
-                         onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
-                        <input type="checkbox" class="checkmark"
-                               asp-for="UserAnswer.IstAntwort1Richtig"
-                               onchange="updateSelection(this)"
-                               disabled="@Model.fp.AnswerChecked" />
-                        <label>@frage.Antwort1</label>
+                             onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
+                            <input type="checkbox" class="checkmark"
+                                   asp-for="UserAnswer.IstAntwort2Richtig"
+                                   onchange="updateSelection(this)"
+                                   disabled="@Model.fp.AnswerChecked" />
+                            <label>@frage.Antwort2</label>
+                        </div>
+                        <div class="antwort-card bg-3 @(Model.fp.AnswerChecked
+                                             ? (frage.IstAntwort3Richtig ? "correct-answer"
+                                             : (Model.UserAnswer.IstAntwort3Richtig ? "wrong-answer" : ""))
+                                             : "")"
+                             onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
+                            <input type="checkbox" class="checkmark"
+                                   asp-for="UserAnswer.IstAntwort3Richtig"
+                                   onchange="updateSelection(this)"
+                                   disabled="@Model.fp.AnswerChecked" />
+                            <label>@frage.Antwort3</label>
+                        </div>
+                        <div class="antwort-card bg-4 @(Model.fp.AnswerChecked
+                                             ? (frage.IstAntwort4Richtig ? "correct-answer"
+                                             : (Model.UserAnswer.IstAntwort4Richtig ? "wrong-answer" : ""))
+                                             : "")"
+                             onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
+                            <input type="checkbox" class="checkmark"
+                                   asp-for="UserAnswer.IstAntwort4Richtig"
+                                   onchange="updateSelection(this)"
+                                   disabled="@Model.fp.AnswerChecked" />
+                            <label>@frage.Antwort4</label>
+                        </div>
                     </div>
-
-                    <div class="antwort-card bg-2 @(Model.fp.AnswerChecked
-                                         ? (frage.IstAntwort2Richtig ? "correct-answer"
-                                         : (Model.UserAnswer.IstAntwort2Richtig ? "wrong-answer" : ""))
-                                         : "")"
-                         onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
-                        <input type="checkbox" class="checkmark"
-                               asp-for="UserAnswer.IstAntwort2Richtig"
-                               onchange="updateSelection(this)"
-                               disabled="@Model.fp.AnswerChecked" />
-                        <label>@frage.Antwort2</label>
-                    </div>
-
-                    <div class="antwort-card bg-3 @(Model.fp.AnswerChecked
-                                         ? (frage.IstAntwort3Richtig ? "correct-answer"
-                                         : (Model.UserAnswer.IstAntwort3Richtig ? "wrong-answer" : ""))
-                                         : "")"
-                         onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
-                        <input type="checkbox" class="checkmark"
-                               asp-for="UserAnswer.IstAntwort3Richtig"
-                               onchange="updateSelection(this)"
-                               disabled="@Model.fp.AnswerChecked" />
-                        <label>@frage.Antwort3</label>
-                    </div>
-
-                    <div class="antwort-card bg-4 @(Model.fp.AnswerChecked
-                                         ? (frage.IstAntwort4Richtig ? "correct-answer"
-                                         : (Model.UserAnswer.IstAntwort4Richtig ? "wrong-answer" : ""))
-                                         : "")"
-                         onclick="@(Model.fp.AnswerChecked ? "" : "selectAnswer(this)")">
-                        <input type="checkbox" class="checkmark"
-                               asp-for="UserAnswer.IstAntwort4Richtig"
-                               onchange="updateSelection(this)"
-                               disabled="@Model.fp.AnswerChecked" />
-                        <label>@frage.Antwort4</label>
-                    </div>
-
-                </div>
+                }
             </div>
         }
 
@@ -188,6 +213,28 @@
                 if (cb !== checkbox) cb.checked = false;
             });
             document.querySelectorAll('.antwort-card').forEach(c => {
+                if (c !== card) c.classList.remove('selected');
+            });
+            card.classList.add('selected');
+        } else {
+            card.classList.remove('selected');
+        }
+    }
+
+    function selectTf(cardElement, checkboxId) {
+        document.querySelectorAll('.tf-karte').forEach(c => c.classList.remove('selected'));
+        document.querySelectorAll('.checkmark').forEach(cb => cb.checked = false);
+        cardElement.classList.add('selected');
+        document.getElementById(checkboxId).checked = true;
+    }
+
+    function updateSelectionTf(checkbox) {
+        const card = checkbox.closest('.tf-karte');
+        if (checkbox.checked) {
+            document.querySelectorAll('.checkmark').forEach(cb => {
+                if (cb !== checkbox) cb.checked = false;
+            });
+            document.querySelectorAll('.tf-karte').forEach(c => {
                 if (c !== card) c.classList.remove('selected');
             });
             card.classList.add('selected');

@@ -46,6 +46,10 @@
     margin-bottom: 20px;
     text-align: center;
     transition: box-shadow 0.3s ease;
+    min-height: 380px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .frage-block h3 {
@@ -304,3 +308,42 @@
     .quiz-info { padding: 12px 16px; }
     .q-nav-btn { width: 32px; height: 32px; font-size: 0.75rem; }
 }
+
+/* ─── Wahr/Falsch ────────────────────────────────────── */
+.tf-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 28px;
+}
+
+.tf-karte {
+    padding: 24px 16px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    border: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: var(--font-body);
+    font-weight: 800;
+    font-size: 1.1rem;
+    min-height: 80px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    user-select: none;
+}
+
+.tf-karte:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.1); }
+
+.tf-wahr  { background: #ECFDF5; border-color: #A7F3D0; color: #065F46; }
+.tf-falsch { background: #FFF1F2; border-color: #FECDD3; color: #9F1239; }
+
+.tf-karte.selected { transform: scale(1.03); border-width: 3px; }
+.tf-wahr.selected  { border-color: #059669; box-shadow: 0 0 0 3px rgba(5,150,105,0.2); }
+.tf-falsch.selected { border-color: #DC2626; box-shadow: 0 0 0 3px rgba(220,38,38,0.2); }
+
+.tf-karte.correct-answer { background: rgba(4,198,138,0.15) !important; border-color: var(--accent) !important; }
+.tf-karte.wrong-answer   { background: rgba(217,48,37,0.10) !important; border-color: var(--error) !important; }
+
+@media (max-width: 600px) { .tf-grid { grid-template-columns: 1fr; } }
