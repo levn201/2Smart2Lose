@@ -8,9 +8,8 @@ namespace Smart2Lose.Helper
         public class DatenbankZugriff
         {
             public string connectionString =
-
-            //"Server=localhost;Database=KahootDatabase;Uid=root;Pwd=21481TNGhello!;CharSet=utf8mb4;"; //Connection zur Framework Local Database von Levin
-            "Server = 192.168.200.41; Port=3306;Database=smart2lose;Uid=Smart2Lose;Pwd=TNBWazubi1!;SslMode=None;CharSet=utf8mb4;";
+            "Server=localhost;Database=KahootDatabase;Uid=root;Pwd=21481TNGhello!;CharSet=utf8mb4;"; //Connection zur Framework Local Database von Levin
+            //"Server = 192.168.200.41; Port=3306;Database=smart2lose;Uid=Smart2Lose;Pwd=TNBWazubi1!;SslMode=None;CharSet=utf8mb4;";
 
             public static string ConnectionString { get; set; } = string.Empty;
 
