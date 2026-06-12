@@ -85,7 +85,7 @@
                                    asp-for="UserAnswer.IstAntwort1Richtig"
                                    onchange="updateSelectionTf(this)"
                                    disabled="@Model.fp.AnswerChecked" />
-                            ✓ Wahr
+                            Wahr
                         </div>
                         <div class="tf-karte tf-falsch @(Model.fp.AnswerChecked
                                 ? (frage.IstAntwort2Richtig ? "correct-answer"
@@ -96,7 +96,7 @@
                                    asp-for="UserAnswer.IstAntwort2Richtig"
                                    onchange="updateSelectionTf(this)"
                                    disabled="@Model.fp.AnswerChecked" />
-                            ✗ Falsch
+                            Falsch
                         </div>
                     </div>
                 }

@@ -93,7 +93,7 @@
             @if (!string.IsNullOrEmpty(Model.ImportError))
             {
                 <div class="quiz-frage error-box" style="margin-top:0.75rem;">
-                    &#9888; @Model.ImportError
+                    @Model.ImportError
                 </div>
             }
             <div class="button-row" style="margin-top:1rem;">
@@ -111,17 +111,17 @@
 
         <div class="typ-selector">
             <div class="typ-karte-erstellen aktiv" onclick="setTyp('MC', this)">
-                <span class="typ-icon">🔲</span>
+                <span class="typ-icon">MC</span>
                 <div class="typ-name">Multiple Choice</div>
                 <div class="typ-desc">4 Antwortmöglichkeiten</div>
             </div>
             <div class="typ-karte-erstellen" onclick="setTyp('TrueFalse', this)">
-                <span class="typ-icon">✅</span>
+                <span class="typ-icon">T/F</span>
                 <div class="typ-name">Wahr / Falsch</div>
                 <div class="typ-desc">True oder False</div>
             </div>
             <div class="typ-karte-erstellen" onclick="setTyp('Passwort', this)">
-                <span class="typ-icon">🔑</span>
+                <span class="typ-icon">PW</span>
                 <div class="typ-name">Passwort</div>
                 <div class="typ-desc">Texteingabe als Antwort</div>
             </div>
@@ -213,12 +213,12 @@
                         <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;">
                             <input type="radio" name="tf_richtig_0" value="1"
                                    onchange="setTfRichtig(0, true, false)" />
-                            ✓ Wahr ist richtig
+                            Wahr ist richtig
                         </label>
                         <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;">
                             <input type="radio" name="tf_richtig_0" value="2"
                                    onchange="setTfRichtig(0, false, true)" />
-                            ✗ Falsch ist richtig
+                            Falsch ist richtig
                         </label>
                     </div>
                     <input type="hidden" id="tf_r1_0" name="tf_istAntwort1Richtig_0" value="true" />
@@ -241,7 +241,7 @@
         @if (!string.IsNullOrEmpty(Model.FragenError))
         {
             <div class="quiz-frage error-box">
-                ⚠️ @Model.FragenError
+                @Model.FragenError
             </div>
         }
 
@@ -253,7 +253,7 @@
             </button>
 
             <button type="submit" class="knopf">
-                💾 Speichern
+                Speichern
             </button>
 
         </div>
