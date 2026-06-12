@@ -8,7 +8,7 @@ using Smart2Lose.Helper;
 
 namespace Smart2Lose.Pages.Admin
 {
-    [Authorize(Roles = "Admin,ReadOnly")]
+    [Authorize(Roles = "Admin,User,ReadOnly")]
     public class AntragModel : PageModel
     {
         public projektName pn = new projektName();

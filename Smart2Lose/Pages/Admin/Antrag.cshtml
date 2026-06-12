@@ -31,7 +31,7 @@
         {
             <a href="/Admin/Rollenantraege">Anträge</a>
         }
-        @if (User.IsInRole("ReadOnly"))
+        @if (User.IsInRole("ReadOnly") || User.IsInRole("User"))
         {
             <a href="/Admin/Antrag" class="active">Antrag</a>
         }
