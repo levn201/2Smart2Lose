@@ -34,6 +34,37 @@ namespace Smart2Lose.Pages.Admin
             if (fb.JoinId <= 0)
                 fb.JoinId = AdminHelper.RandomNum();
 
+            // TrueFalse und Passwort: Fragen-Daten aus separaten Form-Feldern normalisieren
+            if (fb.Typ == "TrueFalse")
+            {
+                for (int i = 0; i < (fb.Fragen?.Count ?? 0); i++)
+                {
+                    fb.Fragen[i].Antwort1 = "Wahr";
+                    fb.Fragen[i].Antwort2 = "Falsch";
+                    fb.Fragen[i].Antwort3 = "";
+                    fb.Fragen[i].Antwort4 = "";
+                    bool wahrIstRichtig = Request.Form[$"tf_istAntwort1Richtig_{i}"] == "true";
+                    fb.Fragen[i].IstAntwort1Richtig = wahrIstRichtig;
+                    fb.Fragen[i].IstAntwort2Richtig = !wahrIstRichtig;
+                    fb.Fragen[i].IstAntwort3Richtig = false;
+                    fb.Fragen[i].IstAntwort4Richtig = false;
+                }
+            }
+            else if (fb.Typ == "Passwort")
+            {
+                for (int i = 0; i < (fb.Fragen?.Count ?? 0); i++)
+                {
+                    fb.Fragen[i].Antwort1 = Request.Form[$"pw_antwort_{i}"].ToString().Trim();
+                    fb.Fragen[i].Antwort2 = "";
+                    fb.Fragen[i].Antwort3 = "";
+                    fb.Fragen[i].Antwort4 = "";
+                    fb.Fragen[i].IstAntwort1Richtig = true;
+                    fb.Fragen[i].IstAntwort2Richtig = false;
+                    fb.Fragen[i].IstAntwort3Richtig = false;
+                    fb.Fragen[i].IstAntwort4Richtig = false;
+                }
+            }
+
             // Titel pr�fen
             if (string.IsNullOrWhiteSpace(fb.Titel))
             {
@@ -48,7 +79,7 @@ namespace Smart2Lose.Pages.Admin
                 return Page();
             }
 
-            // Validierung: genau eine richtige Antwort pro Frage + Fragestellung nicht leer
+            // Validierung: Fragestellung + typ-abhängige Antwortprüfung
             for (int i = 0; i < fb.Fragen.Count; i++)
             {
                 var f = fb.Fragen[i];
@@ -59,16 +90,27 @@ namespace Smart2Lose.Pages.Admin
                     return Page();
                 }
 
-                int richtig =
-                    (f.IstAntwort1Richtig ? 1 : 0) +
-                    (f.IstAntwort2Richtig ? 1 : 0) +
-                    (f.IstAntwort3Richtig ? 1 : 0) +
-                    (f.IstAntwort4Richtig ? 1 : 0);
-
-                if (richtig != 1)
+                if (fb.Typ == "Passwort")
                 {
-                    FragenError = $"Frage {i + 1}: Bitte genau eine richtige Antwort markieren.";
-                    return Page();
+                    if (string.IsNullOrWhiteSpace(f.Antwort1))
+                    {
+                        FragenError = $"Frage {i + 1}: Richtige Antwort darf nicht leer sein.";
+                        return Page();
+                    }
+                }
+                else
+                {
+                    int richtig =
+                        (f.IstAntwort1Richtig ? 1 : 0) +
+                        (f.IstAntwort2Richtig ? 1 : 0) +
+                        (f.IstAntwort3Richtig ? 1 : 0) +
+                        (f.IstAntwort4Richtig ? 1 : 0);
+
+                    if (richtig != 1)
+                    {
+                        FragenError = $"Frage {i + 1}: Bitte genau eine richtige Antwort markieren.";
+                        return Page();
+                    }
                 }
             }
 
@@ -102,14 +144,15 @@ namespace Smart2Lose.Pages.Admin
 
                 // Fragebogen einf�gen
                 using (var cmd = new MySqlCommand(
-                    @"INSERT INTO Fragebogen (Titel, Join_ID, Autor, Kategorie)
-                      VALUES (@t, @j, @a, @k);",
+                    @"INSERT INTO Fragebogen (Titel, Join_ID, Autor, Kategorie, Typ)
+                      VALUES (@t, @j, @a, @k, @typ);",
                     con, tx))
                 {
-                    cmd.Parameters.AddWithValue("@t", fb.Titel);
-                    cmd.Parameters.AddWithValue("@j", fb.JoinId);
-                    cmd.Parameters.AddWithValue("@a", fb.Autor);
-                    cmd.Parameters.AddWithValue("@k", fb.Kategorie);
+                    cmd.Parameters.AddWithValue("@t",   fb.Titel);
+                    cmd.Parameters.AddWithValue("@j",   fb.JoinId);
+                    cmd.Parameters.AddWithValue("@a",   fb.Autor);
+                    cmd.Parameters.AddWithValue("@k",   fb.Kategorie);
+                    cmd.Parameters.AddWithValue("@typ", fb.Typ ?? "MC");
 
                     cmd.ExecuteNonQuery();
                     fid = cmd.LastInsertedId;

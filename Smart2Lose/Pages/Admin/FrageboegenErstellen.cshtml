@@ -4,6 +4,32 @@
 <link rel="stylesheet" href="~/css/Admin/GrundDashboard.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/Admin/FrageboegenErstellen.css" asp-append-version="true" />
 
+<style>
+.typ-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.typ-karte-erstellen {
+    background: #fff;
+    border: 2px solid #DDE3DF;
+    border-radius: 10px;
+    padding: 16px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+}
+.typ-karte-erstellen.aktiv {
+    border-color: #024651;
+    background: rgba(2,70,81,0.05);
+}
+.typ-karte-erstellen .typ-icon { font-size: 1.6rem; display: block; margin-bottom: 6px; }
+.typ-karte-erstellen .typ-name { font-size: 0.85rem; font-weight: 700; color: #024651; }
+.typ-karte-erstellen .typ-desc { font-size: 0.72rem; color: #6E7D78; margin-top: 2px; }
+.tf-felder, .pw-felder { margin-top: 12px; }
+</style>
+
 
 <!-- Header -->
 <header class="header">
@@ -81,6 +107,26 @@
 
     <form method="post" asp-page-handler="Speichern" id="fragenForm" enctype="multipart/form-data">
 
+        <input type="hidden" name="fb.Typ" id="selectedTyp" value="MC" />
+
+        <div class="typ-selector">
+            <div class="typ-karte-erstellen aktiv" onclick="setTyp('MC', this)">
+                <span class="typ-icon">🔲</span>
+                <div class="typ-name">Multiple Choice</div>
+                <div class="typ-desc">4 Antwortmöglichkeiten</div>
+            </div>
+            <div class="typ-karte-erstellen" onclick="setTyp('TrueFalse', this)">
+                <span class="typ-icon">✅</span>
+                <div class="typ-name">Wahr / Falsch</div>
+                <div class="typ-desc">True oder False</div>
+            </div>
+            <div class="typ-karte-erstellen" onclick="setTyp('Passwort', this)">
+                <span class="typ-icon">🔑</span>
+                <div class="typ-name">Passwort</div>
+                <div class="typ-desc">Texteingabe als Antwort</div>
+            </div>
+        </div>
+
         <!-- META -->
         <div class="quiz-meta">
 
@@ -140,28 +186,51 @@
 
                 <h3>Antwortoptionen</h3>
 
-                <div class="antwort-grid">
-                    @for (int i = 1; i <= 4; i++)
-                    {
-                        <div class="antwort-option">
-
-                            <textarea name="fb.Fragen[0].Antwort@(i)"
-                                      placeholder="Antwort @i"></textarea>
-
-                            <label>
-                                <input type="checkbox"
+                <div class="mc-felder">
+                    <div class="antwort-grid">
+                        @for (int i = 1; i <= 4; i++)
+                        {
+                            <div class="antwort-option">
+                                <textarea name="fb.Fragen[0].Antwort@(i)"
+                                          placeholder="Antwort @i"></textarea>
+                                <label>
+                                    <input type="checkbox"
+                                           name="fb.Fragen[0].IstAntwort@(i)Richtig"
+                                           value="true" />
+                                    Richtig
+                                </label>
+                                <input type="hidden"
                                        name="fb.Fragen[0].IstAntwort@(i)Richtig"
-                                       value="true" />
-                                Richtig
-                            </label>
+                                       value="false" />
+                            </div>
+                        }
+                    </div>
+                </div>
 
-                            <!-- Wichtig: hidden NACH Checkbox, sonst wird bool immer false -->
-                            <input type="hidden"
-                                   name="fb.Fragen[0].IstAntwort@(i)Richtig"
-                                   value="false" />
+                <div class="tf-felder" style="display:none;">
+                    <p style="font-size:0.85rem;color:#6E7D78;margin-bottom:10px;">Welche Antwort ist korrekt?</p>
+                    <div style="display:flex;gap:20px;">
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;">
+                            <input type="radio" name="tf_richtig_0" value="1"
+                                   onchange="setTfRichtig(0, true, false)" />
+                            ✓ Wahr ist richtig
+                        </label>
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;">
+                            <input type="radio" name="tf_richtig_0" value="2"
+                                   onchange="setTfRichtig(0, false, true)" />
+                            ✗ Falsch ist richtig
+                        </label>
+                    </div>
+                    <input type="hidden" id="tf_r1_0" name="tf_istAntwort1Richtig_0" value="true" />
+                    <input type="hidden" id="tf_r2_0" name="tf_istAntwort2Richtig_0" value="false" />
+                </div>
 
-                        </div>
-                    }
+                <div class="pw-felder" style="display:none;">
+                    <label style="font-size:0.85rem;font-weight:700;color:#6E7D78;">Richtige Antwort</label>
+                    <input type="text"
+                           name="pw_antwort_0"
+                           placeholder="Korrekte Antwort eingeben"
+                           style="display:block;width:100%;margin-top:6px;padding:10px 14px;border:1.5px solid #DDE3DF;border-radius:8px;font-size:0.95rem;" />
                 </div>
 
             </div>
@@ -197,45 +266,77 @@
 <script>
     let frageIndex = 1;
 
+    function setTyp(typ, clickedEl) {
+        document.getElementById('selectedTyp').value = typ;
+        document.querySelectorAll('.typ-karte-erstellen').forEach(k => k.classList.remove('aktiv'));
+        clickedEl.classList.add('aktiv');
+        applyTypToFragen(typ);
+    }
+
+    function applyTypToFragen(typ) {
+        document.querySelectorAll('.quiz-frage').forEach(function(frage) {
+            const mc = frage.querySelector('.mc-felder');
+            const tf = frage.querySelector('.tf-felder');
+            const pw = frage.querySelector('.pw-felder');
+            if (mc) mc.style.display = typ === 'MC'        ? '' : 'none';
+            if (tf) tf.style.display = typ === 'TrueFalse' ? '' : 'none';
+            if (pw) pw.style.display = typ === 'Passwort'  ? '' : 'none';
+        });
+    }
+
+    function setTfRichtig(i, wahr, falsch) {
+        const r1 = document.getElementById('tf_r1_' + i);
+        const r2 = document.getElementById('tf_r2_' + i);
+        if (r1) r1.value = wahr  ? 'true' : 'false';
+        if (r2) r2.value = falsch ? 'true' : 'false';
+    }
+
     function addFrage() {
         const container = document.getElementById("fragenContainer");
         const last = container.querySelector(".quiz-frage:last-child");
         const neu = last.cloneNode(true);
 
-        // Überschrift aktualisieren (nimmt das erste h3 im Block)
         neu.querySelector("h3").textContent = `Frage ${frageIndex + 1}`;
 
-        // Fragestellung
         const frage = neu.querySelector('textarea[name*="Fragestellung"]');
         frage.name = `fb.Fragen[${frageIndex}].Fragestellung`;
         frage.value = "";
 
-        // Optionale Felder
         const bildInput = neu.querySelector('input[type="file"][name^="bild_"]');
         if (bildInput) { bildInput.name = `bild_${frageIndex}`; bildInput.value = ""; }
         const linkUrl = neu.querySelector('input[name*="LinkUrl"]');
         if (linkUrl) { linkUrl.name = `fb.Fragen[${frageIndex}].LinkUrl`; linkUrl.value = ""; }
 
-        // Antworten + bools
         for (let i = 1; i <= 4; i++) {
             const ta = neu.querySelector(`textarea[name*="Antwort${i}"]`);
-            ta.name = `fb.Fragen[${frageIndex}].Antwort${i}`;
-            ta.value = "";
-
-            // Beide Inputs (checkbox + hidden) umbenennen
+            if (ta) { ta.name = `fb.Fragen[${frageIndex}].Antwort${i}`; ta.value = ""; }
             const inputs = neu.querySelectorAll(`input[name*="IstAntwort${i}Richtig"]`);
             inputs.forEach(x => {
                 x.name = `fb.Fragen[${frageIndex}].IstAntwort${i}Richtig`;
                 if (x.type === "checkbox") x.checked = false;
-                if (x.type === "hidden") x.value = "false";
+                if (x.type === "hidden")   x.value   = "false";
             });
         }
 
+        neu.querySelectorAll('.tf-felder input[type="radio"]').forEach(r => {
+            r.name = `tf_richtig_${frageIndex}`;
+            r.checked = false;
+            const isWahr = r.value === '1';
+            r.setAttribute('onchange', `setTfRichtig(${frageIndex}, ${isWahr}, ${!isWahr})`);
+        });
+        const tfR1 = neu.querySelector('.tf-felder [id^="tf_r1_"]');
+        const tfR2 = neu.querySelector('.tf-felder [id^="tf_r2_"]');
+        if (tfR1) { tfR1.id = `tf_r1_${frageIndex}`; tfR1.name = `tf_istAntwort1Richtig_${frageIndex}`; tfR1.value = 'true'; }
+        if (tfR2) { tfR2.id = `tf_r2_${frageIndex}`; tfR2.name = `tf_istAntwort2Richtig_${frageIndex}`; tfR2.value = 'false'; }
+
+        const pwInput = neu.querySelector('.pw-felder input[type="text"]');
+        if (pwInput) { pwInput.name = `pw_antwort_${frageIndex}`; pwInput.value = ''; }
+
+        applyTypToFragen(document.getElementById('selectedTyp').value);
         container.appendChild(neu);
         frageIndex++;
     }
 
-    // Nur eine Checkbox pro Frage auswählbar (Radio-Verhalten)
     document.addEventListener("change", function (e) {
         if (e.target.type === "checkbox" && e.target.name.includes("IstAntwort")) {
             const container = e.target.closest(".quiz-frage");
@@ -244,20 +345,41 @@
         }
     });
 
-    // Client-seitige Validierung vor Submit
     document.getElementById("fragenForm").addEventListener("submit", function (e) {
+        const typ = document.getElementById('selectedTyp').value;
         const fragen = document.querySelectorAll(".quiz-frage");
 
         for (let i = 0; i < fragen.length; i++) {
-            const boxes = fragen[i].querySelectorAll('input[type="checkbox"][name*="IstAntwort"]');
-            let checked = false;
-            boxes.forEach(b => { if (b.checked) checked = true; });
-
-            if (!checked) {
-                alert(`Frage ${i + 1}: Bitte eine richtige Antwort wählen.`);
-                e.preventDefault();
-                return;
+            if (typ === 'MC') {
+                const boxes = fragen[i].querySelectorAll('input[type="checkbox"][name*="IstAntwort"]');
+                let checked = false;
+                boxes.forEach(b => { if (b.checked) checked = true; });
+                if (!checked) {
+                    alert(`Frage ${i + 1}: Bitte eine richtige Antwort wählen.`);
+                    e.preventDefault();
+                    return;
+                }
+            } else if (typ === 'TrueFalse') {
+                const radios = fragen[i].querySelectorAll('.tf-felder input[type="radio"]');
+                let checked = false;
+                radios.forEach(r => { if (r.checked) checked = true; });
+                if (!checked) {
+                    alert(`Frage ${i + 1}: Bitte Wahr oder Falsch als richtige Antwort wählen.`);
+                    e.preventDefault();
+                    return;
+                }
+            } else if (typ === 'Passwort') {
+                const pwInput = fragen[i].querySelector('.pw-felder input[type="text"]');
+                if (!pwInput || !pwInput.value.trim()) {
+                    alert(`Frage ${i + 1}: Bitte eine Antwort eingeben.`);
+                    e.preventDefault();
+                    return;
+                }
             }
         }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        applyTypToFragen(document.getElementById('selectedTyp').value);
     });
 </script>
